@@ -7297,26 +7297,44 @@
                 "schema" : {
                   "type" : "object",
                   "properties" : {
-                    "mediaType" : {
+                    "cookies" : {
                       "type" : "object",
-                      "properties" : {
-                        "type" : {
-                          "type" : "string"
-                        },
-                        "subtype" : {
-                          "type" : "string"
-                        },
-                        "parameters" : {
-                          "type" : "object",
-                          "additionalProperties" : {
+                      "additionalProperties" : {
+                        "type" : "object",
+                        "properties" : {
+                          "name" : {
                             "type" : "string"
+                          },
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "version" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          },
+                          "path" : {
+                            "type" : "string"
+                          },
+                          "domain" : {
+                            "type" : "string"
+                          },
+                          "comment" : {
+                            "type" : "string"
+                          },
+                          "maxAge" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          },
+                          "expiry" : {
+                            "type" : "string",
+                            "format" : "date-time"
+                          },
+                          "secure" : {
+                            "type" : "boolean"
+                          },
+                          "httpOnly" : {
+                            "type" : "boolean"
                           }
-                        },
-                        "wildcardType" : {
-                          "type" : "boolean"
-                        },
-                        "wildcardSubtype" : {
-                          "type" : "boolean"
                         }
                       }
                     },
@@ -7326,12 +7344,12 @@
                       "items" : {
                         "type" : "object",
                         "properties" : {
-                          "title" : {
-                            "type" : "string"
-                          },
                           "uri" : {
                             "type" : "string",
                             "format" : "uri"
+                          },
+                          "title" : {
+                            "type" : "string"
                           },
                           "uriBuilder" : {
                             "type" : "object"
@@ -7380,47 +7398,6 @@
                         "type" : "string"
                       }
                     },
-                    "cookies" : {
-                      "type" : "object",
-                      "additionalProperties" : {
-                        "type" : "object",
-                        "properties" : {
-                          "name" : {
-                            "type" : "string"
-                          },
-                          "value" : {
-                            "type" : "string"
-                          },
-                          "version" : {
-                            "type" : "integer",
-                            "format" : "int32"
-                          },
-                          "path" : {
-                            "type" : "string"
-                          },
-                          "domain" : {
-                            "type" : "string"
-                          },
-                          "comment" : {
-                            "type" : "string"
-                          },
-                          "maxAge" : {
-                            "type" : "integer",
-                            "format" : "int32"
-                          },
-                          "expiry" : {
-                            "type" : "string",
-                            "format" : "date-time"
-                          },
-                          "secure" : {
-                            "type" : "boolean"
-                          },
-                          "httpOnly" : {
-                            "type" : "boolean"
-                          }
-                        }
-                      }
-                    },
                     "entityTag" : {
                       "type" : "object",
                       "properties" : {
@@ -7438,6 +7415,29 @@
                         "type" : "array",
                         "items" : {
                           "type" : "string"
+                        }
+                      }
+                    },
+                    "mediaType" : {
+                      "type" : "object",
+                      "properties" : {
+                        "type" : {
+                          "type" : "string"
+                        },
+                        "subtype" : {
+                          "type" : "string"
+                        },
+                        "parameters" : {
+                          "type" : "object",
+                          "additionalProperties" : {
+                            "type" : "string"
+                          }
+                        },
+                        "wildcardType" : {
+                          "type" : "boolean"
+                        },
+                        "wildcardSubtype" : {
+                          "type" : "boolean"
                         }
                       }
                     },
@@ -7572,17 +7572,21 @@
           "in" : "query",
           "description" : "Minimum date for returned receipts. Defaults to the first day of the current year.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "to",
           "in" : "query",
           "description" : "Maximum date for returned receipts. Defaults to the last date of the current year. Cannot be more than one year apart from the minimum date.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "period",
           "in" : "query",
@@ -7642,17 +7646,21 @@
           "in" : "query",
           "description" : "Minimum date for returned receipts. Defaults to the first day of the current year.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "to",
           "in" : "query",
           "description" : "Maximum date for returned receipts. Defaults to the last date of the current year. Cannot be more than one year apart from the minimum date.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "period",
           "in" : "query",
@@ -7894,17 +7902,21 @@
           "in" : "query",
           "description" : "Minimum date for returned receipts. Defaults to the first day of the current year.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "to",
           "in" : "query",
           "description" : "Maximum date for returned receipts. Defaults to the last date of the current year. Cannot be more than one year apart from the minimum date.",
           "schema" : {
-            "type" : "string"
+            "pattern" : "yyyy-MM-dd",
+            "type" : "string",
+            "format" : "date"
           },
-          "example" : "2017-01-01"
+          "example" : "2024-08-01"
         }, {
           "name" : "period",
           "in" : "query",
@@ -8645,14 +8657,9 @@
         "required" : [ "amount", "bookingDate", "valueDate" ],
         "type" : "object",
         "properties" : {
-          "bookingDate" : {
+          "additionalText" : {
             "type" : "string",
-            "description" : "Actual booking date of the transaction, as determined by the bank.",
-            "format" : "date"
-          },
-          "originator" : {
-            "type" : "string",
-            "description" : "Name of the person or company that originated the transaction."
+            "description" : "Additional text supplied for the transaction."
           },
           "originatorBankReference" : {
             "type" : "string",
@@ -8706,10 +8713,6 @@
             "type" : "string",
             "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
           },
-          "additionalText" : {
-            "type" : "string",
-            "description" : "Additional text supplied for the transaction."
-          },
           "transactionId" : {
             "type" : "string",
             "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates."
@@ -8726,6 +8729,15 @@
           "amount" : {
             "type" : "number",
             "description" : "Total amount of the booking. Positive for credit, and negative for debit transactions."
+          },
+          "bookingDate" : {
+            "type" : "string",
+            "description" : "Actual booking date of the transaction, as determined by the bank.",
+            "format" : "date"
+          },
+          "originator" : {
+            "type" : "string",
+            "description" : "Name of the person or company that originated the transaction."
           },
           "id" : {
             "type" : "integer",
@@ -8788,16 +8800,16 @@
       "BankStatementRequestDtoV1" : {
         "type" : "object",
         "properties" : {
-          "returnLines" : {
-            "type" : "boolean",
-            "description" : "Set to true if a list of created lines (and found duplicates) is to be included. Otherwise, only the counts will be returned."
-          },
           "bankStatementLines" : {
             "type" : "array",
             "description" : "The bank statement lines to append.",
             "items" : {
               "$ref" : "#/components/schemas/BankStatementLineDtoV1"
             }
+          },
+          "returnLines" : {
+            "type" : "boolean",
+            "description" : "Set to true if a list of created lines (and found duplicates) is to be included. Otherwise, only the counts will be returned."
           }
         }
       },
@@ -8998,13 +9010,13 @@
             "type" : "string",
             "description" : "Optional from date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-01"
           },
           "deliveryToDate" : {
             "type" : "string",
             "description" : "Optional to date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-02"
           },
           "lines" : {
             "type" : "array",
@@ -9321,13 +9333,13 @@
             "type" : "string",
             "description" : "Optional from date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-01"
           },
           "deliveryToDate" : {
             "type" : "string",
             "description" : "Optional to date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-02"
           }
         }
       },
@@ -9510,13 +9522,13 @@
             "type" : "string",
             "description" : "Optional from date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-01"
           },
           "deliveryToDate" : {
             "type" : "string",
             "description" : "Optional to date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-02"
           },
           "lines" : {
             "type" : "array",
@@ -9682,13 +9694,13 @@
             "type" : "string",
             "description" : "Optional from date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-01"
           },
           "deliveryToDate" : {
             "type" : "string",
             "description" : "Optional to date for a delivery span. Only available for double-entry accounting.",
             "format" : "date",
-            "example" : "2023-12-31"
+            "example" : "2024-08-02"
           }
         }
       },
@@ -9765,6 +9777,11 @@
             "description" : "Class to which this account belongs, defined as accounting group. This is usually based on the first number of the account code.",
             "enum" : [ "GROUP_0", "GROUP_1", "GROUP_2", "GROUP_3", "GROUP_4", "GROUP_4_CHANGES", "GROUP_5", "GROUP_6", "GROUP_7", "GROUP_8_GAINS", "GROUP_8_LOSSES", "GROUP_8_OTHER", "GROUP_9" ]
           },
+          "accountName" : {
+            "type" : "string",
+            "description" : "Readable, translated name.",
+            "example" : "Einnahmen (Erlöse)"
+          },
           "openingBalance" : {
             "type" : "number",
             "description" : "The opening balance of the account. Is only returned when opening_balances was set in the request."
@@ -9782,11 +9799,6 @@
           "totalSum" : {
             "type" : "number",
             "description" : "The total sum of the account. Is only returned when totals was set in the request."
-          },
-          "accountName" : {
-            "type" : "string",
-            "description" : "Readable, translated name.",
-            "example" : "Einnahmen (Erlöse)"
           }
         }
       },
@@ -9933,7 +9945,7 @@
             "type" : "string",
             "description" : "A key describing the content of this field.",
             "example" : "TOTAL_AMOUNT",
-            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "IS_DUPLICATE", "DUPLICATE_REFERENCE", "PARTNER_NAME", "PARTNER_FIRST_NAME", "PARTNER_LAST_NAME", "PARTNER_TELEPHONE", "PARTNER_IBAN", "PARTNER_TAX_NUMBER", "PARTNER_EMAIL", "PARTNER_STREET_NAME", "PARTNER_STREET_NUMBER", "PARTNER_ZIP_CODE", "PARTNER_CITY", "PARTNER_COUNTRY", "RECIPIENT" ]
+            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_ZIP_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "CUSTOMER_ZIP_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_SERVICE_DATE", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER", "IS_DUPLICATE", "DUPLICATE_REFERENCE", "PARTNER_NAME", "PARTNER_FIRST_NAME", "PARTNER_LAST_NAME", "PARTNER_TELEPHONE", "PARTNER_IBAN", "PARTNER_TAX_NUMBER", "PARTNER_EMAIL", "PARTNER_STREET_NAME", "PARTNER_STREET_NUMBER", "PARTNER_ZIP_CODE", "PARTNER_CITY", "PARTNER_COUNTRY", "RECIPIENT" ]
           },
           "priority" : {
             "type" : "integer",
@@ -9995,13 +10007,13 @@
       "DocumentUploadDtoV1" : {
         "type" : "object",
         "properties" : {
-          "skipOcr" : {
-            "type" : "boolean",
-            "description" : "If set to true, this document will not be processed automatically by OCR services."
-          },
           "documentDescription" : {
             "type" : "string",
             "description" : "An optional description of the document itself. Will be shown as additional information and used for search."
+          },
+          "skipOcr" : {
+            "type" : "boolean",
+            "description" : "If set to true, this document will not be processed automatically by OCR services."
           },
           "metadata" : {
             "type" : "array",
@@ -10045,11 +10057,11 @@
                   "inputStream" : {
                     "type" : "object"
                   },
-                  "outputStream" : {
-                    "type" : "object"
-                  },
                   "contentType" : {
                     "type" : "string"
+                  },
+                  "outputStream" : {
+                    "type" : "object"
                   }
                 }
               },
@@ -10158,11 +10170,11 @@
               "content" : {
                 "type" : "object"
               },
-              "outputStream" : {
-                "type" : "object"
-              },
               "contentType" : {
                 "type" : "string"
+              },
+              "outputStream" : {
+                "type" : "object"
               }
             }
           },
@@ -10224,13 +10236,13 @@
             "type" : "string",
             "description" : "MIME type of the document. Accepted are images, text/plain and application/pdf, all other types will be replaced by octet-stream."
           },
-          "skipOcr" : {
-            "type" : "boolean",
-            "description" : "If set to true, this document will not be processed automatically by OCR services."
-          },
           "documentDescription" : {
             "type" : "string",
             "description" : "An optional description of the document itself. Will be shown as additional information and used for search."
+          },
+          "skipOcr" : {
+            "type" : "boolean",
+            "description" : "If set to true, this document will not be processed automatically by OCR services."
           },
           "metadata" : {
             "type" : "array",
@@ -13166,7 +13178,7 @@
             "type" : "string",
             "description" : "Type of the receipt. Only INCOME and REBOOK are valid for creating receipts, other types are created automatically.",
             "example" : "INCOME",
-            "enum" : [ "INCOME", "REBOOK", "INITIAL", "MONTHLY", "YEARLY", "FINAL" ]
+            "enum" : [ "INCOME", "REBOOK", "INITIAL", "MONTHLY", "YEARLY", "FINAL", "ZERO" ]
           },
           "dateTime" : {
             "type" : "string",
@@ -13761,10 +13773,6 @@
             "description" : "Timestamp for this waypoint",
             "format" : "date-time"
           },
-          "geoHash" : {
-            "type" : "string",
-            "description" : "Geocoding system"
-          },
           "horizontalAccuracy" : {
             "type" : "number",
             "description" : "Represents the radius of the margin of error of the measurement",
@@ -13779,6 +13787,10 @@
             "type" : "number",
             "description" : "Speed in m/s",
             "format" : "double"
+          },
+          "geoHash" : {
+            "type" : "string",
+            "description" : "Geocoding system"
           }
         },
         "description" : "Waypoints for this trip (optional)"

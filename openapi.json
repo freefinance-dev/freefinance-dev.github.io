@@ -8,7 +8,7 @@
     },
     "description" : "The REST API to be used with FreeFinance and FinanzFenster. Please read the examples for an introduction to authentication and some use cases.",
     "title" : "FreeFinance REST API",
-    "version" : "2.0.0-beta1"
+    "version" : "2.0.0-beta2"
   },
   "externalDocs" : {
     "description" : "Detailed examples for authentication and base tasks can be found here.",

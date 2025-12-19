@@ -2113,6 +2113,22 @@ p {
 <li><a href="#inv_line_calc">4.4.4. Verification of total sums</a></li>
 </ul>
 </li>
+<li><a href="#_pdf_and_image_upload">4.5. PDF and image upload</a>
+<ul class="sectlevel3">
+<li><a href="#_upload_a_document_to_the_staging_folder">4.5.1. Upload a document to the staging folder</a></li>
+<li><a href="#_upload_a_document_with_metadata">4.5.2. Upload a document with metadata</a></li>
+</ul>
+</li>
+<li><a href="#_incoming_and_outgoing_invoices">4.6. Incoming and outgoing invoices</a>
+<ul class="sectlevel3">
+<li><a href="#_incoming_invoices">4.6.1. Incoming Invoices</a>
+<ul class="sectlevel4">
+<li><a href="#_double_entry_accounting">Double Entry Accounting</a></li>
+</ul>
+</li>
+<li><a href="#_outgoing_invoices">4.6.2. Outgoing Invoices</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_faq">5. FAQ</a></li>
@@ -2127,7 +2143,7 @@ p {
 <p>The REST API to be used with FreeFinance and FinanzFenster.
 Please read the examples for an introduction to authentication and some use cases.</p>
 </div>
-<div class="paragraph">
+<div id="openapi_spec" class="paragraph">
 <p>Given the large number of available endpoints, they are not listed in this documentation.
 Instead, the OpenAPI specification file (version 3.1) is available as <a href="openapi.yaml">YAML</a> or <a href="openapi.json">JSON</a>.</p>
 </div>
@@ -2183,6 +2199,18 @@ For example, the production URL <a href="https://app.freefinance.at" class="bare
 This allows application developers to use the API regardless of the specific portal of the user.<br>
 The same is true for <a href="https://app.freefinance.de" class="bare">https://app.freefinance.de</a> and <a href="https://api.freefinance.de" class="bare">https://api.freefinance.de</a>, and so on.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you access only your own user and client, you can use the URL you are already familiar with, like <a href="http://app.freefinance.at" class="bare">http://app.freefinance.at</a>, where the API is also accessible.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2237,7 +2265,7 @@ While unauthenticated resources don&#8217;t require the Bearer token to be provi
 </table>
 </div>
 <div class="paragraph">
-<p>Valid tokens can be requested by the IDP that is returned in the <code>/auth/issuer</code> response.
+<p>Valid tokens can be requested by the IDP URL returned in the <code>/auth/issuer</code> response.
 The IDP expects authentication using the OpenID Connect (OIDC) standard.</p>
 </div>
 <div class="paragraph">
@@ -2581,7 +2609,7 @@ scope = offline_access</pre>
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-The refresh_token can be used to continuously obtain new access tokens for authorizing API calls as the user that granted your application access.
+The <code>refresh_token</code> can be used to continuously obtain new access tokens for the user that granted your application access.
 Keep it as confidential as you would a password and store it securely either in your backend or the available secret storage providers of the web browser or mobile operating systems like Android and iOS!
 </td>
 </tr>
@@ -2604,7 +2632,8 @@ The descriptions of the tags describe the module, and some modules are further d
 <div class="sect2">
 <h3 id="_base_path_and_clients">3.2. Base Path and Clients</h3>
 <div class="paragraph">
-<p>The base API endpoint path is <code>/api/2.0/</code>, usually followed by the three-letter module abbreviation and the resource. <code>GET &lt;host&gt;/api/2.0/fnd/countries</code> for example would return all countries available in the API.
+<p>The base API endpoint path is <code>/api/2.0/</code>, usually followed by the three-letter module abbreviation and the resource.<br>
+<code>GET &lt;host&gt;/api/2.0/fnd/countries</code> for example would return all countries available in the API.
 FND refers to the <strong>f</strong>ou<strong>nd</strong>ation module, which represents basic countries, regions, currencies, and units of measure that can be used in the API.</p>
 </div>
 <div class="admonitionblock note">
@@ -2623,7 +2652,8 @@ If a path is given, such as <code>/fnd/countries</code>, the full path would be 
 <div class="paragraph">
 <p>To obtain all available clients, the <code>/clients</code> endpoint is available.
 It lists the numerical ID for a client, which is part of the resource path for all resources pertaining to that client.
-For example, the GET call would return a client with ID 10000, and to list all customers of that client, the path would be <code>GET /clients/10000/mas/customers</code>.
+For example, the GET call would return a client with ID 10000, and to list all customers of that client, the path would look like this:<br>
+<code>GET /clients/10000/mas/customers</code><br>
 Note that the module prefix is still part of the path after the client ID - the vast majority of resources are sub-paths of a client.</p>
 </div>
 </div>
@@ -2664,10 +2694,12 @@ They have the following format:</p>
 </div>
 <div class="paragraph">
 <p>If the <code>total_count</code> exceeds the number of objects in the array, the next page can be returned by including the <code>offset</code> query parameter.
-For our previous example of fetching the customers of a client, the call would look like this: <code>GET /clients/10000/mas/customers?offset=100</code>.</p>
+For our previous example of fetching the customers of a client, the call would look like this:<br>
+<code>GET /clients/10000/mas/customers?offset=100</code>.</p>
 </div>
 <div class="paragraph">
-<p>Most resources have a default result size of 100. By passing the <code>limit</code> parameter, that size can be adjusted to a maximum of 500. For example, customers no. 100-300 can be fetched with  <code>GET /clients/10000/mas/customers?limit=200&amp;offset=100</code>.</p>
+<p>Most resources have a default result size of 100. By passing the <code>limit</code> parameter, that size can be adjusted to a maximum of 500. For example, customers no. 100-300 can be fetched with this URL:<br>
+<code>GET /clients/10000/mas/customers?limit=200&amp;offset=100</code>.</p>
 </div>
 <div class="paragraph">
 <p>If a resource has different limits, it will be noted in its documentation.</p>
@@ -2686,7 +2718,8 @@ In general, the major properties such as dates, totals, names etc. are sortable 
 If a sort field is not recognized, it will be ignored.</p>
 </div>
 <div class="paragraph">
-<p>Here is an example for sorting over multiple properties when querying the suppliers of a client: <code>GET /clients/10000/mas/suppliers?sort=display_name:ASC,supplier_number:DESC,zip_code</code></p>
+<p>Here is an example for sorting over multiple properties when querying the suppliers of a client:<br>
+<code>GET /clients/10000/mas/suppliers?sort=display_name:ASC,supplier_number:DESC,zip_code</code></p>
 </div>
 <div class="paragraph">
 <p>There is no support in the OpenAPI specification for indicating which properties of a particular resource can be sorted by, so no documented lists can be provided in a standardized way.
@@ -2748,8 +2781,13 @@ You don&#8217;t need to pass <em>null</em> for optional properties, it is equiva
 <h3 id="_query_parameter_arrays">3.7. Query parameter arrays</h3>
 <div class="paragraph">
 <p>In case a query parameter accepts multiple values at once, the values can be given as comma-separated list, or by adding the query parameter multiple times.
-For example, the endpoint <code>GET /clients/10000/pos/cash_registers</code> accepts an optional query parameter <code>states</code> to find cash registers that have any of the given states.
-To retrieve all cash registers that are either active or locked, the parameter can be set in the following ways: <code>GET /clients/10000/pos/cash_registers?states=ACTIVE,LOCKED</code> or <code>GET /clients/10000/pos/cash_registers?states=ACTIVE&amp;states=LOCKED</code>.</p>
+For example, the endpoint<br>
+<code>GET /clients/10000/pos/cash_registers</code><br>
+accepts an optional query parameter <code>states</code> to find cash registers that have any of the given states.
+To retrieve all cash registers that are either active or locked, the parameter can be set in the following ways:<br>
+<code>GET /clients/10000/pos/cash_registers?states=ACTIVE,LOCKED</code><br>
+or<br>
+<code>GET /clients/10000/pos/cash_registers?states=ACTIVE&amp;states=LOCKED</code></p>
 </div>
 <div class="paragraph">
 <p>This OR-logic is the default for querying over multiple possible values.
@@ -2796,6 +2834,19 @@ content-type: application/json;charset=UTF-8</pre>
 <p>Lastly, <code>payload</code> includes relevant identifiers for parsing the error in combination with the error code for convenience.</p>
 </li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you receive validation errors for missing properties that are required, the error response refers to the field with camel case due to a technical limitation.
+The property in the schema is still using snake case.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The application also uses these error codes:</p>
@@ -3294,6 +3345,14 @@ Content-Type: application/json</pre>
 <p>This section introduces the creation of invoices, one of the most used features of the API.
 Before you jump in, make sure you have read the <a href="#cbs_examples">bookkeeping essentials</a> and optionally the <a href="itm.html#itm_examples">item API</a>.</p>
 </div>
+<div class="paragraph">
+<p>Make sure not to confuse the invoicing from the INV feature (see the INV tag in the OpenAPI spec) with outgoing invoices from the CBI module (the CBI-OUT tag).
+CBI outgoing invoices are a simpler version only used for bookkeeping, while the INV module is more extensive with features like the PDF generation, per-line discounts, etc.</p>
+</div>
+<div class="paragraph">
+<p>In general, you use the CBI module to track invoices created somewhere else, while you can use INV to create invoices in FreeFinance itself.
+Clients can use both modules concurrently for different use cases, but most users only require one or the other.</p>
+</div>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -3302,7 +3361,7 @@ Before you jump in, make sure you have read the <a href="#cbs_examples">bookkeep
 </td>
 <td class="content">
 The full invoicing API is only available in the higher subscription tiers.
-If you get 403 errors when trying any invoicing API, check if you have purchased the invoicing feature and your user (or the <a href="#auth_tu">Technical User</a>) has the appropriate permissions.
+If you get 403 errors when trying any invoicing API, check if you have purchased the invoicing feature (Plus tier and above) and your user (or the <a href="#auth_tu">Technical User</a>) has the appropriate permissions.
 </td>
 </tr>
 </table>
@@ -3568,8 +3627,8 @@ Content-Type: application/json</pre>
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "id": "352a...a6",
   "type": "INVOICE",
-  "number": "R-2025.003",<i class="conum" data-value="1"></i><b>(1)</b>
-  "state": "FINALIZED",<i class="conum" data-value="2"></i><b>(2)</b>
+  "number": "R-2025.003", <i class="conum" data-value="1"></i><b>(1)</b>
+  "state": "FINALIZED", <i class="conum" data-value="2"></i><b>(2)</b>
   "date": "2025-11-11",
   "total": 296.28,
   "open": 296.28,
@@ -3628,7 +3687,7 @@ Content-Type: application/json</pre>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>The FINALIZED state prevents most changes to the invoice.
-It can be re-opened on mistakes, which causes the PDF file to be deleted.</td>
+It can be re-opened if a mistake was made, which causes the PDF file to be deleted.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -3641,7 +3700,8 @@ It can be re-opened on mistakes, which causes the PDF file to be deleted.</td>
 </table>
 </div>
 <div class="paragraph">
-<p>To fetch finalized invoices, you can use the files API:</p>
+<p>To fetch the generated PDF file for the finalized invoice, you can use the files API.
+The <code>provider_id</code> in the <code>current_file</code> together with the provider itself (DMS in this case) is to be used as path parameter.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example request to fetch the PDF of a finalized invoice</div>
@@ -3773,6 +3833,1028 @@ Authorization: eyJ...</pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_pdf_and_image_upload">4.5. PDF and image upload</h3>
+<div class="paragraph">
+<p>With this API you can upload files (PDF, XML and images) to the staging folder of the client.
+The files are then available in the <em>My Invoices</em> &#8594; <em>Posting by PDF/File</em> view of the application, which allows creating incoming/outgoing invoices and rebooks with them.</p>
+</div>
+<div class="paragraph">
+<p>When uploading a PDF file or image, the built-in OCR detection feature extracts key information like the date, invoice amount, supplier etc. from it.
+This metadata is then used for suggestions when creating invoices.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the VAT number of a supplier is found, the suppliers in your master data are queried for a supplier with such a number.
+The invoice total is defaulted as amount, and so on.
+The list of known metadata keys in the OpenAPI specification shows you what kind of information can be extracted.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+With proper preparation of your customers and suppliers, you can minimize the work required to create invoices: If they have VAT numbers and defaults for account and tax class entry, the UI can match them and fill all required fields when creating an incoming/outgoing invoice.
+You only need to do a quick review and a final click, rather than entering all data manually each time.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>While the API also allows adding a list of metadata to the upload with well-known keys, custom metadata is ignored by the application to prevent inconsistent behavior and errors due to faulty data.
+If you don&#8217;t need the OCR detection feature and want to provide metadata yourself, contact us to mark your application as trusted.</p>
+</div>
+<div class="paragraph">
+<p>Well-known XML formats like X-Invoice are parsed automatically.
+The same is true if a PDF has an embedded XML - OCR is skipped and the XML data has priority.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The upload API only allows files with a maximum size of 2 MB.
+If your files exceed this limit (and you can&#8217;t compress them), connect an external storage provider like Dropbox, Google Drive, or Onedrive.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_upload_a_document_to_the_staging_folder">4.5.1. Upload a document to the staging folder</h4>
+<div class="paragraph">
+<p>Unlike other resources in the API, the staging upload accepts a <code>multipart/form-data</code> request.<br>
+It consists of two parts: an optional JSON payload with metadata like a description, and one or multiple binary attachments.
+The file name is taken from the <code>Content-Disposition</code> of the first attachment and must not be already present in the folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">Minimal example for a simple file upload</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="content"; filename="document.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of document.pdf --&gt;
+
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response of a file upload</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "key": {
+    "provider": "DMS",
+    "provider_id": "30ac...c6"
+  },
+  "file_name": "document.pdf",
+  "content_type": "application/pdf",
+  "parent_folder": {
+    "provider": "DMS",
+    "provider_id": "975c...36"
+  },
+  "size": 11782
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The uploaded file is now ready in the staging folder and will be processed by OCR.
+If no OCR processing is required, you can supply the property <code>"skip_ocr": true</code>.</p>
+</div>
+<div class="paragraph">
+<p>If your application doesn&#8217;t support multipart requests, you can upload the file base64-encoded as part of the JSON payload instead.
+This creates additional overhead, so only use it if multipart support can&#8217;t be achieved.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example for a file upload with base64-encoded content</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging/json
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    "file_name": "document-json.pdf",
+    "content_type": "application/pdf",
+    "content": "JVBERi0xLjIN...0YNCg==",
+    "description": "My example file with base64"
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response is the same as with the multipart upload.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_upload_a_document_with_metadata">4.5.2. Upload a document with metadata</h4>
+<div class="paragraph">
+<p>If your application is allowed to provide metadata, you can supply it with the multipart or base64-json request.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example for a file upload with sidecar JSON metadata</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="metadata"
+Content-Type: application/json
+
+{
+  "description": "Example PDF", <i class="conum" data-value="1"></i><b>(1)</b>
+  "skip_ocr": true, <i class="conum" data-value="2"></i><b>(2)</b>
+    "metadata": [ <i class="conum" data-value="3"></i><b>(3)</b>
+    {
+      "key": "MERCHANT_NAME", <i class="conum" data-value="4"></i><b>(4)</b>
+      "text_value": "My Test Company"
+    },
+    {
+      "key": "PAID_DATE",
+      "date_value": "2021-05-01"
+    },
+    {
+      "key": "TOTAL_AMOUNT",
+      "numeric_value": 100.00,
+      "qualifier": 1 <i class="conum" data-value="5"></i><b>(5)</b>
+    },
+    {
+      "key": "TAX_RATE",
+      "numeric_value": 20,
+      "qualifier": 1
+    },
+    {
+      "key": "TOTAL_AMOUNT",
+      "numeric_value": 200.00,
+      "qualifier": 2
+    },
+    {
+      "key": "TAX_RATE",
+      "numeric_value": 10,
+      "qualifier": 2
+    }
+
+  ]
+}
+--WebAppBoundary
+Content-Disposition: form-data; name="content"; filename="document-1.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of document1.pdf --&gt;
+
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If one is provided, the description will be used instead of the file name for listings in the UI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>With this flag no OCR processing will be done, which is useful if you supply the metadata yourself.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If you have to use the base64-json variant, supply the <code>metadata</code> array as a regular property of the payload.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>To find available keys, you can consult the  <a href="#openapi_spec">OpenAPI specification</a>.
+The data type depends on the key (text, date, numeric, boolean).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The qualifier limits the scope of this metadata entry to a sub-element of the invoice, in this case a single invoice line.
+All entries with the same qualifier apply to one specific line instead of the entire invoice.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_incoming_and_outgoing_invoices">4.6. Incoming and outgoing invoices</h3>
+<div class="paragraph">
+<p>This section introduces the creation of CBI invoices, one of the most used features of the API.
+Before you jump in, make sure you have read the <a href="#cbs_examples">bookkeeping essentials</a>.</p>
+</div>
+<div class="paragraph">
+<p>Incoming and outgoing invoices are the primary method of creating bookkeeping incomes and expenses.
+Two types exist: incoming invoices define expenses, and outgoing invoices define incomes.</p>
+</div>
+<div class="paragraph">
+<p>An invoice may have none, one or several bookings, and each booking in turn has a journal.
+Journals are realized incomes and outgos and created implicitly by the backend when required.</p>
+</div>
+<div class="paragraph">
+<p>Payment works differently depending on the type of your bookkeeping registered with the client - see the following sections for details.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Creating open, unpaid outgoing invoices is not enabled by default.
+This can be changed in the UI (<em>Fiscal Settings</em> &#8594; <em>Base Settings</em> &#8594; <em>Default values for incoming/outgoing invoices</em> &#8594; <em>Outstanding receivables/payables</em>)
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For cash method accounting (CMA), an unpaid invoice does not yet create a booking.
+The booking and its journal are created once the invoice receives the first payment, and partial payments create proportional journals from the invoice (small rounding errors can occur in the lines).
+Invoices can be deleted as long as no payment was made, otherwise the invoice can only be canceled.</p>
+</li>
+<li>
+<p>In double-entry accounting (DEA), every invoice automatically creates a booking and journal of the entire invoice against an unpaid contra account (payables and receivables).
+The invoice can then have one or several payments, which create simple rebooks from the unpaid account to the payment account.
+Invoices can only be canceled.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When querying invoices with the <code>GET /cbi/incoming_invoices</code> and <code>GET /cbi/outgoing_invoices</code> resources, only the header data of the invoice is returned.
+Full information including the lines is only provided when fetching a singular invoice by its ID, and bookings and journals are fetched with their own sub-resources.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_incoming_invoices">4.6.1. Incoming Invoices</h4>
+<div class="paragraph">
+<p>Incoming invoices are the direct way to create expenses.
+The accounts used for incoming invoice lines are expense accounts, which you can retrieve in the account API with the <code>EXPENSE</code> use.</p>
+</div>
+<div class="paragraph">
+<p>For clients with both cash method accounting (CMA) and double entry accounting (DEA), this example creates an unpaid incoming invoice with the minimal set of required fields.</p>
+</div>
+<div class="paragraph">
+<p>In CMA, no booking is created, and the invoice does not have a sequence number yet.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for minimal incoming invoice</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice_date": "2025-12-31",
+  "lines": [
+    {
+      "account": "9331...67", <i class="conum" data-value="1"></i><b>(1)</b>
+      "taxes": { <i class="conum" data-value="2"></i><b>(2)</b>
+        "tax_1": {
+          "tax_class_entry": "4db0...0e"
+          }
+        },
+      "amount": 120,
+      "amount_type": "NET" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>/cbs/accounts</code> API returns available accounts.
+Set the <code>use</code> query param to <code>EXPENSE</code> get all valid accounts for creating an incoming invoice.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Depending on the tax configuration of your country, one or several taxes can be defined.
+EU countries only require the VAT, so the <code>tax_1</code> group is set.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The amount type defines if the supplied amount is net before tax (NET) or total with tax (GROSS).</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If certain accounts are used (e.g. assets), the supplier becomes mandatory for the invoice.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example response for a CMA client</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "8af8...25",
+    "invoice_date": "2025-10-30",
+    "currency": {
+      "code": "EUR" <i class="conum" data-value="1"></i><b>(1)</b>
+    },
+    "net": 120.00,
+    "tax": 24.00,
+    "total": 144.00, <i class="conum" data-value="2"></i><b>(2)</b>
+    "open": 144.00,
+    "open_in_main_currency": 144.00,
+    "booked": false,
+    "lines": [
+      {
+        "id": "2174...f6",
+        "line_number": 1, <i class="conum" data-value="3"></i><b>(3)</b>
+        "amount": 120,
+        "amount_type": "NET",
+        "net": 120.00,
+        "tax": 24.00,
+        "total": 144.00, <i class="conum" data-value="2"></i><b>(2)</b>
+        "account": {
+          "id": "9331...67",
+          "code": "7600"
+        },
+        "taxes": {
+          "tax_1": {
+            "amount": 24.00,
+            "tax_class_entry": {
+              "id": "4db04f15-e5b0-74f8-cd4b-b2b06e0c0f0e",
+              "code": "020",
+              "tax_rate_value": 20
+            }
+          }
+        },
+        "allowed_changes": [ <i class="conum" data-value="4"></i><b>(4)</b>
+          "DELETION",
+          "ACCOUNT_INFO",
+          "AMOUNT",
+          "DESCRIPTION"
+        ]
+      }
+    ],
+    "allowed_changes": [ <i class="conum" data-value="4"></i><b>(4)</b>
+      "DELETION",
+      "PAYMENT",
+      "SUPPLIER"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The currency, if not supplied, is set to the main currency of the client.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The totals of the invoice and lines are calculated in the backend.
+You can also supply the totals in the payload for validation, triggering an error on a mismatch.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The number of each line is assigned by the order of the lines in the payload <code>lines</code> array.
+Adding and removing lines of an existing invoice will overwrite the number of each existing line to match the order of the payload each time.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>allowed_changes</code> array lets you know what kind of changes are possible for this invoice and each line.
+Depending on the payment and booking state, inclusion of this invoice in tax reports etc. certain changes are prohibited in any later PUT requests or operations.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The next example creates a paid incoming invoice with a supplier from the <code>/mas/suppliers</code> resource.</p>
+</div>
+<div id="example_cbi_min" class="listingblock">
+<div class="title">Example request for a paid incoming invoice with supplier (CMA)</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "supplier": "09c8...e", <i class="conum" data-value="1"></i><b>(1)</b>
+    "currency": "EUR",
+    "note": "My internal note",
+    "paid_date": "2025-12-10", <i class="conum" data-value="2"></i><b>(2)</b>
+    "paid_contra_account": "8742...fb", <i class="conum" data-value="3"></i><b>(3)</b>
+    "description": "A purchase for my company",
+    "invoice_reference": "IV2025.0001",
+    "lines": [
+        {
+            "account": "9331...67",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "4db0...0e"
+                }
+            },
+            "amount": 12,
+            "amount_type": "NET"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the <code>/mas/suppliers</code> API to find available suppliers.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>When the date of payment is present, the invoice will be marked as paid in full, a booking will be created, and a sequence number assigned.
+For CMA paid invoices the invoice date is not required.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The paid contra account must always be supplied together with the paid date.
+See the <code>/cbs/accounts</code> API to find available accounts, using <code>MEANS_OF_PAYMENT</code> for the <code>use</code> parameter.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "6555...50",
+    "invoice_sequence": "ER2025 1",
+    "invoice_date": "2026-01-01",
+    "paid_date": "2025-12-10",
+    "currency": {
+      "code": "EUR"
+    },
+    "net": 12.00,
+    "tax": 2.40,
+    "total": 14.40,
+    "open": 0,
+    "open_in_main_currency": 0,
+    "description": "A purchase for my company",
+    "invoice_reference": "IV2025.0001",
+    "booked": true,
+    "supplier": {
+      "id": "09c8...1e",
+      "supplier_number": "L 1152",
+      "display_name": "My supplier"
+    },
+    "supplier_name": "My supplier",
+    "note": "My internal note",
+    "lines": [
+      {
+        "id": "ebc266a9-4f80-41da-8a45-be17c9189c5b",
+        "line_number": 1,
+        "amount": 12,
+        "amount_type": "NET",
+        "net": 12.00,
+        "tax": 2.40,
+        "total": 14.40,
+        "account": {
+          "id": "9331...67",
+          "code": "7600"
+        },
+        "taxes": {
+          "tax_1": {
+            "amount": 2.40,
+            "tax_class_entry": {
+              "id": "4db0...0e",
+              "code": "020",
+              "tax_rate_value": 20
+            }
+          }
+        },
+        "allowed_changes": [
+          "DELETION",
+          "...",
+          "DESCRIPTION"
+        ]
+      }
+    ],
+    "allowed_changes": [
+      "LINES_COUNT",
+      "...",
+      "SUPPLIER"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>booked</code> flag (and presence of a sequence) indicates that an invoice booking was created.
+To obtain all bookings for the invoice, simply use the <code>bookings</code> resource with the invoice ID.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request to fetch invoice bookings</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices/6555...50/bookings
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 1,
+  "content": [
+    {
+      "id": "57b7...a1",
+      "type": "PAYMENT",
+      "number": 1,
+      "cancelled": false,
+      "reconciled": false,
+      "journals": [
+        {
+          "id": "220b...04",
+          "number": "A2025 1",
+          "journal_type": "OUTGO",
+          "net": 2.40,
+          "tax": 2.40,
+          "total": 14.40
+        }
+      ],
+      "payment_type": "PAYMENT",
+      "payment_date": "2025-12-10",
+      "payment_amount": 14.40,
+      "contra_account": {
+        "id": "8742...fb",
+        "code": "2700"
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_double_entry_accounting">Double Entry Accounting</h5>
+<div class="paragraph">
+<p>In double-entry accounting, creating an unpaid invoice also immediately creates a payables/receivables booking, and the invoice is always issued a sequence.
+The invoice date is always required.</p>
+</div>
+<div class="paragraph">
+<p>Paid <em>incoming invoices</em> where the invoice and paid date are equal do not follow this rule - in this case, only a singular payment booking is generated, similar to CMA.</p>
+</div>
+<div class="paragraph">
+<p>Incoming invoices with different invoice and paid dates and outgoing invoices always create an unpaid initial booking, and may create additional payment bookings (either immediately or with a later payment).</p>
+</div>
+<div class="paragraph">
+<p>Using the same <a href="#example_cbi_min">minimal example</a> for an incoming invoice in CMA clients, you&#8217;ll receive an invoice that already has a booking:</p>
+</div>
+<div class="listingblock">
+<div class="title">Response for an unpaid incoming invoice (shortened)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "c9ba...61",
+    "invoice_sequence": "ER2025 1",
+    "invoice_date": "2025-12-01",
+    "booked": true,
+    "allowed_changes": [
+      "CANCELLATION"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>booked</code> flag is already true, and deletions are not possible.
+Fetching the bookings shows you the full amount booked against payables:</p>
+</div>
+<div class="listingblock">
+<div class="title">Response for the bookings of an unpaid incoming invoice in DEA</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 1,
+  "content": [
+    {
+      "id": "7df1...567",
+      "type": "INITIAL_BOOKING",
+      "number": 1,
+      "journals": [
+        {
+          "id": "065b...f3",
+          "number": "A2025 1",
+          "journal_type": "OUTGO"
+        }
+      ],
+      "contra_account": {
+        "id": "316a8310-297b-4e2d-8c0d-d78cc149e4d5",
+        "code": "3300"
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next example has a different invoice date and paid date, which results in a booking to the <em>payables</em> contra account and an additional payment booking against a <em>means of payment</em> account:</p>
+</div>
+<div class="listingblock">
+<div class="title">Request for a DEA incoming invoice with diverging dates</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21333/cbi/incoming_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "invoice_date": "2025-12-01",
+    "paid_date": "2025-12-02",
+    "paid_contra_account": "6b60...0c",
+    "lines": [
+        {
+            "account": "87b6...4a",
+            "amount": 20,
+            "amount_type": "GROSS",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "4db0...0e"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "71f2e...9d",
+    "invoice_sequence": "ER2025 2",
+    "invoice_date": "2025-12-01",
+    "paid_date": "2025-12-02",
+    "open": 0,
+    "open_in_main_currency": 0,
+    "booked": true,
+    "allowed_changes": [
+      "LINES_COUNT",
+      "INVOICE_DATE",
+      "PAID_DATE",
+      "DUE_DATE",
+      "TOTAL_AMOUNT"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>paid_contra_account</code> present in the request payload is not directly present on the resulting invoice, it is used to create a booking instead.
+Also, cancellations are no longer possible: any existing payment bookings, even those created implicitly, must be canceled first before the invoice itself can be canceled.</p>
+</div>
+<div class="paragraph">
+<p>Fetching the bookings now returns two, one for the initial payables booking and one for the actual payment:</p>
+</div>
+<div class="listingblock">
+<div class="title">Response for the bookings of a paid incoming invoice in DEA</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 2,
+  "content": [
+    {
+      "id": "8c2f...03",
+      "type": "INITIAL_BOOKING",
+      "number": 1,
+      "journals": [
+        {
+          "id": "4760...ac",
+          "number": "A2025 2",
+          "journal_type": "OUTGO"
+        }
+      ],
+      "contra_account": {
+        "id": "3168...d5",
+        "code": "3300"
+      }
+    },
+    {
+      "id": "8a61...02",
+      "type": "PAYMENT",
+      "number": 2,
+      "journals": [
+        {
+          "id": "e009...8d",
+          "number": "U2025 8",
+          "journal_type": "REBOOK"
+        }
+      ],
+      "payment_type": "PAYMENT",
+      "payment_date": "2025-12-02",
+      "payment_amount": 20.00,
+      "contra_account": {
+        "id": "6b60...0c",
+        "code": "2800"
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+There is no difference in the result between an invoice already being created as paid, or first being created as unpaid and then paid in a follow-up request.
+The option of creating an already paid invoice is just for convenience.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_outgoing_invoices">4.6.2. Outgoing Invoices</h4>
+<div class="paragraph">
+<p>The endpoints (<code>/cbi/outgoing_invoices</code>) are the same as their counterpart for incoming invoices, with some minor differences in available fields (customer vs. supplier) and a different class of accounts for the invoice lines.
+Operations like payment and cancellation also work the same way.</p>
+</div>
+<div class="paragraph">
+<p>For DEA, outgoing invoices always have an unpaid initial booking when creating a paid invoice, regardless of the dates being equal or not.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you have the Invoicing (INV) module available, outgoing invoices might seem redundant when you can create fully-featured invoices with PDFs instead.
+However, outgoing invoices still have their use when you need to register an income without requiring a full INV invoice with all its features, or simply don&#8217;t need to create a PDF.
+Both CBI outgoing invoices and INV invoices can be created and used in the same client.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This example creates an unpaid outgoing invoice with the minimal set of required fields.
+You&#8217;ll note that it has the same structure as the incoming invoice, only the <em>account</em> and <em>tax class entry</em> differ - you&#8217;d query the accounts for the <code>INCOME</code> use instead, and use the available tax class entries for them.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for a minimal outgoing invoice</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/outgoing_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "invoice_date": "2025-12-31",
+    "lines": [
+        {
+            "account": "86ed...72",
+            "amount": 100,
+            "amount_type": "NET",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "dec0...28"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "38c5...b6",
+    "invoice_sequence": "AR2025 1",
+    "invoice_date": "2025-12-31",
+    "currency": {
+      "code": "EUR"
+    },
+    "net": 100.00,
+    "tax": 20.00,
+    "total": 120.00,
+    "open": 120.00,
+    "booked": false,
+    "lines": [
+      {
+        "id": "7ed5...64",
+        "line_number": 1,
+        "amount": 100,
+        "amount_type": "NET",
+        "net": 100.00,
+        "tax": 20.00,
+        "total": 120.00,
+        "account": {
+          "id": "86ed...72",
+          "code": "4000"
+        },
+        "taxes": {
+          "tax_1": {
+            "tax_class_entry": {
+              "id": "dec05...28",
+              "code": "020",
+              "tax_rate_value": 20
+            }
+          }
+        }
+      }
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The next example creates a paid outgoing invoice with a customer from the <code>/cbi/customers</code> resource and a different currency (USD).</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for an outgoing invoice with customer in foreign currency</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/outgoing_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "invoice_date": "2025-12-31",
+    "currency": "USD",
+    "currency_rate": 0.8,
+    "customer": "af8f...87",
+    "lines": [
+        {
+            "account": "a678...fd",
+            "amount": 100,
+            "amount_type": "NET",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "9eca...cc"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "5565fbcb-3d06...dd",
+    "invoice_date": "2025-12-31",
+    "currency": {
+      "code": "USD"
+    },
+    "currency_rate": 0.8,
+    "net": 100.00,
+    "tax": 20.00,
+    "total": 120.00,
+    "open": 120.00,
+    "open_in_main_currency": 96.00,
+    "booked": false,
+    "customer": {
+      "id": "af8f...87",
+      "customer_number": "C 1142",
+      "display_name": "My Customer"
+    },
+    "lines": [
+      {
+        "id": "0ce7...0d",
+        "line_number": 1,
+        "amount": 100,
+        "amount_type": "NET",
+        "net": 100.00,
+        "tax": 20.00,
+        "total": 120.00,
+        "account": {
+          "id": "a678...fd",
+          "name": "Revenue (income)",
+          "code": "4000"
+        },
+        "taxes": {
+          "tax_1": {
+            "tax_class_entry": {
+              "id": "9eca...cc",
+              "code": "020",
+              "tax_rate_value": 20
+            }
+          }
+        },
+        "allowed_changes": [
+          "DELETION",
+          "ACCOUNT_INFO",
+          "AMOUNT",
+          "DESCRIPTION"
+        ]
+      }
+    ],
+    "allowed_changes": [
+      "DELETION",
+      "PAYMENT",
+      "REST_PAYMENT",
+      "LINES_COUNT",
+      "INVOICE_DATE",
+      "INVOICE_YEAR",
+      "DUE_DATE",
+      "CURRENCY",
+      "TOTAL_AMOUNT",
+      "DESCRIPTION",
+      "NOTE",
+      "INVOICE_REFERENCE",
+      "PAYMENT_REFERENCE",
+      "DELIVERY_SPAN",
+      "CUSTOMER"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3797,7 +4879,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-02 10:28:32 +0100
+Last updated 2025-12-05 09:12:01 +0100
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

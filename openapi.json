@@ -11580,7 +11580,7 @@
           },
           "amount_type" : {
             "type" : "string",
-            "description" : "Determines if the item price is net without tax (N) or total (T). For IG/reverse charge lines, the amount type must be N.",
+            "description" : "Determines if the item price is net without tax (NET) or total (GROSS). For IG/reverse charge lines, the amount type must be NET.",
             "enum" : [ "NET", "GROSS" ]
           },
           "description" : {
@@ -13040,7 +13040,7 @@
           },
           "amount_type" : {
             "type" : "string",
-            "description" : "Indicates if the base price is net without tax (NETT) or total incl. tax (GROSS).",
+            "description" : "Indicates if the base price is net without tax (NET) or total incl. tax (GROSS).",
             "enum" : [ "NET", "GROSS" ],
             "example" : "NET"
           },
@@ -13202,7 +13202,7 @@
           },
           "amount_type" : {
             "type" : "string",
-            "description" : "Indicates if the base price is net without tax (NETT) or total incl. tax (GROSS).",
+            "description" : "Indicates if the base price is net without tax (NET) or total incl. tax (GROSS).",
             "enum" : [ "NET", "GROSS" ],
             "example" : "NET"
           },
@@ -13391,7 +13391,7 @@
           },
           "amount_type" : {
             "type" : "string",
-            "description" : "Indicates if the base price is net without tax (NETT) or total incl. tax (GROSS).",
+            "description" : "Indicates if the base price is net without tax (NET) or total incl. tax (GROSS).",
             "enum" : [ "NET", "GROSS" ],
             "example" : "NET"
           },
@@ -14363,7 +14363,7 @@
           },
           "amount_type" : {
             "type" : "string",
-            "description" : "Determines if the item price is net without tax (N) or total (T). For IG/reverse charge lines, the amount type must be N.",
+            "description" : "Determines if the item price is net without tax (NET) or total (GROSS). For IG/reverse charge lines, the amount type must be NET.",
             "enum" : [ "NET", "GROSS" ]
           },
           "description" : {

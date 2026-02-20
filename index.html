@@ -2104,6 +2104,7 @@ p {
 <li><a href="#_incoming_invoices">4.3.1. Incoming Invoices</a>
 <ul class="sectlevel4">
 <li><a href="#_double_entry_accounting">Double Entry Accounting</a></li>
+<li><a href="#_paying_an_invoice">Paying an invoice</a></li>
 </ul>
 </li>
 <li><a href="#_outgoing_invoices">4.3.2. Outgoing Invoices</a></li>
@@ -2123,10 +2124,17 @@ p {
 <li><a href="#inv_line_calc">4.5.4. Verification of total sums</a></li>
 </ul>
 </li>
-<li><a href="#_pdf_and_image_upload">4.6. PDF and image upload</a>
+<li><a href="#_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</a>
 <ul class="sectlevel3">
-<li><a href="#_upload_a_document_to_the_staging_folder">4.6.1. Upload a document to the staging folder</a></li>
-<li><a href="#_upload_a_document_with_metadata">4.6.2. Upload a document with metadata</a></li>
+<li><a href="#_fetching_folders_and_files">4.6.1. Fetching Folders and Files</a></li>
+<li><a href="#_creating_a_file">4.6.2. Creating a file</a></li>
+<li><a href="#_assignments">4.6.3. Assignments</a></li>
+<li><a href="#_staging_files">4.6.4. Staging files</a>
+<ul class="sectlevel4">
+<li><a href="#_upload_a_document_to_the_staging_folder">Upload a document to the staging folder</a></li>
+<li><a href="#_upload_a_document_with_metadata">Upload a document with metadata</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -3772,6 +3780,195 @@ The option of creating an already paid invoice is just for convenience.
 </table>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_paying_an_invoice">Paying an invoice</h5>
+<div class="paragraph">
+<p>A payment can be created for an open invoice.
+The payment amount may not exceed the invoice total.</p>
+</div>
+<div class="paragraph">
+<p>Creating a payment automatically generates a booking entry:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In <code>CMA</code>, this is the first booking related to the invoice.
+(If it is the first payment created for the invoice.)</p>
+</li>
+<li>
+<p>In <code>DEA</code>, an additional booking is created (since an initial booking already exists from invoice creation).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once a payment exists, the invoice can no longer be canceled.
+Any related payment bookings — including those created automatically — must first be canceled before the invoice itself can be canceled.</p>
+</div>
+<div class="paragraph">
+<p>In <code>DEA</code>, it is possible to create a rest payment.
+This option should be used if the invoice total is not fully settled, for example due to discounts.
+An additional booking is created for the difference using the account specified in <code>rest_payment_account</code>.
+The rest payment account must always be provided together with the <code>rest_payment_type</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>rest_payment_type</code> differs between incoming and outgoing invoices.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The accounts available for rest payments can be retrieved in the account API with <code>use</code> being the <code>rest_payment_type</code> together with the invoice type, e.g. <code>ROUNDING_DIFFERENCE_INCOME</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Rest payments cannot be created in <code>CMA</code> because, unlike in <code>DEA</code>, there is no initial invoice booking to offset against.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Request for CMA payment for incoming invoice</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices/db34...85/pay
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "payment_type": "PAYMENT",
+    "payment_amount": 1000, <i class="conum" data-value="1"></i><b>(1)</b>
+    "payment_account": "6b60...0c",
+    "payment_date": "2025-01-03"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>payment_amount</code> in this example is equal to <code>total</code> of the invoice</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "c2e5...17",
+    "invoice_sequence": "ER2025 1",
+    "invoice_date": "2025-01-01",
+    "paid_date": "2025-01-03",
+    "net": 1000.00,
+    "tax": 0.00,
+    "total": 1000.00,
+    "open": 0.00,
+    "open_in_main_currency": 0.00,
+    "booked": true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+As described in the example for creating a paid invoice the response does not display the payment account, as it is used to create a booking instead.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Request for DEA payment with rest payment</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21333/cbi/incoming_invoices/db34...85/pay
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "payment_type": "PAYMENT",
+    "payment_amount": 80, <i class="conum" data-value="1"></i><b>(1)</b>
+    "payment_account": "1c41...09",
+    "payment_date": "2025-01-10",
+    "payment_description": "Delivery was overdue",
+    "rest_payment_type": "DISCOUNT",
+    "rest_payment_account": "483a...e2"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>payment_amount</code> in this example is 80 whereas <code>total</code> of the invoice is 100.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "f279...8a",
+    "invoice_sequence": "ER2025 3",
+    "invoice_date": "2025-01-08",
+    "paid_date": "2025-01-10",
+    "net": 83.33,
+    "tax": 16.67,
+    "total": 100.00,
+    "open": 0,
+    "open_in_main_currency": 0.00,
+    "creation_date": "2025-01-10T14:30:37.228203Z",
+    "booked": true
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The rest payment like the payment is also not shown in the response.
+In this case two bookings are created: one for the payment and one for the rest-payment.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_outgoing_invoices">4.3.2. Outgoing Invoices</h4>
@@ -3878,7 +4075,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The next example creates a paid outgoing invoice with a customer from the <code>/cbi/customers</code> resource and a different currency (USD).</p>
+<p>The next example creates a paid outgoing invoice with a customer from the <code>/mas/customers</code> resource and a different currency (USD).</p>
 </div>
 <div class="listingblock">
 <div class="title">Example request for an outgoing invoice with customer in foreign currency</div>
@@ -4636,7 +4833,381 @@ Authorization: eyJ...</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_pdf_and_image_upload">4.6. PDF and image upload</h3>
+<h3 id="_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</h3>
+<div class="paragraph">
+<p>This section covers files, folders, and the assignment of files.
+Files can be stored either in the FreeFinance internal document storage or via external providers.
+The <a href="#_staging_files">Staging files</a> covers how files can be uploaded to create incoming/outgoing invoices and rebooks with them.</p>
+</div>
+<div class="paragraph">
+<p>In the following, only the usage of the internal file system is described.
+The endpoints can be used in a similar way for external providers, however, not all endpoints are supported.
+Existing files and folders of external storages can be retrieved but uploading, modifying, or deleting them is not possible with this API and must be performed within the external application.</p>
+</div>
+<div class="sect3">
+<h4 id="_fetching_folders_and_files">4.6.1. Fetching Folders and Files</h4>
+<div class="paragraph">
+<p>A distinction is made between the root folder and other folders.
+Additionally, there is a difference between internal folders, which cannot be deleted or modified, and those created by the user.
+Using the folder key which consists of the provider and the provider ID, both the subfolders and the files of a folder can be retrieved.
+Starting from the root folder, the entire file system can be constructed in this way.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for DMS root folder</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/root
+Authorization: Bearer eyJ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example root API response</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "key": {
+    "provider": "DMS",
+    "provider_id": "2b35...56"
+  },
+  "name": "/",
+  "flags": [
+    "PROVIDER_ROOT",
+    "READ_ONLY"
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The returned key can now be used in the following endpoints to retrieve the sub-folders and the files located in the specific folder.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for DMS sub-folders</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/2b35...56/folders
+Authorization: Bearer eyJ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 3,
+  "content": [
+    { <i class="conum" data-value="1"></i><b>(1)</b>
+      "key": {
+        "provider": "DMS",
+        "provider_id": "47b27...0f"
+      },
+      "name": "Documents",
+      "description": "test folder",
+      "flags": []
+    },
+    { <i class="conum" data-value="2"></i><b>(2)</b>
+      "key": {
+        "provider": "DMS",
+        "provider_id": "8f3c...a5"
+      },
+      "name": "_Inv",
+      "alias": "MODUL_inv",
+      "flags": [
+        "CHILDREN_READ_ONLY",
+        "READ_ONLY"
+      ]
+    },
+    { <i class="conum" data-value="3"></i><b>(3)</b>
+      "key": {
+        "provider": "DMS",
+        "provider_id": "7ae8...69"
+      },
+      "name": "_bbp",
+      "alias": "JOURNAL_PHOTO_UPLOAD_DIRECTORY",
+      "flags": [
+        "AUTO_OCR"
+      ]
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is a folder created by the user.
+It can be updated, deleted and files can be uploaded and modified.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is a system folder, where the documents of the <code>INV</code>-Module are stored.
+Files are stored there automatically when a user creates a new business document.
+The files and subfolders of this folder can neither be deleted nor modified.
+Furthermore, uploading new files into this folder is not possible.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This is the folder used for document staging.
+Use the endpoint described in <a href="#_staging_files">Staging files</a> to upload files here.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The files within a folder can be retrieved using the following endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for DMS files</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/47b27...0f/files
+Authorization: Bearer eyJ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 1,
+  "content": [
+    {
+      "key": {
+        "provider": "DMS",
+        "provider_id": "85f9...d7e"
+      },
+      "file_name": "document.txt",
+      "content_type": "text/plain",
+      "created_at": "2026-02-19T10:09:49.303588Z",
+      "updated_at": "2026-02-19T10:09:49.303588Z",
+      "assignment_count": 0,
+      "size": 177924,
+      "flags": []
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_file">4.6.2. Creating a file</h4>
+<div class="paragraph">
+<p>A file can only be uploaded to a specified folder.
+Therefore, the folder key of the target folder must be prefetched, as described in the section above.</p>
+</div>
+<div class="paragraph">
+<p>The multipart upload endpoint accepts the file as an attachment in the <code>file</code> section.
+Additional information, such as metadata or a description, can optionally be provided in the <code>data</code> section.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This endpoint is only supported by DMS.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For file uploads, the multipart/form-data endpoint is the recommended method and should be used whenever possible.
+This approach allows files to be transferred in their original binary format and provides better performance and efficiency.</p>
+</div>
+<div class="paragraph">
+<p>A Base64 upload endpoint is also available, allowing files to be submitted as Base64-encoded content within the request body.
+This option exists for compatibility with clients that cannot use multipart uploads.
+However, it is not recommended for regular use, as Base64 encoding increases the payload size and adds unnecessary processing overhead.</p>
+</div>
+<div class="paragraph">
+<p>Whenever supported by the client, the multipart/form-data endpoint should be preferred.
+The Base64 endpoint should only be used when multipart uploads are not possible.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request to upload a new file as multipart</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/47b27...0f/files
+Authorization: Bearer eyJ...
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="uploadedFile.jpg"
+Content-Type: image/jpeg
+
+&lt; ../../../../resources/invoice.jpeg
+
+--WebAppBoundary
+Content-Disposition: form-data; name="data";
+Content-Type: application/json
+
+{
+  "description": "Invoice from 2025-05-21",
+  "metadata": [
+    {
+      "key": "PAID_DATE",
+      "date_value": "2025-05-01"
+    },
+    {
+      "key": "TOTAL_AMOUNT",
+      "numeric_value": 100.00,
+      "qualifier": 1
+    },
+    {
+      "key": "TAX_RATE",
+      "numeric_value": 10,
+      "qualifier": 2
+    }
+  ],
+  "skip_ocr": true <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If set to false, the file will be processed by the OCR-Service and the metadata retrieved there will be attached to the file.
+Please note that OCR processing consumes an ocr-credit.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example response for file upload</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "key": {
+    "provider": "DMS",
+    "provider_id": "a247..ac"
+  },
+  "file_name": "uploadedFile.jpg",
+  "content_type": "image/jpeg",
+  "description": "Invoice from 2025-05-21",
+  "assignment_count": 0,
+  "processing_state": "NONE",
+  "flags": [],
+  "metadata": [
+    {
+      "key": "PAID_DATE",
+      "priority": 0,
+      "creation_date": "2026-02-19T10:39:07.733927211Z",
+      "create_provider": "intellij",
+      "date_value": "2021-05-01",
+      "create_source": "DOC_API"
+    },
+    {
+      "key": "TOTAL_AMOUNT",
+      "qualifier": 1,
+      "priority": 0,
+      "creation_date": "2026-02-19T10:39:07.737581418Z",
+      "create_provider": "intellij",
+      "numeric_value": 100.00,
+      "create_source": "DOC_API"
+    },
+    {
+      "key": "TAX_RATE",
+      "qualifier": 2,
+      "priority": 0,
+      "creation_date": "2026-02-19T10:39:07.739342Z",
+      "create_provider": "intellij",
+      "numeric_value": 10,
+      "create_source": "DOC_API"
+    }
+  ],
+  "size": 1496
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assignments">4.6.3. Assignments</h4>
+<div class="paragraph">
+<p>Assignments are used to link files to a specific resource, also referred to as an assignable.</p>
+</div>
+<div class="paragraph">
+<p>All available assignable types are listed in <code>AssignmentType</code>.
+The type indicates the module and submodule in which the assignable is located.
+For example, an assignment with the type <code>MAS_CUSTOMER</code> means that a file is linked to a specific customer.</p>
+</div>
+<div class="paragraph">
+<p>There are also system-generated assignments that are created as part of other processes.
+For example, when creating a new invoice (as described in <a href="#_invoicing">Invoicing</a>), a PDF file is stored in the <code>DMS</code> file system and an assignment between that file and the invoice is automatically created.
+These assignments are marked as read_only and cannot be deleted.</p>
+</div>
+<div class="paragraph">
+<p>To create a new assignment, the provider key of the file as well as the ID and the <code>AssignmentType</code> of the assignable must be known.
+Refer to the specific module endpoints to retrieve the assignable ID.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Creating assignments is also possible for files of external providers.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example API request to create a new assignment of an cbi invoice</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/files/a247..ac/assignments
+Authorization: Bearer eyJ...
+Content-Type: application/json</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "3335...a3", <i class="conum" data-value="1"></i><b>(1)</b>
+    "type": "CBI_INCOMING_INVOICE"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The unique identifier of the selected resource (e.g from an cbi incoming invoice).</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example response for assignment creation</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "3fdf...ea",
+  "assignable": {
+    "id": "3335...a3",
+    "type": "CBI_INCOMING_INVOICE",
+    "name": "Incoming Invoice ER2024 12, 23.09.2024"
+  },
+  "file": {
+    "key": {
+      "provider": "DMS",
+      "provider_id": "a247..ac"
+    },
+    "file_name": "uploadedFile.jpg"
+  },
+  "read_only": false
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_staging_files">4.6.4. Staging files</h4>
 <div class="paragraph">
 <p>With this API you can upload files (PDF, XML and images) to the staging folder of the client.
 The files are then available in the <em>My Invoices</em> &#8594; <em>Posting by PDF/File</em> view of the application, which allows creating incoming/outgoing invoices and rebooks with them.</p>
@@ -4684,8 +5255,8 @@ If your files exceed this limit (and you can&#8217;t compress them), connect an 
 </tr>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_upload_a_document_to_the_staging_folder">4.6.1. Upload a document to the staging folder</h4>
+<div class="sect4">
+<h5 id="_upload_a_document_to_the_staging_folder">Upload a document to the staging folder</h5>
 <div class="paragraph">
 <p>Unlike other resources in the API, the staging upload accepts a <code>multipart/form-data</code> request.<br>
 It consists of two parts: an optional JSON payload with metadata like a description, and one or multiple binary attachments.
@@ -4696,7 +5267,7 @@ The file name is taken from the <code>Content-Disposition</code> of the first at
 <div class="content">
 <pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
 Content-Type: multipart/form-data; boundary=WebAppBoundary
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4747,7 +5318,7 @@ This creates additional overhead, so only use it if multipart support can&#8217;
 <div class="content">
 <pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging/json
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4764,8 +5335,8 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
 <p>The response is the same as with the multipart upload.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_upload_a_document_with_metadata">4.6.2. Upload a document with metadata</h4>
+<div class="sect4">
+<h5 id="_upload_a_document_with_metadata">Upload a document with metadata</h5>
 <div class="paragraph">
 <p>If your application is allowed to provide metadata, you can supply it with the multipart or base64-json request.</p>
 </div>
@@ -4774,7 +5345,7 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
 <div class="content">
 <pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
 Content-Type: multipart/form-data; boundary=WebAppBoundary
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4857,6 +5428,7 @@ All entries with the same qualifier apply to one specific line instead of the en
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="_faq">5. FAQ</h2>
 <div class="sectionbody">
@@ -4879,7 +5451,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-20 16:35:03 +0100
+Last updated 2026-01-22 12:55:49 +0100
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

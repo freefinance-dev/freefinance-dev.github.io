@@ -49,6 +49,9 @@
     "description" : "Information about the current client and its features & permissions.",
     "name" : "CLIENT"
   }, {
+    "description" : "Documents - files, uploads and document processing.",
+    "name" : "DOC"
+  }, {
     "description" : "Documents - staging upload of files with metadata.",
     "name" : "DOC-STG"
   }, {
@@ -1192,6 +1195,75 @@
         "tags" : [ "CBI-INC" ]
       }
     },
+    "/clients/{client_id}/cbi/incoming_invoices/{invoice}/pay" : {
+      "post" : {
+        "description" : "Registers a payment for an incoming invoice.",
+        "operationId" : "postIncomingInvoicePayment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Invoice id",
+          "example" : "a88cee2d-0a27-439d-a9c3-e9267075f1f1",
+          "in" : "path",
+          "name" : "invoice",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IncomingPaymentDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IncomingInvoiceModificationResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Resource not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBI-INC" ]
+      }
+    },
     "/clients/{client_id}/cbi/invoices" : {
       "get" : {
         "description" : "Returns all invoices.",
@@ -2026,6 +2098,75 @@
         "tags" : [ "CBI-OUT" ]
       }
     },
+    "/clients/{client_id}/cbi/outgoing_invoices/{invoice}/pay" : {
+      "post" : {
+        "description" : "Registers a payment for an outgoing invoice.",
+        "operationId" : "postOutgoingInvoicePayment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Invoice id",
+          "example" : "5665af78-cc67-490-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "invoice",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/OutgoingPaymentDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OutgoingInvoiceModificationResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Resource not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBI-OUT" ]
+      }
+    },
     "/clients/{client_id}/cbs/accounts" : {
       "get" : {
         "description" : "Returns all accounts. Accounts are required for cash based invoicing and business document lines and can be optionally added to items. Every account has one or multiple tax class entries, which define the tax rate for the line.",
@@ -2538,6 +2679,754 @@
           "bearerAuth" : [ ]
         } ],
         "tags" : [ "DOC-STG" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/files/{file_id}" : {
+      "delete" : {
+        "description" : "Deletes the given file. Only supported by DMS.",
+        "operationId" : "deleteFile",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File or folder not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      },
+      "get" : {
+        "description" : "Get the details of an document.",
+        "operationId" : "getFile",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File or folder not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/files/{file_id}/assignments" : {
+      "get" : {
+        "description" : "Get all assignments linked to a file.",
+        "operationId" : "getFileAssignments",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssignmentResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File or folder not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      },
+      "post" : {
+        "description" : "Creates a new assignment.",
+        "operationId" : "createFileAssignment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssignmentCreationDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssignmentDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File or folder not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/files/{file_id}/assignments/{assignment_id}" : {
+      "delete" : {
+        "description" : "Deletes the given assignment from a file.",
+        "operationId" : "deleteFileAssignment",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "assignment_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File or folder not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/files/{file_id}/content" : {
+      "get" : {
+        "description" : "Returns the file content of the file given by id.",
+        "operationId" : "getFileContent",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "file_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : { }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "File not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/folders/{folder_id}" : {
+      "get" : {
+        "description" : "Returns info of the given folder.",
+        "operationId" : "getFolderInfo",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "folder_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FolderDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Provider or folder not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/folders/{folder_id}/files" : {
+      "get" : {
+        "description" : "Gets the documents of the given folder and provider.",
+        "operationId" : "getFilesOfFolder",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "folder_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Contains only documents with the flags given.",
+          "explode" : false,
+          "in" : "query",
+          "name" : "flags",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "READ_ONLY", "ENCRYPTED", "IGNORE_OCR", "GENERATED" ]
+            }
+          },
+          "style" : "form"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Folder not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      },
+      "post" : {
+        "description" : "Creates a new document in the folder provided and uploads one files in a multipart request.The metadata body defines optional attributes. Only supported by DMS.",
+        "operationId" : "createFileInFolder",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "folder_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FileUploadDtoV2"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/folders/{folder_id}/files/base64" : {
+      "post" : {
+        "description" : "Creates a new document in the folder provided and uploads the document provided as base64 string.The metadata body defines optional attributes. Only supported by DMS.",
+        "operationId" : "createFileInFolderAsBase64",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "folder_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FileJsonUploadDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Folder not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/folders/{folder_id}/folders" : {
+      "get" : {
+        "description" : "Returns the sub folders of the given folder.",
+        "operationId" : "getFoldersOfFolder",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "folder_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FolderResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Provider or folder not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
+      }
+    },
+    "/clients/{client_id}/doc/providers/{provider}/root" : {
+      "get" : {
+        "description" : "Returns info of the root folder.",
+        "operationId" : "getRootInfo",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "provider",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FolderDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Provider not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC" ]
       }
     },
     "/clients/{client_id}/features" : {
@@ -7154,13 +8043,6 @@
         "description" : "Returns all countries.",
         "operationId" : "getAllCountries",
         "parameters" : [ {
-          "description" : "Filters for countries currently supported for book-keeping.",
-          "in" : "query",
-          "name" : "supported",
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
           "example" : "name:ASC,status:DESC",
           "in" : "query",
@@ -8183,6 +9065,84 @@
         },
         "required" : [ "document_sequence", "document_sequence_prefix", "id" ]
       },
+      "AssignableDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique identifier of the assignable.",
+            "example" : "40e2f246-8998-3dec-b51c-4edf7f688d4a"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Readable name of the assignable.",
+            "example" : "Incoming invoice AR2024 of 01.01.2024"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of the assignable.",
+            "enum" : [ "CBI_INCOMING_INVOICE", "CBI_OUTGOING_INVOICE", "CBA_INCOME_JOURNAL", "CBA_OUTGO_JOURNAL", "CBA_REBOOK_JOURNAL", "ALB_ASSET_LEDGER", "INV_OFFER", "INV_DELIVERY_NOTE", "INV_INVOICE", "INV_CREDIT_MEMO", "INV_ORDER_CONFIRMATION", "INV_PLAIN_DOCUMENT", "MAIL_TEMPLATE", "POS_RECEIPT", "BSL_BANK_STATEMENT_HEADER", "MAS_CUSTOMER", "MAS_SUPPLIER", "CBR_SALES_TAX_REPORT", "CBR_EC_SALES_REPORT", "CBR_INCOME_TAX_REPORT", "CBR_INCOME_ADDITIONAL_INFO_REPORT", "CBR_CONSOLIDATED_SALES_TAX_REPORT" ],
+            "example" : "CBI_INCOMING_INVOICE"
+          }
+        },
+        "required" : [ "id", "type" ]
+      },
+      "AssignmentCreationDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique identifier for the type of the assignment.",
+            "example" : "40e2f246-8998-3dec-b51c-4edf7f688d4a"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of the assignment.",
+            "enum" : [ "CBI_INCOMING_INVOICE", "CBI_OUTGOING_INVOICE", "CBA_INCOME_JOURNAL", "CBA_OUTGO_JOURNAL", "CBA_REBOOK_JOURNAL", "ALB_ASSET_LEDGER", "INV_OFFER", "INV_DELIVERY_NOTE", "INV_INVOICE", "INV_CREDIT_MEMO", "INV_ORDER_CONFIRMATION", "INV_PLAIN_DOCUMENT", "MAIL_TEMPLATE", "POS_RECEIPT", "BSL_BANK_STATEMENT_HEADER", "MAS_CUSTOMER", "MAS_SUPPLIER", "CBR_SALES_TAX_REPORT", "CBR_EC_SALES_REPORT", "CBR_INCOME_TAX_REPORT", "CBR_INCOME_ADDITIONAL_INFO_REPORT", "CBR_CONSOLIDATED_SALES_TAX_REPORT" ],
+            "example" : "CBI_INCOMING_INVOICE"
+          }
+        },
+        "required" : [ "id", "type" ]
+      },
+      "AssignmentDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "assignable" : {
+            "$ref" : "#/components/schemas/AssignableDtoV2",
+            "description" : "Assignable of the assignment."
+          },
+          "file" : {
+            "$ref" : "#/components/schemas/FileReferenceDtoV2",
+            "description" : "Document of the assignment."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Id of the assignment.",
+            "example" : "40e2f246-8998-3dec-b51c-4edf7f688d4a"
+          },
+          "read_only" : {
+            "type" : "boolean",
+            "description" : "States if the assignment is read only."
+          }
+        },
+        "required" : [ "id" ]
+      },
+      "AssignmentResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssignmentDtoV2"
+            }
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "content" ]
+      },
       "Attachment" : {
         "type" : "object",
         "properties" : {
@@ -8878,6 +9838,11 @@
             "description" : "Color used for this payment account in UI.",
             "example" : "ff0000"
           },
+          "currency_code" : {
+            "type" : "string",
+            "description" : "Code of the currency defined when creating the payment account.",
+            "example" : "EUR"
+          },
           "custom_name" : {
             "type" : "string",
             "description" : "Custom name chosen for this payment account.",
@@ -8899,7 +9864,7 @@
             "example" : "Checking account all capabilities"
           }
         },
-        "required" : [ "account_code", "custom_name", "id", "name" ]
+        "required" : [ "account_code", "currency_code", "custom_name", "id", "name" ]
       },
       "CashRegisterResultDtoV2" : {
         "type" : "object",
@@ -9180,6 +10145,10 @@
             "type" : "string",
             "description" : "Currently active product, or chosen product at registration.",
             "example" : "EAR_STD_PACKAGE_PREMIUM"
+          },
+          "skip_invoicing" : {
+            "type" : "boolean",
+            "description" : "Indicates if the client can skip the invoicing process for specific reasons."
           },
           "support_access_granted" : {
             "type" : "boolean",
@@ -10816,7 +11785,69 @@
           },
           "processing_state" : {
             "type" : "string",
-            "description" : "OCR processing state of the file."
+            "description" : "OCR processing state of the file.",
+            "enum" : [ "NONE", "PENDING", "IN_PROGRESS", "COMPLETE", "ERROR", "IGNORED" ],
+            "example" : "COMPLETE"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "File size of the file in bytes."
+          },
+          "updated_at" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Date of the last update on this file.",
+            "example" : "2024-12-01T10:10:10.126275"
+          }
+        },
+        "required" : [ "content_type", "file_name", "key", "size" ]
+      },
+      "FileDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "assignment_count" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "Count of the documents assigned."
+          },
+          "content_type" : {
+            "type" : "string",
+            "description" : "MIME type of the file.",
+            "example" : "application/pdf"
+          },
+          "created_at" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Date when the file was uploaded.",
+            "example" : "2024-12-01T10:10:10.126275"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Optional file description.",
+            "example" : "Test Document Description."
+          },
+          "file_name" : {
+            "type" : "string",
+            "description" : "File name of the document.",
+            "example" : "Test_Document.pdf"
+          },
+          "flags" : {
+            "type" : "array",
+            "description" : "Flags of the file.",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "READ_ONLY", "ENCRYPTED", "IGNORE_OCR", "GENERATED" ]
+            }
+          },
+          "key" : {
+            "$ref" : "#/components/schemas/DocumentKeyDtoV2"
+          },
+          "processing_state" : {
+            "type" : "string",
+            "description" : "OCR processing state of the file.",
+            "enum" : [ "NONE", "PENDING", "IN_PROGRESS", "COMPLETE", "ERROR", "IGNORED" ],
+            "example" : "COMPLETE"
           },
           "size" : {
             "type" : "integer",
@@ -10882,6 +11913,22 @@
           }
         },
         "required" : [ "file_name", "key" ]
+      },
+      "FileResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FileDtoV2"
+            }
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "content" ]
       },
       "FileStagingDtoV2" : {
         "type" : "object",
@@ -11145,6 +12192,80 @@
           }
         },
         "required" : [ "currency", "from", "id", "income_type", "sales_tax_reporting_period", "setup_complete", "state", "to", "vat_type", "visible", "year" ]
+      },
+      "FolderDetailDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "Additional description of the folder.",
+            "example" : "Private documents"
+          },
+          "flags" : {
+            "type" : "array",
+            "description" : "Flags connected to the folder.",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "PROVIDER_ROOT", "READ_ONLY", "CHILDREN_READ_ONLY", "AUTO_OCR" ]
+            }
+          },
+          "key" : {
+            "$ref" : "#/components/schemas/DocumentKeyDtoV2"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the folder.",
+            "example" : "Invoices"
+          },
+          "parent_folder" : {
+            "$ref" : "#/components/schemas/FolderDetailDtoV2",
+            "description" : "Parent folder of the folder."
+          }
+        },
+        "required" : [ "key", "name" ]
+      },
+      "FolderDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "Additional description of the folder.",
+            "example" : "Private documents"
+          },
+          "flags" : {
+            "type" : "array",
+            "description" : "Flags connected to the folder.",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "PROVIDER_ROOT", "READ_ONLY", "CHILDREN_READ_ONLY", "AUTO_OCR" ]
+            }
+          },
+          "key" : {
+            "$ref" : "#/components/schemas/DocumentKeyDtoV2"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the folder.",
+            "example" : "Invoices"
+          }
+        },
+        "required" : [ "key", "name" ]
+      },
+      "FolderResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FolderDtoV2"
+            }
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "content" ]
       },
       "IncomeTaxClassReferenceDtoV2" : {
         "type" : "object",
@@ -11755,6 +12876,54 @@
         },
         "required" : [ "content" ]
       },
+      "IncomingPaymentDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "currency_rate" : {
+            "type" : "number",
+            "description" : "Currency rate at the payment date. Defaulted to 1.",
+            "example" : 1
+          },
+          "payment_account" : {
+            "type" : "string",
+            "description" : "Account that made/received the payment. See the /accounts resource. Must be of the cash account type (U) and not be reserved (e.g. from a cash register).",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "payment_amount" : {
+            "type" : "number",
+            "description" : "Total paid amount in the currency of the invoice.",
+            "example" : 10
+          },
+          "payment_date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Date of the payment.",
+            "example" : "2024-08-01"
+          },
+          "payment_description" : {
+            "type" : "string",
+            "description" : "Optional description of the payment.",
+            "example" : "Payment was overdue."
+          },
+          "payment_type" : {
+            "type" : "string",
+            "description" : "Indicates if the payment should create a payment booking (= PAYMENT) or not, as a booking was already created manually before (= EXISTING_CREDIT). Defaults to PAYMENT.",
+            "enum" : [ "PAYMENT", "EXISTING_CREDIT" ],
+            "example" : "PAYMENT"
+          },
+          "rest_payment_account" : {
+            "type" : "string",
+            "description" : "Account for rest payment. Only available and mandatory for DBH.",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "rest_payment_type" : {
+            "type" : "string",
+            "description" : "Indicates type of the remaining open amount.",
+            "enum" : [ "DISCOUNT", "ROUNDING_DIFFERENCE" ]
+          }
+        },
+        "required" : [ "payment_account", "payment_amount", "payment_date", "payment_type" ]
+      },
       "InvoiceAccountPaymentCreationDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -11923,6 +13092,10 @@
             "type" : "string",
             "description" : "A description or purpose of the payment.",
             "example" : "Invoice #2025001 payment"
+          },
+          "payment_account" : {
+            "type" : "string",
+            "description" : "Can specify the payment account that should be used if the given cash register has multiple of them."
           },
           "rest_type" : {
             "type" : "string",
@@ -14498,6 +15671,54 @@
         },
         "required" : [ "content" ]
       },
+      "OutgoingPaymentDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "currency_rate" : {
+            "type" : "number",
+            "description" : "Currency rate at the payment date. Defaulted to 1.",
+            "example" : 1
+          },
+          "payment_account" : {
+            "type" : "string",
+            "description" : "Account that made/received the payment. See the /accounts resource. Must be of the cash account type (U) and not be reserved (e.g. from a cash register).",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "payment_amount" : {
+            "type" : "number",
+            "description" : "Total paid amount in the currency of the invoice.",
+            "example" : 10
+          },
+          "payment_date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Date of the payment.",
+            "example" : "2024-08-01"
+          },
+          "payment_description" : {
+            "type" : "string",
+            "description" : "Optional description of the payment.",
+            "example" : "Payment was overdue."
+          },
+          "payment_type" : {
+            "type" : "string",
+            "description" : "Indicates if the payment should create a payment booking (= PAYMENT) or not, as a booking was already created manually before (= EXISTING_CREDIT). Defaults to PAYMENT.",
+            "enum" : [ "PAYMENT", "EXISTING_CREDIT" ],
+            "example" : "PAYMENT"
+          },
+          "rest_payment_account" : {
+            "type" : "string",
+            "description" : "Account for rest payment. Only available and mandatory for DBH.",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "rest_payment_type" : {
+            "type" : "string",
+            "description" : "Indicates type of the remaining open amount.",
+            "enum" : [ "DISCOUNT", "ROUNDING_DIFFERENCE", "IRRECOVERABLE" ]
+          }
+        },
+        "required" : [ "payment_account", "payment_amount", "payment_date", "payment_type" ]
+      },
       "PaymentAccountDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -14577,6 +15798,11 @@
             "description" : "Color used for this payment account in UI.",
             "example" : "ff0000"
           },
+          "currency_code" : {
+            "type" : "string",
+            "description" : "Code of the currency defined when creating the payment account.",
+            "example" : "EUR"
+          },
           "iban" : {
             "type" : "string",
             "description" : "IBAN of the account. Only present for bank accounts.",
@@ -14593,7 +15819,7 @@
             "example" : "Checking account all capabilities"
           }
         },
-        "required" : [ "account_code", "id", "name" ]
+        "required" : [ "account_code", "currency_code", "id", "name" ]
       },
       "PaymentAccountResultDtoV2" : {
         "type" : "object",

@@ -2061,7 +2061,7 @@ p {
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta2</span>
+<span id="revdate">2.0.0-beta3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2097,17 +2097,23 @@ p {
 <ul class="sectlevel3">
 <li><a href="#_accounts">4.2.1. Accounts</a></li>
 <li><a href="#_tax_class_entries">4.2.2. Tax class entries</a></li>
+<li><a href="#_tax_class_entry_modifiers">4.2.3. Tax class entry modifiers</a></li>
 </ul>
 </li>
 <li><a href="#_incoming_and_outgoing_invoices">4.3. Incoming and outgoing invoices</a>
 <ul class="sectlevel3">
 <li><a href="#_incoming_invoices">4.3.1. Incoming Invoices</a>
 <ul class="sectlevel4">
+<li><a href="#_creating_invoices">Creating invoices</a></li>
 <li><a href="#_double_entry_accounting">Double Entry Accounting</a></li>
 <li><a href="#_paying_an_invoice">Paying an invoice</a></li>
 </ul>
 </li>
-<li><a href="#_outgoing_invoices">4.3.2. Outgoing Invoices</a></li>
+<li><a href="#_outgoing_invoices">4.3.2. Outgoing Invoices</a>
+<ul class="sectlevel4">
+<li><a href="#_creating_invoices_2">Creating invoices</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#itm_examples">4.4. Items</a>
@@ -3197,6 +3203,106 @@ If your line item requires a different tax rate (for example, 10% for food), you
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_tax_class_entry_modifiers">4.2.3. Tax class entry modifiers</h4>
+<div class="paragraph">
+<p>When creating incoming invoices, the combination of account and tax rate defined by a tax class entry may not provide sufficient information to determine the correct tax treatment for an invoice line.
+This situation commonly occurs when processing invoices from suppliers located in another country.</p>
+</div>
+<div class="paragraph">
+<p>To address this, tax class entry modifiers can be applied.
+Their purpose is to distinguish between standard domestic transactions and specific transaction types, such as reverse charge transactions or intra-Community acquisitions, which represent different tax types.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Tax class entry modifiers are defined only when multiple tax types may apply to a single tax class entry.
+This occurs when different combinations of VAT sales class and input VAT sales class can be set.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The tax type, VAT sales class, and input VAT sales class are defined by the sales tax class.</p>
+</div>
+<div class="paragraph">
+<p>Each tax class entry is linked to a sales tax class that is used as the default when no modifier is applied to an invoice line.
+If a tax class entry has no modifiers, this sales tax class is always used to determine the tax type of the invoice line.</p>
+</div>
+<div class="paragraph">
+<p>While a tax class entry typically defines either the VAT sales class or the input VAT sales class, modifiers usually define both.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Tax class entry modifiers are used only when creating expenses and are therefore only specified for accounts used for expenses.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example request for tax class entry modifiers of a tax class entry</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/fis/tax_classes/c2b0...918/entries/4db0...f0e/modifiers?limit=2
+Authorization: Bearer eyJ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example tax class entry modifiers response (abbreviated)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8
+...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 4,
+  "content": [
+    {
+      "id": "141d...fd",
+      "with_tax_deduction": true,
+      "vat_sales_tax_class": {
+        "id": "769c...1e",
+        "foreign_tax_type": "IG_SERVICE"
+      },
+      "ivat_sales_tax_class": {
+        "id": "0ed7...df",
+        "key_name": "SALES_TAX_CLASS_066",
+        "foreign_tax_type": "IG_SERVICE"
+      }
+    },
+    {
+      "id": "6374...ca",
+      "with_tax_deduction": false,
+      "vat_sales_tax_class": {
+        "id": "769c...1e",
+        "foreign_tax_type": "IG_SERVICE"
+      },
+      "ivat_sales_tax_class": {
+        "id": "75c4...4f",
+        "foreign_tax_type": "NONE"
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response shows two different tax class entry modifiers specifying intra-Community acquisitions.
+They share the same <code>vat_sales_tax_class</code> but have a different <code>ivat_sales_tax_class</code>.
+The appropriate modifier to apply depends on whether the client is eligible for input tax deduction.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_incoming_and_outgoing_invoices">4.3. Incoming and outgoing invoices</h3>
@@ -3257,6 +3363,8 @@ Full information including the lines is only provided when fetching a singular i
 </div>
 <div class="sect3">
 <h4 id="_incoming_invoices">4.3.1. Incoming Invoices</h4>
+<div class="sect4">
+<h5 id="_creating_invoices">Creating invoices</h5>
 <div class="paragraph">
 <p>Incoming invoices are the direct way to create expenses.
 The accounts used for incoming invoice lines are expense accounts, which you can retrieve in the account API with the <code>EXPENSE</code> use.</p>
@@ -3584,6 +3692,230 @@ Content-Type: application/json;charset=UTF-8</pre>
     }
   ]
 }</code></pre>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_special_invoices">Special invoices</h6>
+<div class="paragraph">
+<p>Besides domestic transactions, there are also specific transaction types, such as reverse charge transactions or intra-Community acquisitions.
+There are two approaches to creating invoices with a special tax type, depending on the selected account and tax class entry.</p>
+</div>
+<div class="paragraph">
+<p>The first approach — relevant only for incoming invoices — is to apply a tax class entry modifier.
+These are used to indicate that the invoice has a special tax type.
+If you are not familiar with modifiers, refer to the section <a href="#_tax_class_entry_modifiers">Tax class entry modifiers</a> first.</p>
+</div>
+<div id="example_cbi_special_sale_modifier" class="listingblock">
+<div class="title">Example request for incoming invoice for an intra-Community acquisition with tax class entry modifier</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "supplier": "10c3..34",
+    "invoice_date": "2025-12-01",
+    "lines": [
+        {
+            "account": "271a...30",
+            "amount": 20,
+            "amount_type": "NET",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "4db0...0e",
+                    "tax_class_entry_modifier": "c442e...b7"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "b8e2...18",
+    "invoice_sequence": "ER2025 1",
+    "invoice_date": "2025-12-01",
+    "currency": {
+      "code": "EUR"
+    },
+    "currency_rate": 1,
+    "net": 20.00,
+    "tax": 0,
+    "total": 20.00,
+    "open": 20.00,
+    "open_in_main_currency": 20.00,
+    "booked": false,
+    "supplier": {
+      "id": "10c3..34",
+      "supplier_number": "L 8610",
+      "display_name": "My Supplier"
+    },
+    "supplier_name": "My Supplier",
+    "lines": [
+      {
+        "id": "7881...9e",
+        "line_number": 1,
+        "amount": 20,
+        "amount_type": "NET",
+        "net": 20.00,
+        "tax": 0,
+        "total": 20.00,
+        "account": {
+          "id": "271a...30",
+          "code": "7650"
+        },
+        "taxes": {
+          "tax_1": {
+            "amount": 0,
+            "tax_class_entry": {
+              "id": "4db0...f0e",
+              "code": "020",
+              "tax_rate_value": 20
+            },
+            "tax_class_entry_modifier": {
+              "id": "c442...b7"
+            }
+          }
+        },
+        "ig_state": "IG",
+        "allowed_changes": [
+          "DELETION",
+          "...",
+          "DESCRIPTION"
+        ]
+      }
+    ],
+    "allowed_changes": [
+      "CANCELLATION",
+      "...",
+      "SUPPLIER"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The second approach to create special invoices applies to tax class entries without modifiers.</p>
+</div>
+<div class="paragraph">
+<p>Each tax class entry defines an <code>ig_state</code> that is used for an invoice when no modifier is selected.
+If a tax class entry has no associated modifiers, all invoices created with that tax class entry will share the same <code>ig_state</code>, which may represent reverse charge transactions or intra-Community acquisitions.</p>
+</div>
+<div class="paragraph">
+<p>Since the <code>ig_state</code> is determined directly by the selected tax class entry, these special invoices are created in the same way as the previously described invoices.</p>
+</div>
+<div id="example_cbi_special_sale_without_modifer" class="listingblock">
+<div class="title">Example request for incoming invoice for an intra-Community acquisition</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "supplier": "10c3..34",
+    "invoice_date": "2025-12-01",
+    "lines": [
+        {
+            "account": "b7ar...58",
+            "amount": 20,
+            "amount_type": "NET",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "29e8...51"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "invoice": {
+    "id": "16c3...15",
+    "invoice_sequence": "ER2025 1",
+    "invoice_date": "2025-12-01",
+    "currency": {
+      "code": "EUR"
+    },
+    "currency_rate": 1,
+    "net": 20.00,
+    "tax": 0,
+    "total": 20.00,
+    "open": 20.00,
+    "open_in_main_currency": 20.00,
+    "booked": false,
+     "supplier": {
+      "id": "10c3..34",
+      "supplier_number": "L 8610",
+      "display_name": "My Supplier"
+    },
+    "supplier_name": "My Supplier",
+    "lines": [
+      {
+        "id": "ae7f...15",
+        "line_number": 1,
+        "amount": 20,
+        "amount_type": "NET",
+        "net": 20.00,
+        "tax": 0,
+        "total": 20.00,
+        "account": {
+          "id": "b7ar...58",
+          "code": "5770"
+        },
+        "taxes": {
+          "tax_1": {
+            "amount": 0,
+            "tax_class_entry": {
+              "id": "29e8...51",
+              "code": "020M",
+              "tax_rate_value": 20
+            }
+          }
+        },
+        "ig_state": "IG_SERVICE",
+        "allowed_changes": [
+          "DELETION",
+          "...",
+          "DESCRIPTION"
+        ]
+      }
+    ],
+    "show_in_payment_candidates": true,
+    "allowed_changes": [
+      "CANCELLATION",
+      "...",
+      "SUPPLIER"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -3993,6 +4325,8 @@ Both CBI outgoing invoices and INV invoices can be created and used in the same 
 </tr>
 </table>
 </div>
+<div class="sect4">
+<h5 id="_creating_invoices_2">Creating invoices</h5>
 <div class="paragraph">
 <p>This example creates an unpaid outgoing invoice with the minimal set of required fields.
 You&#8217;ll note that it has the same structure as the incoming invoice, only the <em>account</em> and <em>tax class entry</em> differ - you&#8217;d query the accounts for the <code>INCOME</code> use instead, and use the available tax class entries for them.</p>
@@ -4185,6 +4519,7 @@ Content-Type: application/json;charset=UTF-8</pre>
     ]
   }
 }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -5451,7 +5786,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-22 12:55:49 +0100
+Last updated 2026-03-19 10:17:35 +0100
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

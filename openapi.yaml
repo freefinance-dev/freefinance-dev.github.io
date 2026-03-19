@@ -7,7 +7,7 @@ info:
   description: The REST API to be used with FreeFinance and FinanzFenster. Please
     read the examples for an introduction to authentication and some use cases.
   title: FreeFinance REST API
-  version: 2.0.0-beta2
+  version: 2.0.0-beta3
 externalDocs:
   description: Detailed examples for authentication and base tasks can be found here.
   url: https://freefinance-dev.github.io
@@ -23,6 +23,8 @@ tags:
   name: AUTH
 - description: Bank Statement Lines - bank account transactions and PSD2.
   name: BSL
+- description: Cash Based Invoicing - incoming and outgoing invoices.
+  name: CBI
 - description: Cash Based Invoicing - incoming invoices (expenses)
   name: CBI-INC
 - description: Cash Based Invoicing - outgoing invoices (incomes).
@@ -1976,6 +1978,45 @@ paths:
       tags:
       - CBS-PAY
   /clients/{client_id}/doc/providers/DMS/staging:
+    get:
+      description: Get all files of the staging folder.
+      operationId: getFilesOfStagingFolder
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileResultDtoV2'
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - DOC-STG
     post:
       description: "Uploads a file to the staging folder with a multipart request.\
         \ The metadata body defines optional attributes to add to the document. The\
@@ -12625,13 +12666,11 @@ components:
           - DESCRIPTION
           - QR_CODE
           - MERCHANT_MAILBOX
-          - MERCHANT_ZIP_MAILBOX
           - MERCHANT_BANK_NAME
           - MERCHANT_ACCOUNT_NUMBER
           - MERCHANT_BANK_CODE
           - MERCHANT_BIC
           - CUSTOMER_MAILBOX
-          - CUSTOMER_ZIP_MAILBOX
           - SENDER_CREDITOR_NUMBER
           - SENDER_REGISTRATION_NUMBER
           - TAX_LIABILITY
@@ -12644,10 +12683,11 @@ components:
           - LINE_ITEM_POSITION
           - LINE_ITEM_ORDER_NUMBER
           - LINE_ITEM_MATERIAL_NUMBER
-          - LINE_ITEM_SERVICE_DATE
           - LINE_ITEM_LEDGER_ACCOUNT
           - COST_CENTER
           - CONTRACT_NUMBER
+          - MERCHANT_NUMBER
+          - CUSTOMER_REGISTRATION_NUMBER
           example: TOTAL_AMOUNT
         numeric_value:
           type: number
@@ -12742,13 +12782,11 @@ components:
           - DESCRIPTION
           - QR_CODE
           - MERCHANT_MAILBOX
-          - MERCHANT_ZIP_MAILBOX
           - MERCHANT_BANK_NAME
           - MERCHANT_ACCOUNT_NUMBER
           - MERCHANT_BANK_CODE
           - MERCHANT_BIC
           - CUSTOMER_MAILBOX
-          - CUSTOMER_ZIP_MAILBOX
           - SENDER_CREDITOR_NUMBER
           - SENDER_REGISTRATION_NUMBER
           - TAX_LIABILITY
@@ -12761,10 +12799,11 @@ components:
           - LINE_ITEM_POSITION
           - LINE_ITEM_ORDER_NUMBER
           - LINE_ITEM_MATERIAL_NUMBER
-          - LINE_ITEM_SERVICE_DATE
           - LINE_ITEM_LEDGER_ACCOUNT
           - COST_CENTER
           - CONTRACT_NUMBER
+          - MERCHANT_NUMBER
+          - CUSTOMER_REGISTRATION_NUMBER
         numeric_value:
           type: number
           description: Metadata value if the metadata is a number.

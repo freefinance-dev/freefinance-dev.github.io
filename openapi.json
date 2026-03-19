@@ -8,7 +8,7 @@
     },
     "description" : "The REST API to be used with FreeFinance and FinanzFenster. Please read the examples for an introduction to authentication and some use cases.",
     "title" : "FreeFinance REST API",
-    "version" : "2.0.0-beta2"
+    "version" : "2.0.0-beta3"
   },
   "externalDocs" : {
     "description" : "Detailed examples for authentication and base tasks can be found here.",
@@ -30,6 +30,9 @@
   }, {
     "description" : "Bank Statement Lines - bank account transactions and PSD2.",
     "name" : "BSL"
+  }, {
+    "description" : "Cash Based Invoicing - incoming and outgoing invoices.",
+    "name" : "CBI"
   }, {
     "description" : "Cash Based Invoicing - incoming invoices (expenses)",
     "name" : "CBI-INC"
@@ -2573,6 +2576,58 @@
       }
     },
     "/clients/{client_id}/doc/providers/DMS/staging" : {
+      "get" : {
+        "description" : "Get all files of the staging folder.",
+        "operationId" : "getFilesOfStagingFolder",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "DOC-STG" ]
+      },
       "post" : {
         "description" : "Uploads a file to the staging folder with a multipart request. The metadata body defines optional attributes to add to the document. The multipart attachment must be one file of a supported type (PDF, XML, images). See the examples for a multipart request. The current maximum size for one file is 2MB.",
         "operationId" : "postStaging",
@@ -15028,7 +15083,7 @@
           "key" : {
             "type" : "string",
             "description" : "A key describing the content of this field.",
-            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_ZIP_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "CUSTOMER_ZIP_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_SERVICE_DATE", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER" ],
+            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ],
             "example" : "TOTAL_AMOUNT"
           },
           "numeric_value" : {
@@ -15086,7 +15141,7 @@
           "key" : {
             "type" : "string",
             "description" : "A key describing the content of this field.",
-            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_ZIP_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "CUSTOMER_ZIP_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_SERVICE_DATE", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER" ]
+            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ]
           },
           "numeric_value" : {
             "type" : "number",

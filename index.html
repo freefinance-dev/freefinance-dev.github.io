@@ -2069,7 +2069,6 @@ p {
 <li><a href="#_introduction">1. Introduction</a>
 <ul class="sectlevel2">
 <li><a href="#_basics">1.1. Basics</a></li>
-<li><a href="#_domains">1.2. Domains</a></li>
 </ul>
 </li>
 <li><a href="#_authentication">2. Authentication</a>
@@ -2188,44 +2187,6 @@ Refer to the OpenAPI spec files linked above for the complete schema of response
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_domains">1.2. Domains</h3>
-<div class="paragraph">
-<p>For testing purposes, we offer two environments to develop against which are separated from production environments:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Demo</strong> (<a href="https://demo.freefinance.at" class="bare">https://demo.freefinance.at</a>) is a production-like environment that is actively used for demonstrations, trials of the application, and education purposes.
-It is equal or very close to the production release of the application, is completely separated from production users, and data is persisted on a best-effort basis.</p>
-</li>
-<li>
-<p><strong>QA</strong> (<a href="https://app.qa.freefinance.at/" class="bare">https://app.qa.freefinance.at/</a>) is a testing environment that is used to test an upcoming application version still in development and testing.
-It may be unstable, contain errors, and no guarantees are made regarding data persistence; it can be reset at any time.
-Using the QA is recommended when you need to prepare for still-unreleased APIs or test your integrations against upcoming releases.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Once your application integration is ready for production, you can set the URL to the production environment, which depends on the specific portal of your user.
-Different portals exist for different partnerships, but for convenience every <em>region</em> (Austria, Germany, International, and so on, distinguished by a different top-level domain) has a single API URL.
-For example, the production URL <a href="https://app.freefinance.at" class="bare">https://app.freefinance.at</a> in the Austrian region has many Austrian sub-portals, but the URL <a href="https://api.freefinance.at" class="bare">https://api.freefinance.at</a> is available for users in all portals in the Austrian region.
-This allows application developers to use the API regardless of the specific portal of the user.<br>
-The same is true for <a href="https://app.freefinance.de" class="bare">https://app.freefinance.de</a> and <a href="https://api.freefinance.de" class="bare">https://api.freefinance.de</a>, and so on.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-If you access only your own user and client, you can use the URL you are already familiar with, like <a href="http://app.freefinance.at" class="bare">http://app.freefinance.at</a>, where the API is also accessible.
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -2237,7 +2198,7 @@ If you access only your own user and client, you can use the URL you are already
 <div class="listingblock">
 <div class="title">Example request that includes the Bearer token</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://api.freefinance.at/api/2.0/clients
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients
 Authorization: Bearer MY-TOKEN</code></pre>
 </div>
 </div>
@@ -2248,7 +2209,7 @@ A number of unauthenticated resources exist to provide general information about
 <div class="listingblock">
 <div class="title">Example unauthenticated request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://api.freefinance.at/api/2.0/auth/issuer</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/auth/issuer</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5786,7 +5747,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-19 10:17:35 +0100
+Last updated 2026-03-20 08:42:24 +0100
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

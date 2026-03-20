@@ -17,9 +17,6 @@
   "servers" : [ {
     "description" : "The demo server, suitable for test implementations against production.",
     "url" : "https://demo.freefinance.at"
-  }, {
-    "description" : "The QA server with the next version for testing.",
-    "url" : "https://app.qa.freefinance.at"
   } ],
   "security" : [ {
     "bearerAuth" : [ ]

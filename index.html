@@ -2061,7 +2061,7 @@ p {
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta3</span>
+<span id="revdate">2.0.0-beta4</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2127,6 +2127,7 @@ p {
 <li><a href="#_staging_invoices">4.5.2. Staging invoices</a></li>
 <li><a href="#_finalized_invoices">4.5.3. Finalized invoices</a></li>
 <li><a href="#inv_line_calc">4.5.4. Verification of total sums</a></li>
+<li><a href="#_external_invoices">4.5.5. External invoices</a></li>
 </ul>
 </li>
 <li><a href="#_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</a>
@@ -5127,6 +5128,140 @@ Authorization: eyJ...</pre>
 <p>Any discrepancy in the invoice total or line totals will raise a validation error, but net and tax totals may shift by a few cents.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_external_invoices">4.5.5. External invoices</h4>
+<div class="paragraph">
+<p>The <code>/inv/invoices/external</code> endpoint allows you to create an invoice that is marked as <em>finalized</em> immediately and is treated as an <em>external</em> document.
+This is useful when an invoice was created in another system and you want to import it into FreeFinance with its original invoice number.</p>
+</div>
+<div class="paragraph">
+<p>External invoices differ from regular finalized invoices in that they do not receive a number from a sequence group.
+Instead, you provide the invoice number directly in the payload.
+This ensures that the original invoice number from the external system is preserved.</p>
+</div>
+<div class="paragraph">
+<p>All external invoices are automatically finalized upon creation.
+Unlike regular finalized invoices, no PDF file is generated automatically.
+If you want to attach a PDF, you must upload it separately and create an assignment.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for an external invoice</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices/external
+Content-Type: application/json
+Authorization: eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "number": "R 2016-0001", <i class="conum" data-value="1"></i><b>(1)</b>
+    "date": "2025-11-11",
+    "customer_name": "Ernest Example",
+    "lines": [
+        {
+            "name": "External service",
+            "item_price": 500.00,
+            "amount": 1.00,
+            "price_type": "NET",
+            "account": "a678...fd",
+            "taxes": {
+                "tax_1": {
+                    "tax_class_entry": "9eca...cc"
+                }
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response for an external invoice</div>
+<div class="content">
+<pre>HTTP/2 201
+Content-Type: application/json</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "8b3c...91",
+  "type": "INVOICE",
+  "number": "R 2016-0001", <i class="conum" data-value="1"></i><b>(1)</b>
+  "state": "FINALIZED", <i class="conum" data-value="2"></i><b>(2)</b>
+  "date": "2025-11-11",
+  "total": 590.00,
+  "open": 590.00,
+  "customer_name": "Ernest Example",
+  "payment_term": {
+    "id": "178c...19",
+    "name": "Standard"
+  },
+  "payment_term_description": "30 days",
+  "lines": [
+    {
+      "id": "7f2a...45",
+      "number": 1,
+      "type": "LINE",
+      "name": "External service",
+      "account": {
+        "id": "a678...fd",
+        "name": "Revenue (income)",
+        "code": "4000"
+      },
+      "taxes": {
+        "tax_1": {
+          "amount": 90.00,
+          "tax_class_entry": {
+            "id": "9eca...cc",
+            "code": "020",
+            "tax_rate_value": 20
+          }
+        }
+      },
+      "total": 590.00,
+      "amount": 1.00,
+      "item_price": 500.00,
+      "price_type": "NET"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The invoice number is provided by you and preserved exactly as given.
+It is not generated from a sequence group.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The state is automatically set to FINALIZED, but no PDF file is generated.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To attach a PDF file to an external invoice, you can upload the file and create an assignment.
+See the <a href="doc.html#_creating_a_file">file creation</a> and <a href="doc.html#_assignments">assignments</a> sections for details.</p>
+</div>
+<div class="paragraph">
+<p>The external invoice endpoint accepts all the same fields as the regular invoice creation endpoint, plus the <code>number</code> field.
+You can reference existing customers and items, use layout setups, and apply all other features available for regular invoices.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use the external invoice endpoint when importing invoices from external systems to preserve their original numbers and avoid conflicts with your internal sequence groups.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</h3>
@@ -5747,7 +5882,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-03-20 08:42:24 +0100
+Last updated 2026-04-07 13:33:31 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

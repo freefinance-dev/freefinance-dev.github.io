@@ -7,7 +7,7 @@ info:
   description: The REST API to be used with FreeFinance and FinanzFenster. Please
     read the examples for an introduction to authentication and some use cases.
   title: FreeFinance REST API
-  version: 2.0.0-beta3
+  version: 2.0.0-beta4
 externalDocs:
   description: Detailed examples for authentication and base tasks can be found here.
   url: https://freefinance-dev.github.io
@@ -3371,6 +3371,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestError'
           description: Input invalid. Further information in the RestError response.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-IV
+  /clients/{client_id}/inv/invoices/external:
+    post:
+      description: Create and marks a specific external invoice as finalized.
+      operationId: createAndFinalizeExternalInvoice
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceExternalCreationDtoV2'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceExtendedDtoV2'
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+          description: Resource not found.
       security:
       - bearerAuth: []
       tags:
@@ -11421,6 +11454,178 @@ components:
       - tax
       - total
       - type
+    InvoiceExternalCreationDtoV2:
+      type: object
+      properties:
+        additional_address:
+          type: string
+          description: "Additional address id, see the /customer/{customer}/additional_addresses\
+            \ resource. Sets an address besides the default to be used for this document."
+        address:
+          $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+        currency:
+          type: string
+          description: "Currency code of the document, see the /currencies resource.\
+            \ Defaulted with EUR."
+          example: EUR
+        currency_rate:
+          type: number
+          description: Currency rate of the document. Defaulted with 1.
+          example: 1
+        customer:
+          type: string
+          description: "ID of the customer, see the /customers resource."
+          example: e7083036-8779-d492-0c78-332cfde21b68
+        customer_name:
+          type: string
+          description: "Customer name, for when the customer doesn't have a record,\
+            \ or doesn't need one. Ignored if a customer id is set."
+          example: Doe Inc.
+        date:
+          type: string
+          format: date
+          description: Date of the invoice. Always required.
+        delivery_from_date:
+          type: string
+          format: date
+          description: Optional from date for a delivery span. Only available for
+            double-entry accounting.
+          example: 2024-08-01
+        delivery_text:
+          type: string
+          description: Delivery text
+        delivery_to_date:
+          type: string
+          format: date
+          description: Optional to date for a delivery span. Only available for double-entry
+            accounting.
+          example: 2024-08-02
+        due_date:
+          type: string
+          format: date
+          description: The date by which the invoice is due.
+          example: 2024-12-31
+        dunning_stop:
+          type: boolean
+          description: "Indicates if the invoice is not to be dunned. If set, the\
+            \ reason must be set as well."
+          example: true
+        dunning_stop_reason:
+          type: string
+          description: Reason for the dunning stop. Mandatory if dunning stop is set.
+          example: Good friends
+        e_invoice_version:
+          type: string
+          description: "If e-invoice creation is configured, this property is mandatory\
+            \ and defines the e-invoice version."
+          enum:
+          - NONE
+          - EB_V6_P1
+          - EB_V6_P0
+          - EB_V5_P0
+          - EB_V4_P3
+          - EB_V4_P2
+          - EB_V4_P1
+          - EB_V4_P0
+          - EB_V3_P02
+          - EB_V3_P0
+          - X_RECHNUNG_V3_P0_UBL
+          example: X_RECHNUNG_V3_P0_UBL
+        finalize:
+          type: boolean
+          description: Specifies whether a document should be attached immediately.
+        inherit_tags:
+          type: boolean
+          description: "When set the tags of the Customer, Supplier and items are\
+            \ inherited onto this line."
+        layout_setup:
+          type: string
+          description: "ID of the layout to be used, seee the /layout_setups resource.\
+            \ Defaulted with configured default setup, if any, and ignored if the\
+            \ document state is not FINALIZED."
+          example: e7083036-8779-d492-0c78-332cfde21b68
+        lines:
+          type: array
+          description: List of all business document lines. The order of this array
+            defines the numbers assigned to the lines.
+          items:
+            $ref: '#/components/schemas/InvoiceLineCreationDtoV2'
+        manual_address:
+          type: boolean
+          description: manualAddress
+        net:
+          type: number
+          description: Total net amount of the document. Must match the sum of all
+            line net amounts if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 100.0
+        note:
+          type: string
+          description: Internal note that isn't printed.
+          example: Internal Description Test.
+        number:
+          type: string
+          description: Number of the business document.
+          example: R 2016-0001
+        open:
+          type: number
+          description: "Remaining, unpaid amount of the document (invoice or credit\
+            \ memo). Decreases with payments, 0 for paid documents."
+        open_amount_in_main_currency:
+          type: number
+          description: "Remaining, unpaid amount in main currency of the document\
+            \ (invoice or credit memo). Decreases with payments, 0 for paid documents."
+        payment_term:
+          type: string
+          description: "Payment term id, see /payment_terms resource. Determines due\
+            \ date, dunning date, etc. and is defaulted with the configured default\
+            \ payment term, if any."
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        reference_date:
+          type: string
+          format: date
+          description: "Optional reference date to another business case, transaction,\
+            \ etc."
+        reference_text:
+          type: string
+          description: "Reference info to other documents, business case information,\
+            \ remittance numbers, etc."
+          example: R 2016-0002
+        sequence_group:
+          type: string
+          description: "Sequence group id, for when a different sequence group is\
+            \ to be used besides the configured default group. See the /sequence_groups\
+            \ resource."
+          example: e7083036-8779-d492-0c78-332cfde21b68
+        tax:
+          type: number
+          description: Total tax amount of the document. Must match the sum of all
+            line tax amounts if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 20.0
+        text_bottom:
+          type: string
+          description: "Description of the business document to be printed after the\
+            \ lines. Defaulted with configured layout, unless the state is EXTERNAL."
+        text_defaulting:
+          type: boolean
+          description: "If true, the text at the top and bottom will be defaulted\
+            \ with the values from the layout."
+        text_top:
+          type: string
+          description: Description of the business document to be printed after the
+            subject.
+          example: Details of the Invoice.
+        total:
+          type: number
+          description: Total amount of the document including tax. Must match the
+            sum of all line totals if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 120.0
+      required:
+      - date
+      - lines
+      - number
     InvoiceLineCreationDtoV2:
       type: object
       description: List of all business document lines. The order of this array defines
@@ -14163,6 +14368,10 @@ components:
     ReceiptReferenceDtoV2:
       type: object
       properties:
+        cash_register:
+          type: string
+          description: Identifier of the cash register where the receipt was issued.
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
         id:
           type: string
           description: Unique id of the receipt.
@@ -14172,6 +14381,7 @@ components:
           description: "Sequence number of the receipt, will be set automatically."
           example: 2017.0001
       required:
+      - cash_register
       - id
       - number
     ReceiptResultDtoV2:

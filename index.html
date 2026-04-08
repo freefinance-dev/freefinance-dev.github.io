@@ -2127,14 +2127,18 @@ p {
 <li><a href="#_staging_invoices">4.5.2. Staging invoices</a></li>
 <li><a href="#_finalized_invoices">4.5.3. Finalized invoices</a></li>
 <li><a href="#inv_line_calc">4.5.4. Verification of total sums</a></li>
-<li><a href="#_external_invoices">4.5.5. External invoices</a></li>
+<li><a href="#_external_invoices">4.5.5. External invoices</a>
+<ul class="sectlevel4">
+<li><a href="#_attaching_a_pdf_file">Attaching a PDF file</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</a>
 <ul class="sectlevel3">
-<li><a href="#_fetching_folders_and_files">4.6.1. Fetching Folders and Files</a></li>
-<li><a href="#_creating_a_file">4.6.2. Creating a file</a></li>
-<li><a href="#_assignments">4.6.3. Assignments</a></li>
+<li><a href="#doc_fetching">4.6.1. Fetching Folders and Files</a></li>
+<li><a href="#creating_a_file">4.6.2. Creating a file</a></li>
+<li><a href="#assignments">4.6.3. Assignments</a></li>
 <li><a href="#_staging_files">4.6.4. Staging files</a>
 <ul class="sectlevel4">
 <li><a href="#_upload_a_document_to_the_staging_folder">Upload a document to the staging folder</a></li>
@@ -5188,16 +5192,38 @@ Content-Type: application/json</pre>
   "id": "8b3c...91",
   "type": "INVOICE",
   "number": "R 2016-0001", <i class="conum" data-value="1"></i><b>(1)</b>
-  "state": "FINALIZED", <i class="conum" data-value="2"></i><b>(2)</b>
+  "state": "EXTERNAL", <i class="conum" data-value="2"></i><b>(2)</b>
   "date": "2025-11-11",
-  "total": 590.00,
-  "open": 590.00,
+  "due_date": "2025-12-11",
+  "paid": false,
+  "net": 500.00,
+  "tax": 100.00,
+  "total": 600.00,
+  "open": 600.00,
+  "open_in_main_currency": 600.00,
+  "currency": "EUR",
+  "currency_rate": 1,
+  "text_top": "",
+  "text_bottom": "",
   "customer_name": "Ernest Example",
+  "manual_address": false,
+  "address": {},
+  "tax_modifier": "NONE",
+  "ec_sales_info": {
+    "ec_period": "2025-11-11"
+  },
   "payment_term": {
     "id": "178c...19",
-    "name": "Standard"
+    "name": "Standard",
+    "from": "2024-09-23",
+    "to": "2099-12-31"
   },
-  "payment_term_description": "30 days",
+  "payment_term_description": "30 Tage",
+  "ignore_in_bsl": false,
+  "dunning_stop": false,
+  "created_at": "2026-04-08T13:12:46.007341892Z",
+  "finalized_at": "2026-04-08T13:12:46.177122298Z",
+  "updated_at": "2026-04-08T13:12:46.184769916Z",
   "lines": [
     {
       "id": "7f2a...45",
@@ -5206,23 +5232,35 @@ Content-Type: application/json</pre>
       "name": "External service",
       "account": {
         "id": "a678...fd",
-        "name": "Revenue (income)",
-        "code": "4000"
+        "name": "Einnahmen (Erlöse)",
+        "code": "4000",
+        "from": "2004-01-01",
+        "to": "2099-12-31",
+        "category": "CREDIT"
       },
       "taxes": {
         "tax_1": {
-          "amount": 90.00,
+          "amount": 100.00,
           "tax_class_entry": {
             "id": "9eca...cc",
+            "key_name": "TAX_CLASS_ENTRY_ESTD_020",
             "code": "020",
             "tax_rate_value": 20
           }
         }
       },
-      "total": 590.00,
+      "net": 500.00,
+      "open": 600.00,
+      "open_in_main_currency": 600.00,
+      "total": 600.00,
+      "tax_modifier": "NONE",
+      "discount": 0,
+      "discount_mode": "CONSTANT",
       "amount": 1.00,
       "item_price": 500.00,
-      "price_type": "NET"
+      "price_type": "NET",
+      "case_line": false,
+      "tags": []
     }
   ]
 }</code></pre>
@@ -5237,13 +5275,205 @@ It is not generated from a sequence group.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The state is automatically set to FINALIZED, but no PDF file is generated.</td>
+<td>The state is set to EXTERNAL and no PDF file is generated.</td>
 </tr>
 </table>
 </div>
+<div class="sect4">
+<h5 id="_attaching_a_pdf_file">Attaching a PDF file</h5>
 <div class="paragraph">
-<p>To attach a PDF file to an external invoice, you can upload the file and create an assignment.
-See the <a href="doc.html#_creating_a_file">file creation</a> and <a href="doc.html#_assignments">assignments</a> sections for details.</p>
+<p>To attach a PDF file to an external invoice, you need to upload the file and create an assignment.
+This involves three steps: fetching a folder, uploading the file, and creating the assignment.</p>
+</div>
+<div class="sect5">
+<h6 id="_preparation_fetch_a_folder">Preparation: Fetch a folder</h6>
+<div class="paragraph">
+<p>Before uploading a file, you need to fetch a folder key where the file will be stored.
+You can retrieve the root folder or list subfolders using the endpoints described in the <a href="#doc_fetching">fetching folders and files</a> section.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for DMS sub-folders</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/folders/2b35...56/folders
+Authorization: Bearer eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 3,
+  "content": [
+    {
+      "key": {
+        "provider": "DMS",
+        "provider_id": "47b27...0f" <i class="conum" data-value="1"></i><b>(1)</b>
+      },
+      "name": "Documents",
+      "flags": []
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the <code>provider_id</code> for the upload endpoint in the next step.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_step_1_upload_the_pdf_file">Step 1: Upload the PDF file</h6>
+<div class="paragraph">
+<p>First, upload the PDF file to a folder in the DMS Storage.
+For external invoices, you typically want to upload to a permanent folder rather than the staging folder, since OCR is usually not necessary.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request to upload a PDF file</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/47b27...0f/files
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="external-invoice-R-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of external-invoice-R-2016-0001.pdf --&gt;
+
+--WebAppBoundary
+Content-Disposition: form-data; name="data"
+Content-Type: application/json
+
+{
+  "description": "External invoice R 2016-0001",
+  "skip_ocr": true
+}
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example response for file upload</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "key": {
+    "provider": "DMS",
+    "provider_id": "a247..ac" <i class="conum" data-value="1"></i><b>(1)</b>
+  },
+  "file_name": "external-invoice-R-2016-0001.pdf",
+  "content_type": "application/pdf",
+  "description": "External invoice R 2016-0001",
+  "created_at": "2026-04-08T13:28:32.280348974Z",
+  "assignment_count": 0,
+  "processing_state": "NONE",
+  "flags": [],
+  "metadata": [],
+  "parent_folder": {
+    "provider": "DMS",
+    "provider_id": "47b27...0f"
+  },
+  "size": 1496,
+  "updated_at": "2026-04-08T13:28:32.280348974Z"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This <code>provider_id</code> is needed for the assignment in the next step.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_step_2_create_an_assignment">Step 2: Create an assignment</h6>
+<div class="paragraph">
+<p>Now create an assignment to link the uploaded file to the external invoice.
+The assignment type for external invoices is <code>INV_INVOICE</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Creating assignments is also possible for files of external providers.
+For external providers (e.g., Dropbox, Google Drive, OneDrive), you must first upload the file to the respective provider using their own interface or API.
+Once the file exists in the external provider, you can create an assignment just like with DMS files.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example request to create an assignment</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/files/a247..ac/assignments
+Content-Type: application/json
+Authorization: Bearer eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "8b3c...91", <i class="conum" data-value="1"></i><b>(1)</b>
+    "type": "INV_INVOICE"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The unique identifier of the external invoice (from the response of the external invoice creation).</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example response for assignment creation</div>
+<div class="content">
+<pre>HTTP/1.1 201
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "3fdf...ea",
+  "assignable": {
+    "id": "8b3c...91",
+    "type": "INV_INVOICE",
+    "name": "External Invoice R 2016-0001"
+  },
+  "file": {
+    "key": {
+      "provider": "DMS",
+      "provider_id": "a247..ac"
+    },
+    "file_name": "external-invoice-R-2016-0001.pdf"
+  },
+  "read_only": false
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The PDF file is now linked to the external invoice and will be displayed in the UI when viewing the invoice.
+You can also fetch the file content using the files API.</p>
+</div>
+<div class="paragraph">
+<p>For more details on file uploads and assignments, see the <a href="#creating_a_file">file creation</a> and <a href="#assignments">assignments</a> sections.</p>
 </div>
 <div class="paragraph">
 <p>The external invoice endpoint accepts all the same fields as the regular invoice creation endpoint, plus the <code>number</code> field.
@@ -5263,6 +5493,8 @@ Use the external invoice endpoint when importing invoices from external systems 
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</h3>
 <div class="paragraph">
@@ -5276,7 +5508,7 @@ The endpoints can be used in a similar way for external providers, however, not 
 Existing files and folders of external storages can be retrieved but uploading, modifying, or deleting them is not possible with this API and must be performed within the external application.</p>
 </div>
 <div class="sect3">
-<h4 id="_fetching_folders_and_files">4.6.1. Fetching Folders and Files</h4>
+<h4 id="doc_fetching">4.6.1. Fetching Folders and Files</h4>
 <div class="paragraph">
 <p>A distinction is made between the root folder and other folders.
 Additionally, there is a difference between internal folders, which cannot be deleted or modified, and those created by the user.
@@ -5419,7 +5651,7 @@ Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_a_file">4.6.2. Creating a file</h4>
+<h4 id="creating_a_file">4.6.2. Creating a file</h4>
 <div class="paragraph">
 <p>A file can only be uploaded to a specified folder.
 Therefore, the folder key of the target folder must be prefetched, as described in the section above.</p>
@@ -5555,7 +5787,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_assignments">4.6.3. Assignments</h4>
+<h4 id="assignments">4.6.3. Assignments</h4>
 <div class="paragraph">
 <p>Assignments are used to link files to a specific resource, also referred to as an assignable.</p>
 </div>

@@ -2061,7 +2061,7 @@ p {
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta4</span>
+<span id="revdate">2.0.0-beta5</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -3427,7 +3427,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 120,
         "amount_type": "NET",
         "net": 120.00,
-        "tax": 24.00,
         "total": 144.00, <i class="conum" data-value="2"></i><b>(2)</b>
         "account": {
           "id": "9331...67",
@@ -3577,7 +3576,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 12,
         "amount_type": "NET",
         "net": 12.00,
-        "tax": 2.40,
         "total": 14.40,
         "account": {
           "id": "9331...67",
@@ -3737,7 +3735,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 20,
         "amount_type": "NET",
         "net": 20.00,
-        "tax": 0,
         "total": 20.00,
         "account": {
           "id": "271a...30",
@@ -3848,7 +3845,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 20,
         "amount_type": "NET",
         "net": 20.00,
-        "tax": 0,
         "total": 20.00,
         "account": {
           "id": "b7ar...58",
@@ -4353,7 +4349,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 100,
         "amount_type": "NET",
         "net": 100.00,
-        "tax": 20.00,
         "total": 120.00,
         "account": {
           "id": "86ed...72",
@@ -4361,6 +4356,7 @@ Content-Type: application/json;charset=UTF-8</pre>
         },
         "taxes": {
           "tax_1": {
+            "amount": 20.00,
             "tax_class_entry": {
               "id": "dec05...28",
               "code": "020",
@@ -4442,7 +4438,6 @@ Content-Type: application/json;charset=UTF-8</pre>
         "amount": 100,
         "amount_type": "NET",
         "net": 100.00,
-        "tax": 20.00,
         "total": 120.00,
         "account": {
           "id": "a678...fd",
@@ -4451,6 +4446,7 @@ Content-Type: application/json;charset=UTF-8</pre>
         },
         "taxes": {
           "tax_1": {
+            "amount": 20.00,
             "tax_class_entry": {
               "id": "9eca...cc",
               "code": "020",
@@ -6114,7 +6110,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-07 13:33:31 +0200
+Last updated 2026-04-16 11:26:22 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

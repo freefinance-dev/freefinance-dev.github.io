@@ -8,7 +8,7 @@
     },
     "description" : "The REST API to be used with FreeFinance and FinanzFenster. Please read the examples for an introduction to authentication and some use cases.",
     "title" : "FreeFinance REST API",
-    "version" : "2.0.0-beta4"
+    "version" : "2.0.0-beta5"
   },
   "externalDocs" : {
     "description" : "Detailed examples for authentication and base tasks can be found here.",
@@ -349,6 +349,174 @@
           "bearerAuth" : [ ]
         } ],
         "tags" : [ "BSL" ]
+      },
+      "post" : {
+        "description" : "Creates a new bank statement. Lines can be either added here or in a separate call.",
+        "operationId" : "createBankStatementHeader",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BankStatementCreationDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BankStatementDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "BSL" ]
+      }
+    },
+    "/clients/{client_id}/bsl/bank_statements/by_payment_account/{payment_account}/lines" : {
+      "post" : {
+        "description" : "Creates new lines for a singular bank statement header tied to a payment account. If no header exists, it will be created. If more than one header exists, an error will be returned. This resource is used for append-only single statements like PSD2.",
+        "operationId" : "postBankStatementHeaderLinesByBankAccount",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Payment Account ID",
+          "example" : "5665af78-cc67-490-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "payment_account",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BankStatementOnlyLineCreationDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BankStatementLineCreationResponseDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "BSL" ]
+      }
+    },
+    "/clients/{client_id}/bsl/bank_statements/{header}/lines" : {
+      "post" : {
+        "description" : "Creates new bank statement lines for the header that is given by id.",
+        "operationId" : "createBankStatementLines",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Header ID",
+          "example" : {
+            "value" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "in" : "path",
+          "name" : "header",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BankStatementOnlyLineCreationDtoV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BankStatementLineCreationResponseDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "BSL" ]
       }
     },
     "/clients/{client_id}/bsl/bank_statements/{id}" : {
@@ -363,6 +531,10 @@
             "type" : "string"
           }
         }, {
+          "description" : "Statement ID",
+          "example" : {
+            "value" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
           "in" : "path",
           "name" : "id",
           "required" : true,
@@ -7626,6 +7798,14 @@
             "default" : false
           }
         }, {
+          "description" : "Indicates if only finalized receipts should be included in the result. This could be relevant for manually cancelling only initiated receipts.",
+          "in" : "query",
+          "name" : "include_only_finalized",
+          "schema" : {
+            "type" : "boolean",
+            "default" : true
+          }
+        }, {
           "description" : "Limit of results.",
           "in" : "query",
           "name" : "limit",
@@ -7678,9 +7858,78 @@
         "tags" : [ "POS-RCT" ]
       }
     },
+    "/clients/{client_id}/pos/cash_registers/{cash_register}/receipts/finish_income" : {
+      "post" : {
+        "description" : "Create an income receipt. This action can also be used optionally (for some security types, an initiation is mandatory) with an initiated receipt ID in the body. When an initiated receipt ID is supplied, the receipt is converted to a fully finished receipt with this action.",
+        "operationId" : "finishReceipt",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Cash register id",
+          "example" : "5665af78-cc67-4910-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "cash_register",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReceiptIncomeCreationDtoV2"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReceiptDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Input invalid. Further information in the RestError response."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Cash register not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "POS-RCT" ]
+      }
+    },
     "/clients/{client_id}/pos/cash_registers/{cash_register}/receipts/income" : {
       "post" : {
-        "description" : "Creates a new income receipt for the cash register.",
+        "deprecated" : true,
+        "description" : "Creates a new income receipt for the cash register. Note: This endpoint is deprecated and will be removed in near future. Use finish_income as direct replacement. The ID in the creationDto will be ignored for this endpoint.",
         "operationId" : "createReceipt",
         "parameters" : [ {
           "in" : "path",
@@ -7814,6 +8063,58 @@
         "tags" : [ "POS-RCT" ]
       }
     },
+    "/clients/{client_id}/pos/cash_registers/{cash_register}/receipts/start_income" : {
+      "post" : {
+        "description" : "Creates a new income receipt for the cash register. Receipt initiations are only valid for a certain timeframe (usually 12 hours) and will be aborted automatically if not finished within the timeframe. There is a limit for initiations. To avoid hitting the limit, initiations should be aborted or finished. This endpoint will only return a result if the cash register type requires initiations, otherwise you only need to call finish_income.",
+        "operationId" : "startReceipt",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Cash register id",
+          "example" : "5665af78-cc67-4910-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "cash_register",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReceiptInitiationResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "204" : {
+            "description" : "For the cash register there is no initiation required. Therefore you can call finish_income without an initiated receipt id."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Cash register not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "POS-RCT" ]
+      }
+    },
     "/clients/{client_id}/pos/cash_registers/{cash_register}/receipts/{receipt}" : {
       "get" : {
         "description" : "Returns specific receipt.",
@@ -7864,6 +8165,47 @@
               }
             },
             "description" : "Cash register or receipt not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "POS-RCT" ]
+      }
+    },
+    "/clients/{client_id}/pos/cash_registers/{cash_register}/receipts/{receipt}/abort_income" : {
+      "post" : {
+        "description" : "Abort an initiated receipt. Can be used when the income has been initiated but will never be finished.",
+        "operationId" : "abortReceiptInitiation",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Cash register id",
+          "example" : "5665af78-cc67-4910-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "cash_register",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Receipt id that was generated by the start_income call.",
+          "example" : "5665af78-cc67-490-b030-f649fde5d8a8",
+          "in" : "path",
+          "name" : "receipt",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Operation completed successfully."
           }
         },
         "security" : [ {
@@ -9438,6 +9780,34 @@
         },
         "required" : [ "realm", "url" ]
       },
+      "BankStatementCreationDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "file_name" : {
+            "type" : "string",
+            "description" : "File name for the bank statement header. Will be sanitized.",
+            "example" : "test_file.csv"
+          },
+          "lines" : {
+            "type" : "array",
+            "description" : "Optional lines that are created with the bank statement header but will not be returned.",
+            "items" : {
+              "$ref" : "#/components/schemas/BankStatementLineCreationDtoV2"
+            }
+          },
+          "payment_account" : {
+            "type" : "string",
+            "description" : "The payment account this statement belongs to. See /cbs/payment_accounts."
+          },
+          "statement_date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Date of creation or export for this bank statement.",
+            "example" : "2024-08-01"
+          }
+        },
+        "required" : [ "file_name", "payment_account", "statement_date" ]
+      },
       "BankStatementDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -9486,12 +9856,146 @@
         },
         "required" : [ "id" ]
       },
+      "BankStatementLineCreationDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "additional_text" : {
+            "type" : "string",
+            "description" : "Additional text supplied for the transaction.",
+            "example" : "Customer number: 1234"
+          },
+          "amount" : {
+            "type" : "string",
+            "description" : "Total amount of the booking. Positive for credit, and negative for debit transactions.",
+            "example" : "1234"
+          },
+          "booking_date" : {
+            "type" : "string",
+            "description" : "Actual booking date of the transaction, as determined by the bank.",
+            "example" : "2024-12-31"
+          },
+          "currency_code" : {
+            "type" : "string",
+            "description" : "Currency code for the line in ISO format. Defaults to the main currency.",
+            "example" : "EUR"
+          },
+          "customer_data" : {
+            "type" : "string",
+            "description" : "Additional customer data about the transaction.",
+            "example" : "Premium customer"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description field describing the purpose of the line."
+          },
+          "note" : {
+            "type" : "string",
+            "description" : "Additional note supplied for the transaction.",
+            "example" : "Booking created"
+          },
+          "originator" : {
+            "type" : "string",
+            "description" : "Name of the person or company that originated the transaction.",
+            "example" : "John Doe"
+          },
+          "originator_account_number" : {
+            "type" : "string",
+            "description" : "Account number of the person or company that originated the transaction.",
+            "example" : "AT026000000001349870"
+          },
+          "originator_bank_code" : {
+            "type" : "string",
+            "description" : "Bank code of the person or company that originated the transaction.",
+            "example" : "12345"
+          },
+          "originator_bank_reference" : {
+            "type" : "string",
+            "description" : "Bank reference of the person or company that originated the transaction.",
+            "example" : "201111301082AAU-041556324459"
+          },
+          "partner_account_number" : {
+            "type" : "string",
+            "description" : "Account number of the person or company that received the transaction.",
+            "example" : "AT021420020010147558"
+          },
+          "partner_bank_code" : {
+            "type" : "string",
+            "description" : "Bank code of the person or company that received the transaction.",
+            "example" : "12345"
+          },
+          "partner_name" : {
+            "type" : "string",
+            "description" : "Name of the person or company that received the transaction.",
+            "example" : "John Doe"
+          },
+          "reason_for_transfer" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Cash withdrawal"
+          },
+          "reason_for_transfer_1" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 1"
+          },
+          "reason_for_transfer_2" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 2"
+          },
+          "reason_for_transfer_3" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 3"
+          },
+          "reason_for_transfer_4" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 4"
+          },
+          "reason_for_transfer_5" : {
+            "type" : "string",
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 5"
+          },
+          "transaction_id" : {
+            "type" : "string",
+            "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates.",
+            "example" : "123456789"
+          },
+          "value_date" : {
+            "type" : "string",
+            "description" : "Value date of the transaction, as submitted by the initiator.",
+            "example" : "2024-12-31"
+          }
+        },
+        "required" : [ "booking_date", "currency_code" ]
+      },
+      "BankStatementLineCreationResponseDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "added_lines" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BankStatementLineDtoV2"
+            }
+          },
+          "duplicate_transactions" : {
+            "type" : "array",
+            "description" : "Transaction ids of the duplicates that were found.",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "BankStatementLineDtoV2" : {
         "type" : "object",
         "properties" : {
           "additional_text" : {
             "type" : "string",
-            "description" : "Additional text supplied for the transaction."
+            "description" : "Additional text supplied for the transaction.",
+            "example" : "Customer number: 1234"
           },
           "amount" : {
             "type" : "string",
@@ -9519,16 +10023,19 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "Unique identifier of the line"
+            "description" : "Unique identifier of the line",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
           },
           "line_number" : {
             "type" : "integer",
             "format" : "int32",
-            "description" : "Line number of the line, must be unique. Will be auto-numbered on import."
+            "description" : "Line number of the line, must be unique. Will be auto-numbered on import.",
+            "example" : 1
           },
           "note" : {
             "type" : "string",
-            "description" : "Additional note supplied for the transaction."
+            "description" : "Additional note supplied for the transaction.",
+            "example" : "Booking created"
           },
           "originator" : {
             "type" : "string",
@@ -9572,23 +10079,28 @@
           },
           "reason_for_transfer_1" : {
             "type" : "string",
-            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 1"
           },
           "reason_for_transfer_2" : {
             "type" : "string",
-            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 2"
           },
           "reason_for_transfer_3" : {
             "type" : "string",
-            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 3"
           },
           "reason_for_transfer_4" : {
             "type" : "string",
-            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 4"
           },
           "reason_for_transfer_5" : {
             "type" : "string",
-            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields."
+            "description" : "Information from the originator about the reason for the transaction. Split into multiple properties as payment providers assign the reason differently and sometimes in multiple fields.",
+            "example" : "Reason 5"
           },
           "state" : {
             "type" : "string",
@@ -9597,7 +10109,8 @@
           },
           "transaction_id" : {
             "type" : "string",
-            "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates."
+            "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates.",
+            "example" : 123456789
           },
           "value_date" : {
             "type" : "string",
@@ -9622,6 +10135,24 @@
           }
         },
         "required" : [ "content" ]
+      },
+      "BankStatementOnlyLineCreationDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "include_lines" : {
+            "type" : "boolean",
+            "description" : "States if the created lines should be returned."
+          },
+          "lines" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BankStatementLineCreationDtoV2"
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
+          }
+        },
+        "required" : [ "lines" ]
       },
       "BankStatementResultDtoV2" : {
         "type" : "object",
@@ -9756,7 +10287,7 @@
           "security_type" : {
             "type" : "string",
             "description" : "Security type of the cash register.",
-            "enum" : [ "NONE", "BAO131" ]
+            "enum" : [ "NONE", "BAO131", "TSS" ]
           },
           "state" : {
             "type" : "string",
@@ -9822,7 +10353,7 @@
           "security_type" : {
             "type" : "string",
             "description" : "Security type of the cash register.",
-            "enum" : [ "NONE", "BAO131" ]
+            "enum" : [ "NONE", "BAO131", "TSS" ]
           },
           "state" : {
             "type" : "string",
@@ -12839,11 +13370,6 @@
             },
             "uniqueItems" : true
           },
-          "tax" : {
-            "type" : "number",
-            "description" : "Total tax amount of the line. Maximum of 10 digits and 2 fractional digits.Must match calculated amount from amount, amount type and tax class entry.",
-            "example" : 20.0
-          },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2"
           },
@@ -12936,11 +13462,6 @@
               "$ref" : "#/components/schemas/TagAssignmentDtoV2"
             }
           },
-          "tax" : {
-            "type" : "number",
-            "description" : "Total tax amount of the line. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
-          },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountDtoV2",
             "description" : "Tax class entries and modifier for the line."
@@ -12951,7 +13472,7 @@
             "example" : 120.0
           }
         },
-        "required" : [ "account", "allowed_changes", "amount", "amount_type", "id", "ig_state", "line_number", "net", "tax", "taxes", "total" ]
+        "required" : [ "account", "allowed_changes", "amount", "amount_type", "id", "ig_state", "line_number", "net", "taxes", "total" ]
       },
       "IncomingInvoiceModificationResultDtoV2" : {
         "type" : "object",
@@ -13198,6 +13719,10 @@
           "payment_account" : {
             "type" : "string",
             "description" : "Can specify the payment account that should be used if the given cash register has multiple of them."
+          },
+          "receipt_id" : {
+            "type" : "string",
+            "description" : "Optional (Required for specific POS types). Provide an initiated receipt ID to complete a pending transaction. If left empty, the system defaults to a one-step process where the receipt is created and finished simultaneously."
           },
           "rest_type" : {
             "type" : "string",
@@ -15824,11 +16349,6 @@
             },
             "uniqueItems" : true
           },
-          "tax" : {
-            "type" : "number",
-            "description" : "Total tax amount of the line. Maximum of 10 digits and 2 fractional digits.Must match calculated amount from amount, amount type and tax class entry.",
-            "example" : 20.0
-          },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
           },
@@ -15897,11 +16417,6 @@
               "$ref" : "#/components/schemas/TagAssignmentDtoV2"
             }
           },
-          "tax" : {
-            "type" : "number",
-            "description" : "Total tax amount of the line. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
-          },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetWithAmountDtoV2",
             "description" : "Tax class entries for the line."
@@ -15912,7 +16427,7 @@
             "example" : 120.0
           }
         },
-        "required" : [ "account", "allowed_changes", "amount", "amount_type", "id", "ig_state", "line_number", "net", "tax", "taxes", "total" ]
+        "required" : [ "account", "allowed_changes", "amount", "amount_type", "id", "ig_state", "line_number", "net", "taxes", "total" ]
       },
       "OutgoingInvoiceModificationResultDtoV2" : {
         "type" : "object",
@@ -16382,6 +16897,11 @@
             "description" : "Optional reference to an invoice or other receipt.",
             "example" : "R-2020.004"
           },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the receipt. Available statuses depend on the specific type of cash register. This is an readonly field and can only be modified by certain operations.",
+            "enum" : [ "INITIATED", "FINALIZED", "ABORTED" ]
+          },
           "tax" : {
             "type" : "number",
             "description" : "Tax amount of the receipt.",
@@ -16477,6 +16997,11 @@
             "description" : "Optional reference to an invoice or other receipt.",
             "example" : "R-2020.004"
           },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the receipt. Available statuses depend on the specific type of cash register. This is an readonly field and can only be modified by certain operations.",
+            "enum" : [ "INITIATED", "FINALIZED", "ABORTED" ]
+          },
           "tax" : {
             "type" : "number",
             "description" : "Tax amount of the receipt.",
@@ -16525,6 +17050,10 @@
             "format" : "date-time",
             "description" : "Date and time of the receipt, defaulted to the current time."
           },
+          "id" : {
+            "type" : "string",
+            "description" : "Optional. The ID of a previously initiated receipt from the start_income endpoint. Use this to finalize an existing transaction. If omitted, the system will create and finalize a new receipt in a single step."
+          },
           "lines" : {
             "type" : "array",
             "description" : "Receipt lines for INCOME type receipts.",
@@ -16551,6 +17080,17 @@
           }
         },
         "required" : [ "lines", "total" ]
+      },
+      "ReceiptInitiationResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Unique id of the receipt.",
+            "example" : "92b1d927-5c4f-4aca-bbda-29176f8a0f68"
+          }
+        },
+        "required" : [ "id" ]
       },
       "ReceiptLineCreationDtoV2" : {
         "type" : "object",

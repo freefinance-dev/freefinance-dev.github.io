@@ -567,7 +567,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta5</span>
+<span id="revdate">2.0.0-beta6</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -621,31 +621,40 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#itm_examples">4.4. Items</a>
+<li><a href="#bsl_examples">4.4. Bank Statements</a>
 <ul class="sectlevel3">
-<li><a href="#_creating_an_item">4.4.1. Creating an item</a></li>
-<li><a href="#_fetching_items">4.4.2. Fetching items</a></li>
+<li><a href="#_fetching_bank_statement_headers">4.4.1. Fetching bank statement headers</a></li>
+<li><a href="#fetching_bank_statement_lines">4.4.2. Fetching bank statement lines</a></li>
+<li><a href="#_creating_a_bank_statement_header_with_optional_lines">4.4.3. Creating a bank statement header with optional lines</a></li>
+<li><a href="#creating_lines_by_header">4.4.4. Creating bank statement lines for an existing header</a></li>
+<li><a href="#append_lines_by_account">4.4.5. Creating lines by payment account (PSD2 append-only mode)</a></li>
 </ul>
 </li>
-<li><a href="#_invoicing">4.5. Invoicing</a>
+<li><a href="#itm_examples">4.5. Items</a>
 <ul class="sectlevel3">
-<li><a href="#_prerequisites">4.5.1. Prerequisites</a></li>
-<li><a href="#_staging_invoices">4.5.2. Staging invoices</a></li>
-<li><a href="#_finalized_invoices">4.5.3. Finalized invoices</a></li>
-<li><a href="#inv_line_calc">4.5.4. Verification of total sums</a></li>
-<li><a href="#_external_invoices">4.5.5. External invoices</a>
+<li><a href="#_creating_an_item">4.5.1. Creating an item</a></li>
+<li><a href="#_fetching_items">4.5.2. Fetching items</a></li>
+</ul>
+</li>
+<li><a href="#_invoicing">4.6. Invoicing</a>
+<ul class="sectlevel3">
+<li><a href="#_prerequisites">4.6.1. Prerequisites</a></li>
+<li><a href="#_staging_invoices">4.6.2. Staging invoices</a></li>
+<li><a href="#_finalized_invoices">4.6.3. Finalized invoices</a></li>
+<li><a href="#inv_line_calc">4.6.4. Verification of total sums</a></li>
+<li><a href="#_external_invoices">4.6.5. External invoices</a>
 <ul class="sectlevel4">
 <li><a href="#_attaching_a_pdf_file">Attaching a PDF file</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</a>
+<li><a href="#_documents_files_folders_assignments">4.7. Documents - files, folders, assignments</a>
 <ul class="sectlevel3">
-<li><a href="#doc_fetching">4.6.1. Fetching Folders and Files</a></li>
-<li><a href="#creating_a_file">4.6.2. Creating a file</a></li>
-<li><a href="#assignments">4.6.3. Assignments</a></li>
-<li><a href="#_staging_files">4.6.4. Staging files</a>
+<li><a href="#doc_fetching">4.7.1. Fetching Folders and Files</a></li>
+<li><a href="#creating_a_file">4.7.2. Creating a file</a></li>
+<li><a href="#assignments">4.7.3. Assignments</a></li>
+<li><a href="#_staging_files">4.7.4. Staging files</a>
 <ul class="sectlevel4">
 <li><a href="#_upload_a_document_to_the_staging_folder">Upload a document to the staging folder</a></li>
 <li><a href="#_upload_a_document_with_metadata">Upload a document with metadata</a></li>
@@ -2993,14 +3002,442 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="itm_examples">4.4. Items</h3>
+<h3 id="bsl_examples">4.4. Bank Statements</h3>
+<div class="paragraph">
+<p>This section covers operations for managing bank statements and their lines.
+Bank statements can contain transactions imported manually via the API or retrieved automatically through PSD2 integrations.</p>
+</div>
+<div class="sect3">
+<h4 id="_fetching_bank_statement_headers">4.4.1. Fetching bank statement headers</h4>
+<div class="paragraph">
+<p>Returns all bank statement headers for the current client.
+This includes both manual imports and PSD2 auto-imported statements.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for all bank statement headers</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements
+Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example API response for all bank statement headers</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 1,
+  "content": [
+    {
+      "id": "a7b3...01",
+      "file_name": "psd2_export_march_2024.csv",
+      "type": "PSD2",
+      "currency": {
+        "code": "EUR"
+      },
+      "statement_date": "2024-03-15",
+      "value_date_from": "2024-03-01",
+      "value_date_to": "2024-03-15",
+      "state": "NEW",
+      "payment_account": {
+        "id": "b8c4...12",
+        "name": "Business Checking Account",
+        "account_code": "1234567890"
+      }
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="fetching_bank_statement_lines">4.4.2. Fetching bank statement lines</h4>
+<div class="paragraph">
+<p>Returns the transaction lines for a specific bank statement header.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request for bank statement lines</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/a7b3...f0/lines
+Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example API response for bank statement lines</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "total_count": 3,
+  "content": [
+    {
+      "id": "c9d0...de",
+      "line_number": 1,
+      "state": "ACTIVE",
+      "value_date": "2024-03-01",
+      "amount": "-1500.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-03-01",
+      "originator": "Vendor Corp GmbH",
+      "originator_bank_reference": "REF202403010001",
+      "originator_bank_code": "12345",
+      "originator_account_number": "AT43123450123456789",
+      "partner_name": "Office Supplies Ltd",
+      "partner_account_number": "AT021420020010147558",
+      "partner_bank_code": "67890",
+      "reason_for_transfer": "Invoice INV-2024-001 payment",
+      "additional_text": "Q1 supplies",
+      "transaction_id": "TXN-20240301-001"
+    },
+    {
+      "id": "d0e1...ef",
+      "line_number": 2,
+      "state": "ACTIVE",
+      "value_date": "2024-03-05",
+      "amount": "2500.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-03-05",
+      "originator": "Client AB Inc.",
+      "partner_name": "Client AB Inc.",
+      "customer_data": "Premium customer",
+      "reason_for_transfer": "Service fees March 2024",
+      "transaction_id": "TXN-20240305-001"
+    },
+    {
+      "id": "e1f2...f0",
+      "line_number": 3,
+      "state": "POTENTIALLY_DUPLICATED",
+      "value_date": "2024-03-10",
+      "amount": "-500.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-03-10",
+      "originator": "Subscription Service",
+      "partner_name": "Subscription Service",
+      "reason_for_transfer": "Monthly subscription",
+      "transaction_id": "SUB-MONTHLY-001"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Lines with the <code>POTENTIALLY_DUPLICATED</code> state may indicate duplicate submissions from PSD2 providers.
+These lines can still be added but will be flagged for review.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_bank_statement_header_with_optional_lines">4.4.3. Creating a bank statement header with optional lines</h4>
+<div class="paragraph">
+<p>Creates a new bank statement header.
+Optionally, lines can be included during creation.
+The header is always linked to a payment account.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can choose to add lines later using the <a href="#creating_lines_by_header">Creating bank statement lines for an existing header</a> endpoint if you prefer to separate header creation from line imports.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example API request to create a bank statement header</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "file_name": "manual_import_jan_2024.csv",
+  "payment_account": "b8c4...f012",
+  "statement_date": "2026-01-31"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example API response for successful creation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "f2a3...01",
+  "file_name": "manual_import_jan_2024.csv",
+  "type": "API",
+  "currency": {
+    "code": "EUR"
+  },
+  "statement_date": "2026-01-31",
+  "value_date_from": "2026-01-31",
+  "value_date_to": "2026-01-31",
+  "state": "NEW",
+  "payment_account": {
+    "id": "b8c4...12",
+    "name": "Business Checking Account"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="creating_lines_by_header">4.4.4. Creating bank statement lines for an existing header</h4>
+<div class="paragraph">
+<p>Appends new lines to an existing bank statement header.
+Each call adds lines with auto-incremented line numbers.
+Lines with duplicate <code>transaction_id</code> values are filtered out - duplicates are tracked and reported back but not added again.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request to create lines</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/f2a3...01/lines
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "include_lines": true,
+  "lines": [
+    {
+      "description": "Office rent January",
+      "value_date": "2024-01-15",
+      "amount": "-2000.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-01-15",
+      "partner_name": "Property Management GmbH"
+    },
+    {
+      "description": "Client payment received",
+      "value_date": "2024-01-20",
+      "amount": "3500.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-01-20",
+      "partner_name": "Acme Corporation",
+      "reason_for_transfer": "Invoice ACME-2024-001"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example API response for line creation</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "added_lines": [
+    {
+      "id": "03a4...12",
+      "line_number": 1,
+      "state": "ACTIVE",
+      "value_date": "2024-01-15",
+      "amount": "-2000.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-01-15",
+      "partner_name": "Property Management GmbH",
+      "description": "Office rent January"
+    },
+    {
+      "id": "14b5...23",
+      "line_number": 2,
+      "state": "ACTIVE",
+      "value_date": "2024-01-20",
+      "amount": "3500.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-01-20",
+      "partner_name": "Acme Corporation",
+      "reason_for_transfer": "Invoice ACME-2024-001",
+      "description": "Client payment received"
+    }
+  ],
+  "duplicate_transactions": []
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Set <code>include_lines</code> to <code>false</code> when adding large batches of lines.
+The response will contain empty arrays for <code>added_lines</code> and <code>duplicate_transactions</code> while still performing the import and deduplication.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="append_lines_by_account">4.4.5. Creating lines by payment account (PSD2 append-only mode)</h4>
+<div class="paragraph">
+<p>Creates lines for a bank statement tied to a specific payment account.
+This endpoint handles automatic header management:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If no header exists for the account with overlapping dates, a new header is created.</p>
+</li>
+<li>
+<p>If exactly one matching header exists, lines are appended to it.</p>
+</li>
+<li>
+<p>If multiple headers exist (ambiguous case), the request fails with an error.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This endpoint is designed for continuous append-only workflows like PSD2 auto-imports.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example API request to create lines by payment account</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/by_payment_account/b8c4...12/lines
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "include_lines": true,
+  "lines": [
+    {
+      "description": "Payroll salary February",
+      "value_date": "2024-02-28",
+      "amount": "-5000.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-02-28",
+      "originator": "Payroll Provider AG",
+      "originator_bank_reference": "PAYROLL-FEB-2024",
+      "originator_account_number": "AT12345678901234567",
+      "partner_name": "Employees Collective",
+      "reason_for_transfer": "Salary payment February 2024",
+      "transaction_id": "1432369126"
+    },
+    {
+      "description": "Freelancer invoice #42",
+      "value_date": "2024-02-25",
+      "amount": "-750.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-02-25",
+      "originator": "Freelance Services UG",
+      "originator_bank_reference": "INV-42",
+      "partner_name": "Freelance Services UG",
+      "reason_for_transfer": "Web development services",
+      "transaction_id": "1432369124"
+    },
+    {
+      "description": "Duplicate submission test",
+      "value_date": "2024-02-28",
+      "amount": "-5000.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-02-28",
+      "originator": "Payroll Provider AG",
+      "originator_bank_reference": "PAYROLL-FEB-2024",
+      "partner_name": "Employees Collective",
+      "reason_for_transfer": "Salary payment February 2024",
+      "transaction_id": "1432369126"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example API response with duplicates detected</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">HTTP/2 200 OK
+content-type: application/json;charset=UTF-8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "added_lines": [
+    {
+      "id": "25c6...34",
+      "line_number": 1,
+      "state": "ACTIVE",
+      "value_date": "2024-02-28",
+      "amount": "-5000.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-02-28",
+      "originator": "Payroll Provider AG",
+      "originator_bank_reference": "PAYROLL-FEB-2024",
+      "originator_account_number": "AT12345678901234567",
+      "partner_name": "Employees Collective",
+      "reason_for_transfer": "Salary payment February 2024",
+      "description": "Payroll salary February"
+    },
+    {
+      "id": "36d7...45",
+      "line_number": 2,
+      "state": "ACTIVE",
+      "value_date": "2024-02-25",
+      "amount": "-750.00",
+      "currency_code": "EUR",
+      "booking_date": "2024-02-25",
+      "originator": "Freelance Services UG",
+      "originator_bank_reference": "INV-42",
+      "partner_name": "Freelance Services UG",
+      "reason_for_transfer": "Web development services",
+      "description": "Freelancer invoice #42"
+    }
+  ],
+  "duplicate_transactions": [
+    "1432369126"
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the response above, the third line was skipped because its <code>transaction_id</code> matched the first line.
+It appears in <code>duplicate_transactions</code> and does not appear in <code>added_lines</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="itm_examples">4.5. Items</h3>
 <div class="paragraph">
 <p>Items are part of the master data of a client, they are reusable definitions of a revenue line used in INV invoices and cash receipts.
 For use in the API, creating items beforehand (with accounts, tax class entries, prices and descriptions already included) allows you to create invoices and receipts quickly by referencing an item and enabling item defaulting.
 Alternatively, if you want to have complete control over the data of the line, you can take the values of the items and apply them to invoice and receipt lines yourself.</p>
 </div>
 <div class="sect3">
-<h4 id="_creating_an_item">4.4.1. Creating an item</h4>
+<h4 id="_creating_an_item">4.5.1. Creating an item</h4>
 <div class="paragraph">
 <p>Without an item category, an <a href="#cbs_examples">account and tax class entry</a> are required for an item.
 Below is a minimal example with one tax group - if the country of the client has multiple taxes, an entry is required for all of them.</p>
@@ -3087,7 +3524,7 @@ If the item category has valid defaults for the account and tax class entry, the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fetching_items">4.4.2. Fetching items</h4>
+<h4 id="_fetching_items">4.5.2. Fetching items</h4>
 <div class="paragraph">
 <p>The <code>itm/items</code> resource accepts the <code>category</code> query parameter for the ID of a category the item belongs to, and a generic <code>search</code> parameter to filter for the name, description, number or barcode.
 This way you can either present a list of items for selection, or fetch the one result to use directly in subsequent API calls to create invoices or receipts.</p>
@@ -3142,7 +3579,7 @@ Content-Type: application/json</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_invoicing">4.5. Invoicing</h3>
+<h3 id="_invoicing">4.6. Invoicing</h3>
 <div class="paragraph">
 <p>This section introduces the creation of invoices, one of the most used features of the API.
 Before you jump in, make sure you have read the <a href="#cbs_examples">bookkeeping essentials</a> and optionally the <a href="itm.html#itm_examples">item API</a>.</p>
@@ -3173,7 +3610,7 @@ If you get 403 errors when trying any invoicing API, check if you have purchased
 Once a document is <em>finalized</em>, all corresponding documents are generated (PDF, XML) and further edits are restricted.</p>
 </div>
 <div class="sect3">
-<h4 id="_prerequisites">4.5.1. Prerequisites</h4>
+<h4 id="_prerequisites">4.6.1. Prerequisites</h4>
 <div class="paragraph">
 <p>To create a <em>staging</em> invoice, at least one (default) payment term must exist, since the term defines the due date of the invoice.
 If no payment term is referenced, the default payment term is applied automatically.
@@ -3201,7 +3638,7 @@ Payment terms and layout setups don&#8217;t expire, but sequence groups require 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staging_invoices">4.5.2. Staging invoices</h4>
+<h4 id="_staging_invoices">4.6.2. Staging invoices</h4>
 <div class="paragraph">
 <p>Here is the minimal example for creating an invoice, with an unreferenced customer and explicit values for the account and tax class.
 A default payment term must exist and will be selected automatically.</p>
@@ -3386,7 +3823,7 @@ Without the <code>item_defaulting</code> flag, the item is only set as a referen
 </div>
 </div>
 <div class="sect3">
-<h4 id="_finalized_invoices">4.5.3. Finalized invoices</h4>
+<h4 id="_finalized_invoices">4.6.3. Finalized invoices</h4>
 <div class="paragraph">
 <p>Any invoicing document can be finalized immediately on creation (with <code>finalize: true</code> in the payload) or later on during an update or with an explicit API call (with <code>/inv/invoices/{id}/finalize</code>).</p>
 </div>
@@ -3522,7 +3959,7 @@ Content-Type: application/pdf;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="inv_line_calc">4.5.4. Verification of total sums</h4>
+<h4 id="inv_line_calc">4.6.4. Verification of total sums</h4>
 <div class="paragraph">
 <p>Supplying the expected invoice totals in the payload for invoice creation is optional.
 But if you use net amounts, we  <strong>strongly recommend</strong> including the totals to prevent sudden discrepancies.</p>
@@ -3635,7 +4072,7 @@ Authorization: eyJ...</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_external_invoices">4.5.5. External invoices</h4>
+<h4 id="_external_invoices">4.6.5. External invoices</h4>
 <div class="paragraph">
 <p>The <code>/inv/invoices/external</code> endpoint allows you to create an invoice that is marked as <em>finalized</em> immediately and is treated as an <em>external</em> document.
 This is useful when an invoice was created in another system and you want to import it into FreeFinance with its original invoice number.</p>
@@ -3998,7 +4435,7 @@ Use the external invoice endpoint when importing invoices from external systems 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_documents_files_folders_assignments">4.6. Documents - files, folders, assignments</h3>
+<h3 id="_documents_files_folders_assignments">4.7. Documents - files, folders, assignments</h3>
 <div class="paragraph">
 <p>This section covers files, folders, and the assignment of files.
 Files can be stored either in the FreeFinance internal document storage or via external providers.
@@ -4010,7 +4447,7 @@ The endpoints can be used in a similar way for external providers, however, not 
 Existing files and folders of external storages can be retrieved but uploading, modifying, or deleting them is not possible with this API and must be performed within the external application.</p>
 </div>
 <div class="sect3">
-<h4 id="doc_fetching">4.6.1. Fetching Folders and Files</h4>
+<h4 id="doc_fetching">4.7.1. Fetching Folders and Files</h4>
 <div class="paragraph">
 <p>A distinction is made between the root folder and other folders.
 Additionally, there is a difference between internal folders, which cannot be deleted or modified, and those created by the user.
@@ -4153,7 +4590,7 @@ Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="creating_a_file">4.6.2. Creating a file</h4>
+<h4 id="creating_a_file">4.7.2. Creating a file</h4>
 <div class="paragraph">
 <p>A file can only be uploaded to a specified folder.
 Therefore, the folder key of the target folder must be prefetched, as described in the section above.</p>
@@ -4289,7 +4726,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="assignments">4.6.3. Assignments</h4>
+<h4 id="assignments">4.7.3. Assignments</h4>
 <div class="paragraph">
 <p>Assignments are used to link files to a specific resource, also referred to as an assignable.</p>
 </div>
@@ -4372,7 +4809,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staging_files">4.6.4. Staging files</h4>
+<h4 id="_staging_files">4.7.4. Staging files</h4>
 <div class="paragraph">
 <p>With this API you can upload files (PDF, XML and images) to the staging folder of the client.
 The files are then available in the <em>My Invoices</em> &#8594; <em>Posting by PDF/File</em> view of the application, which allows creating incoming/outgoing invoices and rebooks with them.</p>
@@ -4616,7 +5053,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-26 09:21:39 +0200
+Last updated 2026-05-26 10:33:44 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

@@ -2055,26 +2055,13 @@ p {
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
-<script id="scripts" type="text/javascript" src="/scripts_57aa95d98338fccd2ebe92a77ceadab1509af03f.js"></script>
-<meta name="referrer" content="same-origin" />
-
-			<link rel="icon" sizes="16x16" type="image/png" href=/assets/favicon_16.png />
-			<link rel="icon" sizes="32x32" type="image/png" href=/assets/favicon_32.png />
-				<link rel="icon" sizes="any" type="image/svg+xml" href=/assets/favicon.svg />
-<title>RISE Rocket.Chat</title><meta name="application-name" content="RISE Rocket.Chat"><meta name="apple-mobile-web-app-title" content="RISE Rocket.Chat">
-<meta http-equiv="content-language" content=""><meta name="language" content="">
-<meta name="robots" content="INDEX,FOLLOW">
-<meta name="msvalidate.01" content="">
-<meta name="google-site-verification" content="">
-<meta property="fb:app_id" content="">
-<base href="/">
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta6</span>
+<span id="revdate">2.0.0-beta7</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2128,40 +2115,51 @@ p {
 </li>
 </ul>
 </li>
-<li><a href="#bsl_examples">4.4. Bank Statements</a>
+<li><a href="#_cash_based_accounting">4.4. Cash-based accounting</a>
 <ul class="sectlevel3">
-<li><a href="#_fetching_bank_statement_headers">4.4.1. Fetching bank statement headers</a></li>
-<li><a href="#fetching_bank_statement_lines">4.4.2. Fetching bank statement lines</a></li>
-<li><a href="#_creating_a_bank_statement_header_with_optional_lines">4.4.3. Creating a bank statement header with optional lines</a></li>
-<li><a href="#creating_lines_by_header">4.4.4. Creating bank statement lines for an existing header</a></li>
-<li><a href="#append_lines_by_account">4.4.5. Creating lines by payment account (PSD2 append-only mode)</a></li>
+<li><a href="#_rebook_journals">4.4.1. Rebook journals</a>
+<ul class="sectlevel4">
+<li><a href="#_create_a_rebook_journal">Create a rebook journal</a></li>
+<li><a href="#_get_all_rebook_journals">Get all rebook journals</a></li>
+<li><a href="#_get_a_rebook_journal_by_id">Get a rebook journal by ID</a></li>
 </ul>
 </li>
-<li><a href="#itm_examples">4.5. Items</a>
-<ul class="sectlevel3">
-<li><a href="#_creating_an_item">4.5.1. Creating an item</a></li>
-<li><a href="#_fetching_items">4.5.2. Fetching items</a></li>
 </ul>
 </li>
-<li><a href="#_invoicing">4.6. Invoicing</a>
+<li><a href="#bsl_examples">4.5. Bank Statements</a>
 <ul class="sectlevel3">
-<li><a href="#_prerequisites">4.6.1. Prerequisites</a></li>
-<li><a href="#_staging_invoices">4.6.2. Staging invoices</a></li>
-<li><a href="#_finalized_invoices">4.6.3. Finalized invoices</a></li>
-<li><a href="#inv_line_calc">4.6.4. Verification of total sums</a></li>
-<li><a href="#_external_invoices">4.6.5. External invoices</a>
+<li><a href="#_fetching_bank_statement_headers">4.5.1. Fetching bank statement headers</a></li>
+<li><a href="#fetching_bank_statement_lines">4.5.2. Fetching bank statement lines</a></li>
+<li><a href="#_creating_a_bank_statement_header_with_optional_lines">4.5.3. Creating a bank statement header with optional lines</a></li>
+<li><a href="#creating_lines_by_header">4.5.4. Creating bank statement lines for an existing header</a></li>
+<li><a href="#append_lines_by_account">4.5.5. Creating lines by payment account (PSD2 append-only mode)</a></li>
+</ul>
+</li>
+<li><a href="#itm_examples">4.6. Items</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_an_item">4.6.1. Creating an item</a></li>
+<li><a href="#_fetching_items">4.6.2. Fetching items</a></li>
+</ul>
+</li>
+<li><a href="#_invoicing">4.7. Invoicing</a>
+<ul class="sectlevel3">
+<li><a href="#_prerequisites">4.7.1. Prerequisites</a></li>
+<li><a href="#_staging_invoices">4.7.2. Staging invoices</a></li>
+<li><a href="#_finalized_invoices">4.7.3. Finalized invoices</a></li>
+<li><a href="#inv_line_calc">4.7.4. Verification of total sums</a></li>
+<li><a href="#_external_invoices">4.7.5. External invoices</a>
 <ul class="sectlevel4">
 <li><a href="#_attaching_a_pdf_file">Attaching a PDF file</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#_documents_files_folders_assignments">4.7. Documents - files, folders, assignments</a>
+<li><a href="#_documents_files_folders_assignments">4.8. Documents - files, folders, assignments</a>
 <ul class="sectlevel3">
-<li><a href="#doc_fetching">4.7.1. Fetching Folders and Files</a></li>
-<li><a href="#creating_a_file">4.7.2. Creating a file</a></li>
-<li><a href="#assignments">4.7.3. Assignments</a></li>
-<li><a href="#_staging_files">4.7.4. Staging files</a>
+<li><a href="#doc_fetching">4.8.1. Fetching Folders and Files</a></li>
+<li><a href="#creating_a_file">4.8.2. Creating a file</a></li>
+<li><a href="#assignments">4.8.3. Assignments</a></li>
+<li><a href="#_staging_files">4.8.4. Staging files</a>
 <ul class="sectlevel4">
 <li><a href="#_upload_a_document_to_the_staging_folder">Upload a document to the staging folder</a></li>
 <li><a href="#_upload_a_document_with_metadata">Upload a document with metadata</a></li>
@@ -4509,13 +4507,248 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bsl_examples">4.4. Bank Statements</h3>
+<h3 id="_cash_based_accounting">4.4. Cash-based accounting</h3>
+<div class="paragraph">
+<p>Core module for all cash-based accounting purposes.
+Bookings and payments from invoices, documents, and automatic processes such as depreciation are managed here.
+In addition, direct booking functionality is available through rebook journals.</p>
+</div>
+<div class="sect3">
+<h4 id="_rebook_journals">4.4.1. Rebook journals</h4>
+<div class="paragraph">
+<p>Rebook journals for creating and managing rebook bookings between accounts.</p>
+</div>
+<div class="sect4">
+<h5 id="_create_a_rebook_journal">Create a rebook journal</h5>
+<div class="paragraph">
+<p>Creates a journal entry between two accounts in the cash-based accounting system.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals
+Content-Type: application/json
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "type": "REBOOK", <i class="conum" data-value="1"></i><b>(1)</b>
+    "account": "02c0...bb2", <i class="conum" data-value="2"></i><b>(2)</b>
+    "contra_account": "9695...824", <i class="conum" data-value="3"></i><b>(3)</b>
+    "amount": 100
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Possible types are <em>REBOOK</em>, <em>CORRECTION</em> and <em>FINALIZATION</em>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use <code>/cbs/accounts/rebook?rebook_type={type}</code> to find valid accounts for the selected type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Contra accounts depend on the primary account and type — use <code>/cbs/accounts/{account_id}/rebook?rebook_type={type}</code> to search for valid contra accounts.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "b699...79b",
+    "type": "REBOOK",
+    "account": {
+        "id": "02c0...bb2",
+        "name": "Savings account",
+        "code": "2852",
+        "from": "2004-01-01",
+        "to": "2099-12-31",
+        "category": "DEBIT"
+    },
+    "contra_account": {
+        "id": "9695...824",
+        "name": "Savings account",
+        "code": "2857",
+        "from": "2004-01-01",
+        "to": "2099-12-31",
+        "category": "DEBIT"
+    },
+    "paid_date": "2026-06-05",
+    "cancellation_state": "NONE",
+    "invoice_date": "2026-06-05",
+    "currency": "EUR",
+    "currency_rate": 1,
+    "amount": 100
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_get_all_rebook_journals">Get all rebook journals</h5>
+<div class="paragraph">
+<p>Returns all rebook journals with pagination and optional filtering via query parameters <code>search</code>, <code>from</code>, and <code>to</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "total_count": 2,
+    "content": [
+        {
+            "id": "2e6f...46c",
+            "type": "FINALIZATION",
+            "account": {
+                "id": "502e...52f",
+                "name": "Plant and machinery",
+                "code": "0400",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "contra_account": {
+                "id": "a206...adf3",
+                "name": "Depreciation of tangible fixed assets (automated booking)",
+                "code": "7010",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "paid_date": "2024-12-31",
+            "cancellation_state": "NONE",
+            "description": "2024 Keine Information",
+            "invoice_reference": "L 2",
+            "currency": "EUR",
+            "currency_rate": 1
+        },
+        {
+            "id": "577d...ec8",
+            "type": "REBOOK",
+            "account": {
+                "id": "b169...a4f",
+                "name": "Long-term liabilities to banks (credit, loan, etc.)",
+                "code": "3150",
+                "from": "2018-01-01",
+                "to": "2099-12-31",
+                "category": "CREDIT"
+            },
+            "contra_account": {
+                "id": "04a7...9b",
+                "name": "Bank",
+                "code": "2800",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "paid_date": "2024-09-23",
+            "cancellation_state": "NONE",
+            "description": "Kredit Erste Bank Investition Halle 2",
+            "invoice_reference": "Erhalt von Kredit / Darlehen Invest. Halle 2",
+            "invoice_date": "2024-09-23",
+            "currency": "EUR",
+            "currency_rate": 1
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_get_a_rebook_journal_by_id">Get a rebook journal by ID</h5>
+<div class="paragraph">
+<p>Retrieves the details of a specific rebook journal.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals/b699...79b
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "b699...79b",
+    "type": "REBOOK",
+    "account": {
+        "id": "02c0...bb2",
+        "name": "Savings account",
+        "code": "2852",
+        "from": "2004-01-01",
+        "to": "2099-12-31",
+        "category": "DEBIT"
+    },
+    "contra_account": {
+        "id": "9695...824",
+        "name": "Savings account",
+        "code": "2857",
+        "from": "2004-01-01",
+        "to": "2099-12-31",
+        "category": "DEBIT"
+    },
+    "paid_date": "2026-06-05",
+    "cancellation_state": "NONE",
+    "invoice_date": "2026-06-05",
+    "currency": "EUR",
+    "currency_rate": 1,
+    "amount": 100
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A <code>404 Not Found</code> is returned if the journal does not exist.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bsl_examples">4.5. Bank Statements</h3>
 <div class="paragraph">
 <p>This section covers operations for managing bank statements and their lines.
 Bank statements can contain transactions imported manually via the API or retrieved automatically through PSD2 integrations.</p>
 </div>
 <div class="sect3">
-<h4 id="_fetching_bank_statement_headers">4.4.1. Fetching bank statement headers</h4>
+<h4 id="_fetching_bank_statement_headers">4.5.1. Fetching bank statement headers</h4>
 <div class="paragraph">
 <p>Returns all bank statement headers for the current client.
 This includes both manual imports and PSD2 auto-imported statements.</p>
@@ -4562,7 +4795,7 @@ content-type: application/json;charset=UTF-8</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="fetching_bank_statement_lines">4.4.2. Fetching bank statement lines</h4>
+<h4 id="fetching_bank_statement_lines">4.5.2. Fetching bank statement lines</h4>
 <div class="paragraph">
 <p>Returns the transaction lines for a specific bank statement header.</p>
 </div>
@@ -4650,7 +4883,7 @@ These lines can still be added but will be flagged for review.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_a_bank_statement_header_with_optional_lines">4.4.3. Creating a bank statement header with optional lines</h4>
+<h4 id="_creating_a_bank_statement_header_with_optional_lines">4.5.3. Creating a bank statement header with optional lines</h4>
 <div class="paragraph">
 <p>Creates a new bank statement header.
 Optionally, lines can be included during creation.
@@ -4714,7 +4947,7 @@ content-type: application/json;charset=UTF-8</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="creating_lines_by_header">4.4.4. Creating bank statement lines for an existing header</h4>
+<h4 id="creating_lines_by_header">4.5.4. Creating bank statement lines for an existing header</h4>
 <div class="paragraph">
 <p>Appends new lines to an existing bank statement header.
 Each call adds lines with auto-incremented line numbers.
@@ -4808,7 +5041,7 @@ The response will contain empty arrays for <code>added_lines</code> and <code>du
 </div>
 </div>
 <div class="sect3">
-<h4 id="append_lines_by_account">4.4.5. Creating lines by payment account (PSD2 append-only mode)</h4>
+<h4 id="append_lines_by_account">4.5.5. Creating lines by payment account (PSD2 append-only mode)</h4>
 <div class="paragraph">
 <p>Creates lines for a bank statement tied to a specific payment account.
 This endpoint handles automatic header management:</p>
@@ -4937,14 +5170,14 @@ It appears in <code>duplicate_transactions</code> and does not appear in <code>a
 </div>
 </div>
 <div class="sect2">
-<h3 id="itm_examples">4.5. Items</h3>
+<h3 id="itm_examples">4.6. Items</h3>
 <div class="paragraph">
 <p>Items are part of the master data of a client, they are reusable definitions of a revenue line used in INV invoices and cash receipts.
 For use in the API, creating items beforehand (with accounts, tax class entries, prices and descriptions already included) allows you to create invoices and receipts quickly by referencing an item and enabling item defaulting.
 Alternatively, if you want to have complete control over the data of the line, you can take the values of the items and apply them to invoice and receipt lines yourself.</p>
 </div>
 <div class="sect3">
-<h4 id="_creating_an_item">4.5.1. Creating an item</h4>
+<h4 id="_creating_an_item">4.6.1. Creating an item</h4>
 <div class="paragraph">
 <p>Without an item category, an <a href="#cbs_examples">account and tax class entry</a> are required for an item.
 Below is a minimal example with one tax group - if the country of the client has multiple taxes, an entry is required for all of them.</p>
@@ -5031,7 +5264,7 @@ If the item category has valid defaults for the account and tax class entry, the
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fetching_items">4.5.2. Fetching items</h4>
+<h4 id="_fetching_items">4.6.2. Fetching items</h4>
 <div class="paragraph">
 <p>The <code>itm/items</code> resource accepts the <code>category</code> query parameter for the ID of a category the item belongs to, and a generic <code>search</code> parameter to filter for the name, description, number or barcode.
 This way you can either present a list of items for selection, or fetch the one result to use directly in subsequent API calls to create invoices or receipts.</p>
@@ -5086,7 +5319,7 @@ Content-Type: application/json</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_invoicing">4.6. Invoicing</h3>
+<h3 id="_invoicing">4.7. Invoicing</h3>
 <div class="paragraph">
 <p>This section introduces the creation of invoices, one of the most used features of the API.
 Before you jump in, make sure you have read the <a href="#cbs_examples">bookkeeping essentials</a> and optionally the <a href="itm.html#itm_examples">item API</a>.</p>
@@ -5117,7 +5350,7 @@ If you get 403 errors when trying any invoicing API, check if you have purchased
 Once a document is <em>finalized</em>, all corresponding documents are generated (PDF, XML) and further edits are restricted.</p>
 </div>
 <div class="sect3">
-<h4 id="_prerequisites">4.6.1. Prerequisites</h4>
+<h4 id="_prerequisites">4.7.1. Prerequisites</h4>
 <div class="paragraph">
 <p>To create a <em>staging</em> invoice, at least one (default) payment term must exist, since the term defines the due date of the invoice.
 If no payment term is referenced, the default payment term is applied automatically.
@@ -5145,7 +5378,7 @@ Payment terms and layout setups don&#8217;t expire, but sequence groups require 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staging_invoices">4.6.2. Staging invoices</h4>
+<h4 id="_staging_invoices">4.7.2. Staging invoices</h4>
 <div class="paragraph">
 <p>Here is the minimal example for creating an invoice, with an unreferenced customer and explicit values for the account and tax class.
 A default payment term must exist and will be selected automatically.</p>
@@ -5330,7 +5563,7 @@ Without the <code>item_defaulting</code> flag, the item is only set as a referen
 </div>
 </div>
 <div class="sect3">
-<h4 id="_finalized_invoices">4.6.3. Finalized invoices</h4>
+<h4 id="_finalized_invoices">4.7.3. Finalized invoices</h4>
 <div class="paragraph">
 <p>Any invoicing document can be finalized immediately on creation (with <code>finalize: true</code> in the payload) or later on during an update or with an explicit API call (with <code>/inv/invoices/{id}/finalize</code>).</p>
 </div>
@@ -5466,7 +5699,7 @@ Content-Type: application/pdf;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="inv_line_calc">4.6.4. Verification of total sums</h4>
+<h4 id="inv_line_calc">4.7.4. Verification of total sums</h4>
 <div class="paragraph">
 <p>Supplying the expected invoice totals in the payload for invoice creation is optional.
 But if you use net amounts, we  <strong>strongly recommend</strong> including the totals to prevent sudden discrepancies.</p>
@@ -5579,7 +5812,7 @@ Authorization: eyJ...</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_external_invoices">4.6.5. External invoices</h4>
+<h4 id="_external_invoices">4.7.5. External invoices</h4>
 <div class="paragraph">
 <p>The <code>/inv/invoices/external</code> endpoint allows you to create an invoice that is marked as <em>finalized</em> immediately and is treated as an <em>external</em> document.
 This is useful when an invoice was created in another system and you want to import it into FreeFinance with its original invoice number.</p>
@@ -5942,7 +6175,7 @@ Use the external invoice endpoint when importing invoices from external systems 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_documents_files_folders_assignments">4.7. Documents - files, folders, assignments</h3>
+<h3 id="_documents_files_folders_assignments">4.8. Documents - files, folders, assignments</h3>
 <div class="paragraph">
 <p>This section covers files, folders, and the assignment of files.
 Files can be stored either in the FreeFinance internal document storage or via external providers.
@@ -5954,7 +6187,7 @@ The endpoints can be used in a similar way for external providers, however, not 
 Existing files and folders of external storages can be retrieved but uploading, modifying, or deleting them is not possible with this API and must be performed within the external application.</p>
 </div>
 <div class="sect3">
-<h4 id="doc_fetching">4.7.1. Fetching Folders and Files</h4>
+<h4 id="doc_fetching">4.8.1. Fetching Folders and Files</h4>
 <div class="paragraph">
 <p>A distinction is made between the root folder and other folders.
 Additionally, there is a difference between internal folders, which cannot be deleted or modified, and those created by the user.
@@ -6097,7 +6330,7 @@ Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="creating_a_file">4.7.2. Creating a file</h4>
+<h4 id="creating_a_file">4.8.2. Creating a file</h4>
 <div class="paragraph">
 <p>A file can only be uploaded to a specified folder.
 Therefore, the folder key of the target folder must be prefetched, as described in the section above.</p>
@@ -6233,7 +6466,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="assignments">4.7.3. Assignments</h4>
+<h4 id="assignments">4.8.3. Assignments</h4>
 <div class="paragraph">
 <p>Assignments are used to link files to a specific resource, also referred to as an assignable.</p>
 </div>
@@ -6316,7 +6549,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_staging_files">4.7.4. Staging files</h4>
+<h4 id="_staging_files">4.8.4. Staging files</h4>
 <div class="paragraph">
 <p>With this API you can upload files (PDF, XML and images) to the staging folder of the client.
 The files are then available in the <em>My Invoices</em> &#8594; <em>Posting by PDF/File</em> view of the application, which allows creating incoming/outgoing invoices and rebooks with them.</p>
@@ -6560,7 +6793,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-05-26 10:33:44 +0200
+Last updated 2026-06-05 16:27:44 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

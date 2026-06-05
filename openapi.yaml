@@ -7,7 +7,7 @@ info:
   description: The REST API to be used with FreeFinance and FinanzFenster. Please
     read the examples for an introduction to authentication and some use cases.
   title: FreeFinance REST API
-  version: 2.0.0-beta6
+  version: 2.0.0-beta7
 externalDocs:
   description: Detailed examples for authentication and base tasks can be found here.
   url: https://freefinance-dev.github.io
@@ -21,6 +21,8 @@ tags:
   name: AUTH
 - description: Bank Statement Lines - bank account transactions and PSD2.
   name: BSL
+- description: Cash Based Accounting - main bookkeeping and journals.
+  name: CBA
 - description: Cash Based Invoicing - incoming and outgoing invoices.
   name: CBI
 - description: Cash Based Invoicing - incoming invoices (expenses)
@@ -532,6 +534,131 @@ paths:
       - bearerAuth: []
       tags:
       - BSL
+  /clients/{client_id}/cba/rebook_journals:
+    get:
+      description: Get all rebook journals
+      operationId: getRebookJournals
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: "Filters for description, sequence, note, business partner, etc."
+        in: query
+        name: search
+        schema:
+          type: string
+      - description: Minimum date.
+        example: 2024-08-01
+        in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      - description: Maximum date.
+        example: 2024-08-01
+        in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebookJournalResultDtoV2'
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBA
+    post:
+      description: Create a new rebook.
+      operationId: createRebookJournal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebookJournalCreationDtoV2'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebookJournalDtoV2'
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+          description: Input invalid. Further information in the RestError response.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBA
+  /clients/{client_id}/cba/rebook_journals/{journal_id}:
+    get:
+      description: Get a rebook journal by id.
+      operationId: getRebookJournal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: journal_id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebookJournalDetailDtoV2'
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestError'
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBA
   /clients/{client_id}/cbi/incoming_invoices:
     get:
       description: "Returns a list of incoming invoices filtered by optional search\
@@ -2107,6 +2234,75 @@ paths:
       - bearerAuth: []
       tags:
       - CBS-ACC
+  /clients/{client_id}/cbs/accounts/rebook:
+    get:
+      description: "Returns all rebook accounts. Accounts are required for cash based\
+        \ invoicing and business document lines and can be optionally added to items.\
+        \ Every account has one or multiple tax class entries, which define the tax\
+        \ rate for the line."
+      operationId: rebookAccounts
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: Rebook type the account matches.
+        in: query
+        name: rebook_type
+        required: true
+        schema:
+          type: string
+          enum:
+          - REBOOK
+          - CORRECTION
+          - FINALIZATION
+          - BALANCE
+      - description: Effective date at which the account should be valid. Defaults
+          to today.
+        example: 2024-08-01
+        in: query
+        name: effective_date
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      - description: "Search text filtering by code, name or description."
+        example: 4000
+        in: query
+        name: search_text
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResultDtoV2'
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBS-ACC
   /clients/{client_id}/cbs/accounts/{account}:
     get:
       description: Returns a specific account by its id.
@@ -2137,6 +2333,77 @@ paths:
               schema:
                 $ref: '#/components/schemas/RestError'
           description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBS-ACC
+  /clients/{client_id}/cbs/accounts/{account}/rebook:
+    get:
+      description: Returns rebook contra accounts for the account given.
+      operationId: rebookContraAccounts
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: account
+        required: true
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: Rebook type the account matches.
+        in: query
+        name: rebook_type
+        required: true
+        schema:
+          type: string
+          enum:
+          - REBOOK
+          - CORRECTION
+          - FINALIZATION
+          - BALANCE
+      - description: Effective date at which the account should be valid. Defaults
+          to today.
+        example: 2024-08-01
+        in: query
+        name: effective_date
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      - description: "Search text filtering by code, name or description."
+        example: 4000
+        in: query
+        name: search_text
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResultDtoV2'
+          description: Operation completed successfully.
       security:
       - bearerAuth: []
       tags:
@@ -9205,6 +9472,13 @@ components:
       - booking_date
       - currency_code
       - id
+    BankStatementLineReferenceDtoV2:
+      type: object
+      properties:
+        bank_statement_header:
+          type: string
+        id:
+          type: string
     BankStatementLineResultDtoV2:
       type: object
       properties:
@@ -9531,6 +9805,38 @@ components:
           example: PC
       required:
       - amount
+    BusinessDocumentReferenceV2:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Date of the invoice. Always required.
+        id:
+          type: string
+          description: Unique identifier of the business document.
+          example: 1bc76af0-1305-41b4-a876-291b0dbb7d77
+        number:
+          type: string
+          description: "Number of the business document. Will be automatically generated,\
+            \ unless EXTERNAL is set for the state - then it is a mandatory property.\
+            \ Must be unique."
+          example: R 2016-0001
+        type:
+          type: string
+          description: Business document type
+          enum:
+          - OFFER
+          - DELIVERY_NOTE
+          - ORDER_CONFORMATION
+          - INVOICE
+          - DUNNING_LETTER
+          - CREDIT_MEMO
+          example: Invoice
+      required:
+      - date
+      - id
+      - type
     CancellationDtoV2:
       type: object
       properties:
@@ -14277,6 +14583,19 @@ components:
         invoice:
           $ref: '#/components/schemas/IncomingInvoiceDetailDtoV2'
           description: Invoice that has been created.
+    IncomingInvoiceReferenceDtoV2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the invoice
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        sequence_number:
+          type: string
+          description: Sequence number of the invoice.
+          example: ER2026-8
+      required:
+      - id
     IncomingInvoiceResultDtoV2:
       type: object
       properties:
@@ -16692,9 +17011,9 @@ components:
         net:
           type: number
           description: Total net sum of the journal in the main currency.
-        number:
+        sequence:
           type: string
-          description: Number of the journal.
+          description: Sequence of the journal.
           example: E2024 1
         tax:
           type: number
@@ -19177,6 +19496,19 @@ components:
         invoice:
           $ref: '#/components/schemas/OutgoingInvoiceDetailDtoV2'
           description: Invoice that has been created.
+    OutgoingInvoiceReferenceDtoV2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the invoice
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        sequence_number:
+          type: string
+          description: Sequence number of the invoice.
+          example: AR2026-8
+      required:
+      - id
     OutgoingInvoiceResultDtoV2:
       type: object
       properties:
@@ -19531,6 +19863,224 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PaymentTermDtoV2'
+        total_count:
+          type: integer
+          format: int64
+      required:
+      - content
+    RebookJournalCreationDtoV2:
+      type: object
+      properties:
+        account:
+          type: string
+          description: Account to subtract the amount from. Must be a valid account
+            for the rebook type. See accounts/rebook
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        amount:
+          type: number
+          description: Total amount of the booking. Maximum of 10 digits and 5 fractional
+            digits. Note that these bookings have no tax.
+          example: 10
+        contra_account:
+          type: string
+          description: "Account to add the amount to. Must be a valid contra account\
+            \ for the rebook type and selected account. See accounts/{account_id}/rebook "
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        date:
+          type: string
+          format: date
+          description: "Date of the booking, defaulted to current date."
+          example: 2020-12-31
+        description:
+          type: string
+          description: Description or additional information for the booking.
+          example: Payment for invoice ER1234
+        note:
+          type: string
+          description: Internal note.
+          example: Rebook
+        reference:
+          type: string
+          description: "Text reference to other receipts, invoices, etc."
+          example: ER1234
+        type:
+          type: string
+          description: "Rebook type, which limits available accounts. See the /accounts/rebook_accounts\
+            \ resource."
+          enum:
+          - REBOOK
+          - CORRECTION
+          - FINALIZATION
+          - BALANCE
+          example: REBOOK
+      required:
+      - account
+      - amount
+      - contra_account
+      - type
+    RebookJournalDetailDtoV2:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/AccountReferenceDtoV2'
+          description: Account from which the amount was subtracted. See the /accounts
+            resource.
+        amount:
+          type: number
+          description: Total amount of the rebook in the main currency.
+        bank_statement:
+          $ref: '#/components/schemas/BankStatementLineReferenceDtoV2'
+          description: Bank statement associated with the journal.
+        business_document:
+          $ref: '#/components/schemas/BusinessDocumentReferenceV2'
+          description: Business document associated with the journal.
+        cancellation_state:
+          type: string
+          description: Indicates if this rebook has been cancelled.
+          enum:
+          - NONE
+          - CANCELLED
+          - CANCELLATION
+        cancelled_reason:
+          type: string
+          description: The reason for the cancellation as provided when it was cancelled.
+          example: Duplicate entry.
+        contra_account:
+          $ref: '#/components/schemas/AccountReferenceDtoV2'
+          description: Account to which the amount was added. See the /accounts resource.
+        currency:
+          type: string
+          description: Currency if the rebook amount was in a currency different to
+            the main currency. See the /currencies resource.
+        currency_rate:
+          type: number
+          description: Currency rate if the rebook amount was in a currency different
+            to the main currency. Otherwise defaulted with 1.
+        description:
+          type: string
+          description: Description or note for the rebook.
+          example: Payment for invoice ER1234
+        id:
+          type: string
+          description: ID of the rebook journal.
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        incoming_invoice:
+          $ref: '#/components/schemas/IncomingInvoiceReferenceDtoV2'
+          description: Invoice associated with the journal.
+        invoice_date:
+          type: string
+          format: date
+          description: Optional invoice date if the rebook is originating from an
+            invoice or other business case.
+        invoice_reference:
+          type: string
+          description: "Optional reference to an invoice, receipt, journal number,\
+            \ etc."
+          example: ER1234
+        note:
+          type: string
+          description: Internal note.
+          example: Rebook
+        outgoing_invoice:
+          $ref: '#/components/schemas/OutgoingInvoiceReferenceDtoV2'
+          description: Outgoing invoice associated with the journal.
+        paid_date:
+          type: string
+          format: date
+          description: Date of the booking.
+          example: 2024-08-01
+        referenceJournal:
+          $ref: '#/components/schemas/JournalReferenceDtoV2'
+          description: Reference journal
+        type:
+          type: string
+          description: "Rebook type, which limits available accounts. See the /accounts/rebook_accounts\
+            \ resource."
+          enum:
+          - REBOOK
+          - CORRECTION
+          - FINALIZATION
+          - BALANCE
+          example: REBOOK
+    RebookJournalDtoV2:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/AccountReferenceDtoV2'
+          description: Account from which the amount was subtracted. See the /accounts
+            resource.
+        amount:
+          type: number
+          description: Total amount of the rebook in the main currency.
+        cancellation_state:
+          type: string
+          description: Indicates if this rebook has been cancelled.
+          enum:
+          - NONE
+          - CANCELLED
+          - CANCELLATION
+        cancelled_reason:
+          type: string
+          description: The reason for the cancellation as provided when it was cancelled.
+          example: Duplicate entry.
+        contra_account:
+          $ref: '#/components/schemas/AccountReferenceDtoV2'
+          description: Account to which the amount was added. See the /accounts resource.
+        currency:
+          type: string
+          description: Currency if the rebook amount was in a currency different to
+            the main currency. See the /currencies resource.
+        currency_rate:
+          type: number
+          description: Currency rate if the rebook amount was in a currency different
+            to the main currency. Otherwise defaulted with 1.
+        description:
+          type: string
+          description: Description or note for the rebook.
+          example: Payment for invoice ER1234
+        id:
+          type: string
+          description: ID of the rebook journal.
+          example: 5665af78-cc67-490-b030-f649fde5d8a8
+        invoice_date:
+          type: string
+          format: date
+          description: Optional invoice date if the rebook is originating from an
+            invoice or other business case.
+        invoice_reference:
+          type: string
+          description: "Optional reference to an invoice, receipt, journal number,\
+            \ etc."
+          example: ER1234
+        note:
+          type: string
+          description: Internal note.
+          example: Rebook
+        paid_date:
+          type: string
+          format: date
+          description: Date of the booking.
+          example: 2024-08-01
+        referenceJournal:
+          $ref: '#/components/schemas/JournalReferenceDtoV2'
+          description: Reference journal
+        type:
+          type: string
+          description: "Rebook type, which limits available accounts. See the /accounts/rebook_accounts\
+            \ resource."
+          enum:
+          - REBOOK
+          - CORRECTION
+          - FINALIZATION
+          - BALANCE
+          example: REBOOK
+    RebookJournalResultDtoV2:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/RebookJournalDtoV2'
         total_count:
           type: integer
           format: int64
@@ -20745,6 +21295,11 @@ components:
           type: string
           description: Number of the supplier.
           example: S123
+        tax_number:
+          type: string
+          description: Tax number or UID number of the contact. May be used for matching
+            the contact with document metadata for bookings.
+          example: AT0123456789
       required:
       - display_name
       - id

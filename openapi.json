@@ -8,7 +8,7 @@
     },
     "description" : "The REST API to be used with FreeFinance and FinanzFenster. Please read the examples for an introduction to authentication and some use cases.",
     "title" : "FreeFinance REST API",
-    "version" : "2.0.0-beta7"
+    "version" : "2.0.0-beta8"
   },
   "externalDocs" : {
     "description" : "Detailed examples for authentication and base tasks can be found here.",
@@ -20,7 +20,7 @@
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
-  } ],
+  }   ],
   "tags" : [ {
     "description" : "Authentication information for API users.",
     "name" : "AUTH"
@@ -6814,10 +6814,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/PaymentHistoryDtoV2"
-                  }
+                  "$ref" : "#/components/schemas/InvoicePaymentDtoV2"
                 }
               }
             },
@@ -6886,10 +6883,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/PaymentHistoryDtoV2"
-                  }
+                  "$ref" : "#/components/schemas/InvoicePaymentDtoV2"
                 }
               }
             },
@@ -6967,10 +6961,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/PaymentHistoryDtoV2"
-                  }
+                  "$ref" : "#/components/schemas/InvoicePaymentDtoV2"
                 }
               }
             },
@@ -12749,7 +12740,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -12784,13 +12775,13 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "price_type" : {
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -12806,7 +12797,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -12844,7 +12835,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -12880,7 +12871,7 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "number" : {
             "type" : "integer",
@@ -12901,7 +12892,7 @@
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -12923,7 +12914,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -12996,10 +12987,6 @@
             "type" : "boolean",
             "description" : "Indicates if this is the default cash register to use in frontends."
           },
-          "enable_drawback" : {
-            "type" : "boolean",
-            "description" : "When this is enabled, all front-ends of the cash register are supposed to activate the cashback feature, i.e. display the amount of currency returned to the customer on overpayment."
-          },
           "group" : {
             "type" : "string",
             "description" : "Optional, freely defined register group, for example by payment method or branch office.",
@@ -13048,7 +13035,7 @@
             "enum" : [ "NEW", "READY", "ACTIVE", "LOCKED", "TEST" ]
           }
         },
-        "required" : [ "allow_past_income", "enable_drawback", "id", "name", "number", "state" ]
+        "required" : [ "allow_past_income", "id", "name", "number", "state" ]
       },
       "CashRegisterDtoV2" : {
         "type" : "object",
@@ -13065,10 +13052,6 @@
           "default" : {
             "type" : "boolean",
             "description" : "Indicates if this is the default cash register to use in frontends."
-          },
-          "enable_drawback" : {
-            "type" : "boolean",
-            "description" : "When this is enabled, all front-ends of the cash register are supposed to activate the cashback feature, i.e. display the amount of currency returned to the customer on overpayment."
           },
           "group" : {
             "type" : "string",
@@ -13114,7 +13097,7 @@
             "enum" : [ "NEW", "READY", "ACTIVE", "LOCKED", "TEST" ]
           }
         },
-        "required" : [ "allow_past_income", "enable_drawback", "id", "name", "number", "state" ]
+        "required" : [ "allow_past_income", "id", "name", "number", "state" ]
       },
       "CashRegisterLayoutDtoV2" : {
         "type" : "object",
@@ -13232,7 +13215,7 @@
           "custom_name" : {
             "type" : "string",
             "description" : "Custom name chosen for this payment account.",
-            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+            "example" : "Card register"
           },
           "iban" : {
             "type" : "string",
@@ -13248,6 +13231,12 @@
             "type" : "string",
             "description" : "Name for this payment account.",
             "example" : "Checking account all capabilities"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Defines for what payments the account is configured for. Use NON_CASH when you cannot or wont differentiate between EC_CARD and CREDIT_CARD.",
+            "enum" : [ "CASH", "EC_CARD", "CREDIT_CARD", "NON_CASH" ],
+            "example" : "EC_CARD"
           }
         },
         "required" : [ "account_code", "currency_code", "custom_name", "id", "name" ]
@@ -13702,7 +13691,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -13740,7 +13730,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -13764,7 +13755,7 @@
           },
           "layout_setup" : {
             "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
+            "description" : "ID of the layout to be used, see the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
             "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
@@ -13776,25 +13767,17 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
           "payment_term" : {
             "type" : "string",
@@ -13819,7 +13802,7 @@
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -13837,7 +13820,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "lines" ]
@@ -14292,7 +14275,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -14327,13 +14310,13 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "price_type" : {
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -14349,7 +14332,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -14387,7 +14370,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -14423,7 +14406,7 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "number" : {
             "type" : "integer",
@@ -14444,7 +14427,7 @@
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -14466,7 +14449,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -15789,7 +15772,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -15827,7 +15811,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -15845,7 +15830,7 @@
           },
           "layout_setup" : {
             "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
+            "description" : "ID of the layout to be used, see the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
             "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
@@ -15857,25 +15842,17 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
           "payment_term" : {
             "type" : "string",
@@ -15900,7 +15877,7 @@
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -15918,7 +15895,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "lines" ]
@@ -18410,7 +18387,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -18448,7 +18426,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -18488,7 +18467,7 @@
           },
           "layout_setup" : {
             "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
+            "description" : "ID of the layout to be used, see the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
             "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
@@ -18500,25 +18479,17 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
           "payment_term" : {
             "type" : "string",
@@ -18543,7 +18514,7 @@
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -18561,7 +18532,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "lines" ]
@@ -19104,7 +19075,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -19142,7 +19114,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -19166,24 +19139,9 @@
             "description" : "Reason for the dunning stop. Mandatory if dunning stop is set.",
             "example" : "Good friends"
           },
-          "e_invoice_version" : {
-            "type" : "string",
-            "description" : "If e-invoice creation is configured, this property is mandatory and defines the e-invoice version.",
-            "enum" : [ "NONE", "EB_V6_P1", "EB_V6_P0", "EB_V5_P0", "EB_V4_P3", "EB_V4_P2", "EB_V4_P1", "EB_V4_P0", "EB_V3_P02", "EB_V3_P0", "X_RECHNUNG_V3_P0_UBL" ],
-            "example" : "X_RECHNUNG_V3_P0_UBL"
-          },
-          "finalize" : {
-            "type" : "boolean",
-            "description" : "Specifies whether a document should be attached immediately."
-          },
           "inherit_tags" : {
             "type" : "boolean",
             "description" : "When set the tags of the Customer, Supplier and items are inherited onto this line."
-          },
-          "layout_setup" : {
-            "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
-            "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
             "type" : "array",
@@ -19194,12 +19152,12 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
@@ -19209,15 +19167,7 @@
           "number" : {
             "type" : "string",
             "description" : "Number of the business document.",
-            "example" : "R 2016-0001"
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+            "example" : "R 2026-0001"
           },
           "payment_term" : {
             "type" : "string",
@@ -19234,15 +19184,10 @@
             "description" : "Reference info to other documents, business case information, remittance numbers, etc.",
             "example" : "R 2016-0002"
           },
-          "sequence_group" : {
-            "type" : "string",
-            "description" : "Sequence group id, for when a different sequence group is to be used besides the configured default group. See the /sequence_groups resource.",
-            "example" : "e7083036-8779-d492-0c78-332cfde21b68"
-          },
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -19260,7 +19205,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "lines", "number" ]
@@ -19286,7 +19231,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -19321,13 +19266,13 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "price_type" : {
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -19343,7 +19288,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -19381,7 +19326,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -19417,7 +19362,7 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "number" : {
             "type" : "integer",
@@ -19438,7 +19383,7 @@
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -19460,7 +19405,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -19474,6 +19419,22 @@
           }
         },
         "required" : [ "amount" ]
+      },
+      "InvoicePaymentDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "invoice" : {
+            "$ref" : "#/components/schemas/InvoiceExtendedDtoV2",
+            "description" : "Invoice document"
+          },
+          "payment_history" : {
+            "type" : "array",
+            "description" : "List of all payments in the payment history.",
+            "items" : {
+              "$ref" : "#/components/schemas/PaymentHistoryDtoV2"
+            }
+          }
+        }
       },
       "InvoiceStatisticsDtoV2" : {
         "type" : "object",
@@ -19956,7 +19917,7 @@
             "example" : 12
           }
         },
-        "required" : [ "amount_type", "name", "selling_price" ]
+        "required" : [ "account", "amount_type", "name", "selling_price" ]
       },
       "ItemReferenceDtoV2" : {
         "type" : "object",
@@ -20150,7 +20111,7 @@
             "example" : 12
           }
         },
-        "required" : [ "amount_type", "name", "selling_price" ]
+        "required" : [ "account", "amount_type", "name", "selling_price" ]
       },
       "JournalReferenceDtoV2" : {
         "type" : "object",
@@ -20495,7 +20456,7 @@
           "key" : {
             "type" : "string",
             "description" : "A key describing the content of this field.",
-            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ],
+            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ],
             "example" : "TOTAL_AMOUNT"
           },
           "numeric_value" : {
@@ -20553,7 +20514,7 @@
           "key" : {
             "type" : "string",
             "description" : "A key describing the content of this field.",
-            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "LINE_ITEM_POSITION", "LINE_ITEM_ORDER_NUMBER", "LINE_ITEM_MATERIAL_NUMBER", "LINE_ITEM_LEDGER_ACCOUNT", "COST_CENTER", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ]
+            "enum" : [ "INVOICE_DATE", "PAID_DATE", "DUE_DATE", "DELIVERY_DATE_FROM", "DELIVERY_DATE_TO", "MERCHANT_NAME", "MERCHANT_FIRST_NAME", "MERCHANT_LAST_NAME", "MERCHANT_TELEPHONE", "MERCHANT_IBAN", "MERCHANT_TAX_NUMBER", "MERCHANT_EMAIL", "MERCHANT_STREET_NAME", "MERCHANT_STREET_NUMBER", "MERCHANT_ZIP_CODE", "MERCHANT_CITY", "MERCHANT_COUNTRY", "MERCHANT_REGION", "MERCHANT_COMPANY_REGISTRATION_NUMBER", "MERCHANT_COMPANY_JURISDICTION", "CUSTOMER_NAME", "CUSTOMER_FIRST_NAME", "CUSTOMER_LAST_NAME", "CUSTOMER_TELEPHONE", "CUSTOMER_IBAN", "CUSTOMER_TAX_NUMBER", "CUSTOMER_EMAIL", "CUSTOMER_STREET_NAME", "CUSTOMER_STREET_NUMBER", "CUSTOMER_ZIP_CODE", "CUSTOMER_CITY", "CUSTOMER_COUNTRY", "CUSTOMER_NUMBER", "CUSTOMER_BBG_NUMBER", "SUPPLIER_BGG_NUMBER", "INVOICE_NUMBER", "ORDER_NUMBER", "CURRENCY", "NET_AMOUNT", "TAX_AMOUNT", "TOTAL_AMOUNT", "TAX_RATE", "DESCRIPTION", "QR_CODE", "MERCHANT_MAILBOX", "MERCHANT_BANK_NAME", "MERCHANT_ACCOUNT_NUMBER", "MERCHANT_BANK_CODE", "MERCHANT_BIC", "CUSTOMER_MAILBOX", "SENDER_CREDITOR_NUMBER", "SENDER_REGISTRATION_NUMBER", "TAX_LIABILITY", "DISCOUNT_DATE", "DISCOUNT_RELATIVE_DATE", "DISCOUNT_PAYMENT_AMOUNT", "DISCOUNT_RELATIVE_AMOUNT", "DISCOUNT_REDUCTION_AMOUNT", "PAYMENT_METHOD", "CONTRACT_NUMBER", "MERCHANT_NUMBER", "CUSTOMER_REGISTRATION_NUMBER" ]
           },
           "numeric_value" : {
             "type" : "number",
@@ -20600,7 +20561,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -20638,7 +20600,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -20662,7 +20625,7 @@
           },
           "layout_setup" : {
             "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
+            "description" : "ID of the layout to be used, see the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
             "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
@@ -20674,25 +20637,17 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
           "payment_term" : {
             "type" : "string",
@@ -20717,7 +20672,7 @@
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -20735,7 +20690,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "expiration_date", "lines" ]
@@ -21144,7 +21099,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -21179,13 +21134,13 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "price_type" : {
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -21201,7 +21156,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -21239,7 +21194,7 @@
           "discount" : {
             "type" : "number",
             "description" : "Optional discount amount, either as a total amount or a percentage (defined in discount mode). Maximum of 10 digits and 5 fractional digits.",
-            "example" : 10.0
+            "example" : 5.0
           },
           "discount_mode" : {
             "type" : "string",
@@ -21275,7 +21230,7 @@
           "net" : {
             "type" : "number",
             "description" : "Total net price of the line. Always required for verification. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "number" : {
             "type" : "integer",
@@ -21296,7 +21251,7 @@
             "type" : "string",
             "description" : "Determines it item price is net without tax (NET) or total with tax (GROSS). Must be present if an item reference is not supplied.",
             "enum" : [ "NET", "GROSS" ],
-            "example" : "GROSS"
+            "example" : "NET"
           },
           "tags" : {
             "type" : "array",
@@ -21318,7 +21273,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total price, including tax, of the line. Always required for verification, and must be the sum of net and tax price. Maximum of 10 digits and 5 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           },
           "type" : {
             "type" : "string",
@@ -21370,7 +21325,8 @@
         "properties" : {
           "additional_address" : {
             "type" : "string",
-            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document."
+            "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this document.",
+            "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
             "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
@@ -21408,7 +21364,8 @@
           },
           "delivery_text" : {
             "type" : "string",
-            "description" : "Delivery text"
+            "description" : "Free-text field containing delivery-related information such as shipping details, delivery instructions, or additional notes for the recipient.",
+            "example" : "Please leave the package at the front door if nobody is home."
           },
           "delivery_to_date" : {
             "type" : "string",
@@ -21426,7 +21383,7 @@
           },
           "layout_setup" : {
             "type" : "string",
-            "description" : "ID of the layout to be used, seee the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
+            "description" : "ID of the layout to be used, see the /layout_setups resource. Defaulted with configured default setup, if any, and ignored if the document state is not FINALIZED.",
             "example" : "e7083036-8779-d492-0c78-332cfde21b68"
           },
           "lines" : {
@@ -21438,25 +21395,17 @@
           },
           "manual_address" : {
             "type" : "boolean",
-            "description" : "manualAddress"
+            "description" : "If the address for this document was overridden with custom values."
           },
           "net" : {
             "type" : "number",
             "description" : "Total net amount of the document. Must match the sum of all line net amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 100.0
+            "example" : 50.0
           },
           "note" : {
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
-          },
-          "open" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
-          },
-          "open_amount_in_main_currency" : {
-            "type" : "number",
-            "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
           "payment_term" : {
             "type" : "string",
@@ -21481,7 +21430,7 @@
           "tax" : {
             "type" : "number",
             "description" : "Total tax amount of the document. Must match the sum of all line tax amounts if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 20.0
+            "example" : 10.0
           },
           "text_bottom" : {
             "type" : "string",
@@ -21499,7 +21448,7 @@
           "total" : {
             "type" : "number",
             "description" : "Total amount of the document including tax. Must match the sum of all line totals if document is FINALIZED or EXTERNAL for verification. Maximum of 10 digits and 2 fractional digits.",
-            "example" : 120.0
+            "example" : 60.0
           }
         },
         "required" : [ "date", "lines" ]
@@ -22691,7 +22640,7 @@
           "type" : {
             "type" : "string",
             "description" : "Type of the payment event.",
-            "enum" : [ "RECEIVABLES", "RECEIVABLES_DUNNING", "PAID", "DISCOUNT", "UNCOLLECTABLE", "CANCELLED", "ON_ACCOUNT", "CURRENCY_DIFFERENCE", "ROUNDING_DIFFERENCE", "CORRECTION", "CREDIT_FOR_INVOICE", "CANCELLATION_INVOICE_FOR_INVOICE", "CREDIT_CASHED" ]
+            "enum" : [ "RECEIVABLES", "RECEIVABLES_DUNNING", "PAID", "DISCOUNT", "UNCOLLECTABLE", "CANCELLED", "ON_ACCOUNT", "CURRENCY_DIFFERENCE", "ROUNDING_DIFFERENCE", "CORRECTION", "CREDIT_FOR_INVOICE", "CANCELLATION_INVOICE_FOR_INVOICE", "INVOICE_DEDUCTIONS", "CREDIT_CASHED" ]
           }
         }
       },
@@ -23486,7 +23435,7 @@
           "date_time" : {
             "type" : "string",
             "format" : "date-time",
-            "description" : "Date and time of the receipt."
+            "description" : "Date and time of the rebook. Default to now if empty."
           },
           "description" : {
             "type" : "string",
@@ -23507,7 +23456,7 @@
             "enum" : [ "FROM_ACCOUNT", "TO_ACCOUNT" ]
           }
         },
-        "required" : [ "account", "date_time", "total", "type" ]
+        "required" : [ "account", "total", "type" ]
       },
       "ReceiptReferenceDtoV2" : {
         "type" : "object",
@@ -25048,7 +24997,8 @@
         "properties" : {
           "tax_class_entry" : {
             "type" : "string",
-            "description" : "Tax class entry id, determining the tax rate."
+            "description" : "Tax class entry id, determining the tax rate. More then one field is only present if there are multiple tax rates configured and available.",
+            "example" : "d35aed5d-ff02-78d4-a98d-5f1f388b75c7"
           }
         }
       },
@@ -25345,14 +25295,17 @@
       },
       "TaxWithAmountCreationDtoV2" : {
         "type" : "object",
+        "description" : "This field is only present if there are multiple tax rates configured and available.",
         "properties" : {
           "amount" : {
             "type" : "number",
-            "description" : "Tax amount of the line."
+            "description" : "Tax amount of the line. More than one field is only present if there are multiple tax rates configured and available.",
+            "example" : 10
           },
           "tax_class_entry" : {
             "type" : "string",
-            "description" : "Tax class entry id, determining the tax rate."
+            "description" : "Tax class entry id, determining the tax rate. More then one field is only present if there are multiple tax rates configured and available.",
+            "example" : "d35aed5d-ff02-78d4-a98d-5f1f388b75c7"
           }
         }
       },
@@ -25397,11 +25350,13 @@
         "properties" : {
           "amount" : {
             "type" : "number",
-            "description" : "Tax amount of the line."
+            "description" : "Tax amount of the line. More than one field is only present if there are multiple tax rates configured and available.",
+            "example" : 10
           },
           "tax_class_entry" : {
             "type" : "string",
-            "description" : "Tax class entry id, determining the tax rate."
+            "description" : "Tax class entry id, determining the tax rate. More then one field is only present if there are multiple tax rates configured and available.",
+            "example" : "d35aed5d-ff02-78d4-a98d-5f1f388b75c7"
           },
           "tax_class_entry_modifier" : {
             "type" : "string",
@@ -25432,7 +25387,8 @@
         "properties" : {
           "tax_class_entry" : {
             "type" : "string",
-            "description" : "Tax class entry id, determining the tax rate."
+            "description" : "Tax class entry id, determining the tax rate. More then one field is only present if there are multiple tax rates configured and available.",
+            "example" : "d35aed5d-ff02-78d4-a98d-5f1f388b75c7"
           },
           "tax_class_entry_modifier" : {
             "type" : "string",

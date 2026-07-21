@@ -20,7 +20,7 @@
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
-  }   ],
+  } ],
   "tags" : [ {
     "description" : "Authentication information for API users.",
     "name" : "AUTH"
@@ -11804,7 +11804,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : "2"
+            "example" : 2
           },
           "address_type" : {
             "type" : "string",
@@ -11910,7 +11910,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         },
         "required" : [ "address_type", "identifier" ]
@@ -12093,7 +12093,6 @@
             "type" : "string"
           },
           "contentType" : {
-            "type" : "object",
             "properties" : {
               "parameters" : {
                 "type" : "object",
@@ -12116,12 +12115,10 @@
             }
           },
           "dataHandler" : {
-            "type" : "object",
             "properties" : {
               "allCommands" : {
                 "type" : "array",
                 "items" : {
-                  "type" : "object",
                   "properties" : {
                     "commandClass" : {
                       "type" : "string"
@@ -12133,7 +12130,6 @@
                 }
               },
               "commandMap" : {
-                "type" : "object",
                 "properties" : {
                   "mimeTypes" : {
                     "type" : "array",
@@ -12144,42 +12140,30 @@
                 },
                 "writeOnly" : true
               },
-              "content" : {
-                "type" : "object"
-              },
+              "content" : { },
               "contentType" : {
                 "type" : "string"
               },
               "dataSource" : {
-                "type" : "object",
                 "properties" : {
                   "contentType" : {
                     "type" : "string"
                   },
-                  "inputStream" : {
-                    "type" : "object"
-                  },
+                  "inputStream" : { },
                   "name" : {
                     "type" : "string"
                   },
-                  "outputStream" : {
-                    "type" : "object"
-                  }
+                  "outputStream" : { }
                 }
               },
-              "inputStream" : {
-                "type" : "object"
-              },
+              "inputStream" : { },
               "name" : {
                 "type" : "string"
               },
-              "outputStream" : {
-                "type" : "object"
-              },
+              "outputStream" : { },
               "preferredCommands" : {
                 "type" : "array",
                 "items" : {
-                  "type" : "object",
                   "properties" : {
                     "commandClass" : {
                       "type" : "string"
@@ -12193,7 +12177,6 @@
               "transferDataFlavors" : {
                 "type" : "array",
                 "items" : {
-                  "type" : "object",
                   "properties" : {
                     "defaultRepresentationClassAsString" : {
                       "type" : "string"
@@ -12257,9 +12240,7 @@
               }
             }
           },
-          "object" : {
-            "type" : "object"
-          }
+          "object" : { }
         }
       },
       "AuthIssuerInfoDtoV2" : {
@@ -12363,7 +12344,7 @@
           "amount" : {
             "type" : "string",
             "description" : "Total amount of the booking. Positive for credit, and negative for debit transactions.",
-            "example" : "1234"
+            "example" : 1234
           },
           "booking_date" : {
             "type" : "string",
@@ -12402,7 +12383,7 @@
           "originator_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that originated the transaction.",
-            "example" : "12345"
+            "example" : 12345
           },
           "originator_bank_reference" : {
             "type" : "string",
@@ -12417,7 +12398,7 @@
           "partner_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that received the transaction.",
-            "example" : "12345"
+            "example" : 12345
           },
           "partner_name" : {
             "type" : "string",
@@ -12457,7 +12438,7 @@
           "transaction_id" : {
             "type" : "string",
             "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates.",
-            "example" : "123456789"
+            "example" : 123456789
           },
           "value_date" : {
             "type" : "string",
@@ -12654,9 +12635,7 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/BankStatementLineCreationDtoV2"
-            },
-            "maxItems" : 2147483647,
-            "minItems" : 1
+            }
           }
         },
         "required" : [ "lines" ]
@@ -12721,7 +12700,6 @@
       },
       "BusinessDocumentLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -12792,7 +12770,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /accounts/{account}/tax_class_entries resource."
           },
           "total" : {
             "type" : "number",
@@ -13695,7 +13674,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -14256,7 +14236,6 @@
       },
       "CreditMemoLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -14327,7 +14306,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /accounts/{account}/tax_class_entries resource."
           },
           "total" : {
             "type" : "number",
@@ -14533,7 +14513,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : "2"
+            "example" : 2
           },
           "attribute1" : {
             "type" : "string",
@@ -14632,7 +14612,8 @@
             "example" : "a88cee2d-0a27-439d-a9c3-e9267075f1f1"
           },
           "default_taxes" : {
-            "$ref" : "#/components/schemas/TaxSetCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
+            "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored."
           },
           "description" : {
             "type" : "string",
@@ -14657,7 +14638,7 @@
           "duns" : {
             "type" : "string",
             "description" : "Data Universal Numbering System (DUNS) number of the customer.",
-            "example" : "301627035"
+            "example" : 301627035
           },
           "email_address" : {
             "type" : "string",
@@ -14677,7 +14658,7 @@
           "gln" : {
             "type" : "string",
             "description" : "Global location number of the customer.",
-            "example" : "9110016992075"
+            "example" : 9110016992075
           },
           "has_valid_tax_number" : {
             "type" : "boolean",
@@ -14767,8 +14748,7 @@
             "type" : "array",
             "description" : "Any tags to associate this customer or supplier with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this customer or supplier with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
@@ -14781,7 +14761,7 @@
             "type" : "string",
             "format" : "date",
             "description" : "Validation date of the tax number",
-            "example" : "0006-07-17"
+            "example" : "01-01-2024"
           },
           "tax_number_validation_type" : {
             "type" : "string",
@@ -14812,7 +14792,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -15229,7 +15209,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : "2"
+            "example" : 2
           },
           "attribute1" : {
             "type" : "string",
@@ -15338,7 +15318,8 @@
             "example" : "a88cee2d-0a27-439d-a9c3-e9267075f1f1"
           },
           "default_taxes" : {
-            "$ref" : "#/components/schemas/TaxSetCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
+            "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored."
           },
           "description" : {
             "type" : "string",
@@ -15363,7 +15344,7 @@
           "duns" : {
             "type" : "string",
             "description" : "Data Universal Numbering System (DUNS) number of the customer.",
-            "example" : "301627035"
+            "example" : 301627035
           },
           "email_address" : {
             "type" : "string",
@@ -15383,7 +15364,7 @@
           "gln" : {
             "type" : "string",
             "description" : "Global location number of the customer.",
-            "example" : "9110016992075"
+            "example" : 9110016992075
           },
           "has_valid_tax_number" : {
             "type" : "boolean",
@@ -15464,8 +15445,7 @@
             "type" : "array",
             "description" : "Any tags to associate this customer or supplier with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this customer or supplier with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
@@ -15478,7 +15458,7 @@
             "type" : "string",
             "format" : "date",
             "description" : "Validation date of the tax number",
-            "example" : "0006-07-17"
+            "example" : "01-01-2024"
           },
           "tax_number_validation_type" : {
             "type" : "string",
@@ -15509,7 +15489,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -15776,7 +15756,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -16387,7 +16368,6 @@
       },
       "DocumentKeyDtoV2" : {
         "type" : "object",
-        "description" : "Ids of documents that should be attached to email.",
         "properties" : {
           "provider" : {
             "type" : "string",
@@ -17157,9 +17137,7 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineCreationDtoV2"
-            },
-            "maxItems" : 2147483647,
-            "minItems" : 1
+            }
           },
           "net" : {
             "type" : "number",
@@ -17484,7 +17462,6 @@
       },
       "IncomingInvoiceLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -17535,7 +17512,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2",
+            "description" : "Tax class entries and modifier."
           },
           "total" : {
             "type" : "number",
@@ -17640,7 +17618,6 @@
       },
       "IncomingInvoiceLineUpdateDtoV2" : {
         "type" : "object",
-        "description" : "Lines for the template. Existing lines can be changed by applying their ID. Lines without ID will be created and existing lines without matching ID will be deleted.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -17695,7 +17672,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2",
+            "description" : "Tax class entries and modifier."
           },
           "total" : {
             "type" : "number",
@@ -17774,9 +17752,7 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineCreationDtoV2"
-            },
-            "maxItems" : 2147483647,
-            "minItems" : 1
+            }
           },
           "name" : {
             "type" : "string",
@@ -17811,8 +17787,7 @@
             "type" : "array",
             "description" : "Tags connected to the template",
             "items" : {
-              "type" : "string",
-              "description" : "Tags connected to the template"
+              "type" : "string"
             }
           },
           "tax" : {
@@ -18096,9 +18071,7 @@
             "description" : "Lines for the template. Existing lines can be changed by applying their ID. Lines without ID will be created and existing lines without matching ID will be deleted.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineUpdateDtoV2"
-            },
-            "maxItems" : 2147483647,
-            "minItems" : 1
+            }
           },
           "name" : {
             "type" : "string",
@@ -18133,8 +18106,7 @@
             "type" : "array",
             "description" : "Tags connected to the template",
             "items" : {
-              "type" : "string",
-              "description" : "Tags connected to the template"
+              "type" : "string"
             }
           },
           "tax" : {
@@ -18391,7 +18363,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -19079,7 +19052,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -19212,7 +19186,6 @@
       },
       "InvoiceLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -19283,7 +19256,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /accounts/{account}/tax_class_entries resource."
           },
           "total" : {
             "type" : "number",
@@ -19549,7 +19523,8 @@
             "example" : "Tree category"
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
+            "description" : "Default Tax class entry for items, see the cbs/accounts/{account}/tax_class_entries resource.Needs to be given together with account when creating an item category, otherwise it is ignored."
           },
           "unit_of_measure" : {
             "type" : "string",
@@ -19835,7 +19810,7 @@
           },
           "ignore_total_discount" : {
             "type" : "boolean",
-            "default" : false,
+            "default" : "false",
             "description" : "If set to true item is not considered for the discount of a business document."
           },
           "item_category" : {
@@ -19887,19 +19862,20 @@
           "supplier_order_number" : {
             "type" : "string",
             "description" : "Optional number for the item number in the supplier's records.",
-            "example" : "1"
+            "example" : 1
           },
           "tags" : {
             "type" : "array",
             "description" : "Any tags to associate this item with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this item with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /cbs/accounts/{account}/tax_class_entries resource. Required when creating an item if item category is not given or has no default account.",
+            "example" : "e7083036-8779-d492-0c78-332cfde21b6"
           },
           "unit_of_measure" : {
             "type" : "string",
@@ -20024,7 +20000,7 @@
           },
           "ignore_total_discount" : {
             "type" : "boolean",
-            "default" : false,
+            "default" : "false",
             "description" : "If set to true item is not considered for the discount of a business document."
           },
           "item_category" : {
@@ -20076,19 +20052,20 @@
           "supplier_order_number" : {
             "type" : "string",
             "description" : "Optional number for the item number in the supplier's records.",
-            "example" : "1"
+            "example" : 1
           },
           "tags" : {
             "type" : "array",
             "description" : "Any tags to associate this item with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this item with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /cbs/accounts/{account}/tax_class_entries resource. Required when creating an item if item category is not given or has no default account.",
+            "example" : "e7083036-8779-d492-0c78-332cfde21b6"
           },
           "unit_of_measure" : {
             "type" : "string",
@@ -20097,7 +20074,7 @@
           },
           "update_templates" : {
             "type" : "boolean",
-            "default" : false,
+            "default" : "false",
             "description" : "If set to true all invoice templates where the item is used will be updated. Default is false."
           },
           "visible" : {
@@ -20363,7 +20340,6 @@
       },
       "ManualAddressInfoDtoV2" : {
         "type" : "object",
-        "description" : "This address information will be taken (only) for this receipt. If a customer reference is available, its information will be overwritten by this address.",
         "properties" : {
           "bcc_email_address" : {
             "type" : "string",
@@ -20436,13 +20412,12 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         }
       },
       "MetadataCreationDtoV2" : {
         "type" : "object",
-        "description" : "A list of metadata to include with the new document. Only approved metadata sources are used in the UI.",
         "properties" : {
           "boolean_value" : {
             "type" : "boolean",
@@ -20565,7 +20540,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -21080,7 +21056,6 @@
       },
       "OfferLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -21151,7 +21126,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /accounts/{account}/tax_class_entries resource."
           },
           "total" : {
             "type" : "number",
@@ -21329,7 +21305,8 @@
             "example" : "a9137a47-5f4c-4239-b85e-2a97e3826cbb"
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "If manual address is true this address information will set for the document."
           },
           "currency" : {
             "type" : "string",
@@ -21915,9 +21892,7 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/OutgoingInvoiceLineCreationDtoV2"
-            },
-            "maxItems" : 2147483647,
-            "minItems" : 1
+            }
           },
           "net" : {
             "type" : "number",
@@ -22252,7 +22227,6 @@
       },
       "OutgoingInvoiceLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "Lines that will be created for the template.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -22287,7 +22261,8 @@
             "uniqueItems" : true
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries for the line."
           },
           "total" : {
             "type" : "number",
@@ -22646,7 +22621,6 @@
       },
       "PaymentTermDiscountDtoV2" : {
         "type" : "object",
-        "description" : "List of discounts connected to the payment term.",
         "properties" : {
           "days" : {
             "type" : "integer",
@@ -23071,6 +23045,10 @@
           "payment_account" : {
             "$ref" : "#/components/schemas/CashRegisterPaymentAccountReferenceDtoV2"
           },
+          "qr_code" : {
+            "type" : "string",
+            "description" : "Machine readable code."
+          },
           "reference_date" : {
             "type" : "string",
             "format" : "date",
@@ -23218,7 +23196,8 @@
             "description" : "Additional address id, see the /customer/{customer}/additional_addresses resource. Sets an address besides the default to be used for this receipt."
           },
           "address" : {
-            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2"
+            "$ref" : "#/components/schemas/ManualAddressInfoDtoV2",
+            "description" : "This address information will be taken (only) for this receipt. If a customer reference is available, its information will be overwritten by this address."
           },
           "customer" : {
             "type" : "string",
@@ -23233,7 +23212,8 @@
           "date_time" : {
             "type" : "string",
             "format" : "date-time",
-            "description" : "Date and time of the receipt, defaulted to the current time."
+            "description" : "Date and time of the receipt, defaulted to the current time.",
+            "example" : "2017-02-20T14:54:37.443"
           },
           "id" : {
             "type" : "string",
@@ -23279,7 +23259,6 @@
       },
       "ReceiptLineCreationDtoV2" : {
         "type" : "object",
-        "description" : "Receipt lines for INCOME type receipts.",
         "properties" : {
           "account" : {
             "type" : "string",
@@ -23435,7 +23414,8 @@
           "date_time" : {
             "type" : "string",
             "format" : "date-time",
-            "description" : "Date and time of the rebook. Default to now if empty."
+            "description" : "Date and time of the rebook. Default to now if empty.",
+            "example" : "2017-02-20T14:54:37.443"
           },
           "description" : {
             "type" : "string",
@@ -23755,7 +23735,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : "2"
+            "example" : 2
           },
           "attribute1" : {
             "type" : "string",
@@ -23854,7 +23834,8 @@
             "enum" : [ "AMOUNT", "AMOUNT_WITH_TAX", "PERCENTAGE", "PERCENTAGE_WITH_TAX" ]
           },
           "default_taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithModifierCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithModifierCreationDtoV2",
+            "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored."
           },
           "description" : {
             "type" : "string",
@@ -23964,8 +23945,7 @@
             "type" : "array",
             "description" : "Any tags to associate this customer or supplier with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this customer or supplier with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
@@ -23978,7 +23958,7 @@
             "type" : "string",
             "format" : "date",
             "description" : "Validation date of the tax number",
-            "example" : "0006-07-17"
+            "example" : "01-01-2024"
           },
           "tax_number_validation_type" : {
             "type" : "string",
@@ -24009,7 +23989,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -24341,7 +24321,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : "2"
+            "example" : 2
           },
           "attribute1" : {
             "type" : "string",
@@ -24440,7 +24420,8 @@
             "enum" : [ "AMOUNT", "AMOUNT_WITH_TAX", "PERCENTAGE", "PERCENTAGE_WITH_TAX" ]
           },
           "default_taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithModifierCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithModifierCreationDtoV2",
+            "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored."
           },
           "description" : {
             "type" : "string",
@@ -24541,8 +24522,7 @@
             "type" : "array",
             "description" : "Any tags to associate this customer or supplier with",
             "items" : {
-              "type" : "string",
-              "description" : "Any tags to associate this customer or supplier with"
+              "type" : "string"
             },
             "uniqueItems" : true
           },
@@ -24555,7 +24535,7 @@
             "type" : "string",
             "format" : "date",
             "description" : "Validation date of the tax number",
-            "example" : "0006-07-17"
+            "example" : "01-01-2024"
           },
           "tax_number_validation_type" : {
             "type" : "string",
@@ -24586,7 +24566,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : "1010"
+            "example" : 1010
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -25110,7 +25090,6 @@
       },
       "TaxSetCreationDtoV2" : {
         "type" : "object",
-        "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored.",
         "properties" : {
           "tax_1" : {
             "$ref" : "#/components/schemas/TaxCreationDtoV2"
@@ -25156,16 +25135,20 @@
             "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2"
           },
           "tax_2" : {
-            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2",
+            "description" : "This field is only present if there are multiple tax rates configured and available."
           },
           "tax_3" : {
-            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2",
+            "description" : "This field is only present if there are multiple tax rates configured and available."
           },
           "tax_4" : {
-            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2",
+            "description" : "This field is only present if there are multiple tax rates configured and available."
           },
           "tax_5" : {
-            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxWithAmountCreationDtoV2",
+            "description" : "This field is only present if there are multiple tax rates configured and available."
           }
         }
       },
@@ -25212,7 +25195,6 @@
       },
       "TaxSetWithModifierAndAmountCreationDtoV2" : {
         "type" : "object",
-        "description" : "Tax class entries and modifier.",
         "properties" : {
           "tax_1" : {
             "$ref" : "#/components/schemas/TaxWithModifierAndAmountCreationDtoV2"
@@ -25254,7 +25236,6 @@
       },
       "TaxSetWithModifierCreationDtoV2" : {
         "type" : "object",
-        "description" : "Tax class entry ids for the default account, see the /fis/tax_class_entries resource. Will be used as default for new incoming/outgoing invoices with the contact. Must be set alongside default_account, otherwisethis field will be ignored.",
         "properties" : {
           "tax_1" : {
             "$ref" : "#/components/schemas/TaxWithModifierCreationDtoV2"
@@ -25295,7 +25276,6 @@
       },
       "TaxWithAmountCreationDtoV2" : {
         "type" : "object",
-        "description" : "This field is only present if there are multiple tax rates configured and available.",
         "properties" : {
           "amount" : {
             "type" : "number",

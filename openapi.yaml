@@ -8726,7 +8726,7 @@ components:
         address_branch_no:
           type: string
           description: "Address branch number of the company, if present."
-          example: "2"
+          example: 2
         address_type:
           type: string
           description: "Determines whether this address is an invoice address, delivery\
@@ -8820,7 +8820,7 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
       required:
       - address_type
       - identifier
@@ -9019,7 +9019,6 @@ components:
         contentId:
           type: string
         contentType:
-          type: object
           properties:
             parameters:
               type: object
@@ -9034,50 +9033,40 @@ components:
             wildcardType:
               type: boolean
         dataHandler:
-          type: object
           properties:
             allCommands:
               type: array
               items:
-                type: object
                 properties:
                   commandClass:
                     type: string
                   commandName:
                     type: string
             commandMap:
-              type: object
               properties:
                 mimeTypes:
                   type: array
                   items:
                     type: string
               writeOnly: true
-            content:
-              type: object
+            content: {}
             contentType:
               type: string
             dataSource:
-              type: object
               properties:
                 contentType:
                   type: string
-                inputStream:
-                  type: object
+                inputStream: {}
                 name:
                   type: string
-                outputStream:
-                  type: object
-            inputStream:
-              type: object
+                outputStream: {}
+            inputStream: {}
             name:
               type: string
-            outputStream:
-              type: object
+            outputStream: {}
             preferredCommands:
               type: array
               items:
-                type: object
                 properties:
                   commandClass:
                     type: string
@@ -9086,7 +9075,6 @@ components:
             transferDataFlavors:
               type: array
               items:
-                type: object
                 properties:
                   defaultRepresentationClassAsString:
                     type: string
@@ -9126,8 +9114,7 @@ components:
             type: array
             items:
               type: string
-        object:
-          type: object
+        object: {}
     AuthIssuerInfoDtoV2:
       type: object
       properties:
@@ -9223,7 +9210,7 @@ components:
           type: string
           description: "Total amount of the booking. Positive for credit, and negative\
             \ for debit transactions."
-          example: "1234"
+          example: 1234
         booking_date:
           type: string
           description: "Actual booking date of the transaction, as determined by the\
@@ -9257,7 +9244,7 @@ components:
         originator_bank_code:
           type: string
           description: Bank code of the person or company that originated the transaction.
-          example: "12345"
+          example: 12345
         originator_bank_reference:
           type: string
           description: Bank reference of the person or company that originated the
@@ -9270,7 +9257,7 @@ components:
         partner_bank_code:
           type: string
           description: Bank code of the person or company that received the transaction.
-          example: "12345"
+          example: 12345
         partner_name:
           type: string
           description: Name of the person or company that received the transaction.
@@ -9315,7 +9302,7 @@ components:
           type: string
           description: "Optional, unique transaction id. Lines with duplicate transaction\
             \ ids are filtered out as duplicates."
-          example: "123456789"
+          example: 123456789
         value_date:
           type: string
           description: "Value date of the transaction, as submitted by the initiator."
@@ -9495,8 +9482,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BankStatementLineCreationDtoV2'
-          maxItems: 2147483647
-          minItems: 1
       required:
       - lines
     BankStatementResultDtoV2:
@@ -9566,8 +9551,6 @@ components:
           example: e7083036-8779-d492-0c78-332cfde21b68
     BusinessDocumentLineCreationDtoV2:
       type: object
-      description: List of all business document lines. The order of this array defines
-        the numbers assigned to the lines.
       properties:
         account:
           type: string
@@ -9644,6 +9627,8 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithAmountCreationDtoV2'
+          description: "Tax class entries of the item, see the /accounts/{account}/tax_class_entries\
+            \ resource."
         total:
           type: number
           description: "Total price, including tax, of the line. Always required for\
@@ -10585,6 +10570,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -11206,8 +11193,6 @@ components:
       - type
     CreditMemoLineCreationDtoV2:
       type: object
-      description: List of all business document lines. The order of this array defines
-        the numbers assigned to the lines.
       properties:
         account:
           type: string
@@ -11284,6 +11269,8 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithAmountCreationDtoV2'
+          description: "Tax class entries of the item, see the /accounts/{account}/tax_class_entries\
+            \ resource."
         total:
           type: number
           description: "Total price, including tax, of the line. Always required for\
@@ -11486,7 +11473,7 @@ components:
         address_branch_no:
           type: string
           description: "Address branch number of the company, if present."
-          example: "2"
+          example: 2
         attribute1:
           type: string
           description: Client-defined custom attribute. Can be freely renamed or used.
@@ -11578,6 +11565,10 @@ components:
           example: a88cee2d-0a27-439d-a9c3-e9267075f1f1
         default_taxes:
           $ref: '#/components/schemas/TaxSetCreationDtoV2'
+          description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
+            \ resource. Will be used as default for new incoming/outgoing invoices\
+            \ with the contact. Must be set alongside default_account, otherwisethis\
+            \ field will be ignored."
         description:
           type: string
           description: Short description or note belonging to the contact.
@@ -11599,7 +11590,7 @@ components:
         duns:
           type: string
           description: Data Universal Numbering System (DUNS) number of the customer.
-          example: "301627035"
+          example: 301627035
         email_address:
           type: string
           description: E-mail address belonging to the contact.
@@ -11616,7 +11607,7 @@ components:
         gln:
           type: string
           description: Global location number of the customer.
-          example: "9110016992075"
+          example: 9110016992075
         has_valid_tax_number:
           type: boolean
           description: Whether this contact has a valid tax number
@@ -11700,7 +11691,6 @@ components:
           description: Any tags to associate this customer or supplier with
           items:
             type: string
-            description: Any tags to associate this customer or supplier with
           uniqueItems: true
         tax_number:
           type: string
@@ -11711,7 +11701,7 @@ components:
           type: string
           format: date
           description: Validation date of the tax number
-          example: 0006-07-17
+          example: 01-01-2024
         tax_number_validation_type:
           type: string
           description: Validation type of the tax number
@@ -11739,7 +11729,7 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
       required:
       - ignore_in_bsa
     CustomerDefaultAddressModificationDtoV2:
@@ -12101,7 +12091,7 @@ components:
         address_branch_no:
           type: string
           description: "Address branch number of the company, if present."
-          example: "2"
+          example: 2
         attribute1:
           type: string
           description: Client-defined custom attribute. Can be freely renamed or used.
@@ -12207,6 +12197,10 @@ components:
           example: a88cee2d-0a27-439d-a9c3-e9267075f1f1
         default_taxes:
           $ref: '#/components/schemas/TaxSetCreationDtoV2'
+          description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
+            \ resource. Will be used as default for new incoming/outgoing invoices\
+            \ with the contact. Must be set alongside default_account, otherwisethis\
+            \ field will be ignored."
         description:
           type: string
           description: Short description or note belonging to the contact.
@@ -12228,7 +12222,7 @@ components:
         duns:
           type: string
           description: Data Universal Numbering System (DUNS) number of the customer.
-          example: "301627035"
+          example: 301627035
         email_address:
           type: string
           description: E-mail address belonging to the contact.
@@ -12245,7 +12239,7 @@ components:
         gln:
           type: string
           description: Global location number of the customer.
-          example: "9110016992075"
+          example: 9110016992075
         has_valid_tax_number:
           type: boolean
           description: Whether this contact has a valid tax number
@@ -12316,7 +12310,6 @@ components:
           description: Any tags to associate this customer or supplier with
           items:
             type: string
-            description: Any tags to associate this customer or supplier with
           uniqueItems: true
         tax_number:
           type: string
@@ -12327,7 +12320,7 @@ components:
           type: string
           format: date
           description: Validation date of the tax number
-          example: 0006-07-17
+          example: 01-01-2024
         tax_number_validation_type:
           type: string
           description: Validation type of the tax number
@@ -12355,7 +12348,7 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
       required:
       - ignore_in_bsa
     DailyClosingDtoV2:
@@ -12615,6 +12608,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -13248,7 +13243,6 @@ components:
           example: 1010
     DocumentKeyDtoV2:
       type: object
-      description: Ids of documents that should be attached to email.
       properties:
         provider:
           type: string
@@ -13987,8 +13981,6 @@ components:
             the assigned line numbers.
           items:
             $ref: '#/components/schemas/IncomingInvoiceLineCreationDtoV2'
-          maxItems: 2147483647
-          minItems: 1
         net:
           type: number
           description: "Net amount of the invoice. Has to match net amount of lines\
@@ -14313,8 +14305,6 @@ components:
       - total
     IncomingInvoiceLineCreationDtoV2:
       type: object
-      description: List of invoice lines. The supplied order of the array defines
-        the assigned line numbers.
       properties:
         account:
           type: string
@@ -14369,6 +14359,7 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2'
+          description: Tax class entries and modifier.
         total:
           type: number
           description: "Total amount (net + tax) of the line. Maximum of 10 digits\
@@ -14491,9 +14482,6 @@ components:
       - total
     IncomingInvoiceLineUpdateDtoV2:
       type: object
-      description: Lines for the template. Existing lines can be changed by applying
-        their ID. Lines without ID will be created and existing lines without matching
-        ID will be deleted.
       properties:
         account:
           type: string
@@ -14552,6 +14540,7 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithModifierAndAmountCreationDtoV2'
+          description: Tax class entries and modifier.
         total:
           type: number
           description: "Total amount (net + tax) of the line. Maximum of 10 digits\
@@ -14619,8 +14608,6 @@ components:
             the assigned line numbers.
           items:
             $ref: '#/components/schemas/IncomingInvoiceLineCreationDtoV2'
-          maxItems: 2147483647
-          minItems: 1
         name:
           type: string
           description: Name of the template
@@ -14652,7 +14639,6 @@ components:
           description: Tags connected to the template
           items:
             type: string
-            description: Tags connected to the template
         tax:
           type: number
           description: "Tax amount of the invoice. Has to match tax amount of lines\
@@ -14916,8 +14902,6 @@ components:
             matching ID will be deleted.
           items:
             $ref: '#/components/schemas/IncomingInvoiceLineUpdateDtoV2'
-          maxItems: 2147483647
-          minItems: 1
         name:
           type: string
           description: Name of the template
@@ -14949,7 +14933,6 @@ components:
           description: Tags connected to the template
           items:
             type: string
-            description: Tags connected to the template
         tax:
           type: number
           description: "Tax amount of the invoice. Has to match tax amount of lines\
@@ -15213,6 +15196,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -15958,6 +15943,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -16087,8 +16074,6 @@ components:
       - number
     InvoiceLineCreationDtoV2:
       type: object
-      description: List of all business document lines. The order of this array defines
-        the numbers assigned to the lines.
       properties:
         account:
           type: string
@@ -16165,6 +16150,8 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithAmountCreationDtoV2'
+          description: "Tax class entries of the item, see the /accounts/{account}/tax_class_entries\
+            \ resource."
         total:
           type: number
           description: "Total price, including tax, of the line. Always required for\
@@ -16437,6 +16424,9 @@ components:
           example: Tree category
         taxes:
           $ref: '#/components/schemas/TaxSetCreationDtoV2'
+          description: "Default Tax class entry for items, see the cbs/accounts/{account}/tax_class_entries\
+            \ resource.Needs to be given together with account when creating an item\
+            \ category, otherwise it is ignored."
         unit_of_measure:
           type: string
           description: Short code of the unit type to default for items. See the fnd/units_of_measure
@@ -16699,7 +16689,7 @@ components:
           example: <p>Grows Apples during Autumn</p>
         ignore_total_discount:
           type: boolean
-          default: false
+          default: "false"
           description: If set to true item is not considered for the discount of a
             business document.
         item_category:
@@ -16747,16 +16737,19 @@ components:
         supplier_order_number:
           type: string
           description: Optional number for the item number in the supplier's records.
-          example: "1"
+          example: 1
         tags:
           type: array
           description: Any tags to associate this item with
           items:
             type: string
-            description: Any tags to associate this item with
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetCreationDtoV2'
+          description: "Tax class entries of the item, see the /cbs/accounts/{account}/tax_class_entries\
+            \ resource. Required when creating an item if item category is not given\
+            \ or has no default account."
+          example: e7083036-8779-d492-0c78-332cfde21b6
         unit_of_measure:
           type: string
           description: "short code for the amount unit of measure, see the /units_of_measure\
@@ -16872,7 +16865,7 @@ components:
           example: <p>Grows Apples during Autumn</p>
         ignore_total_discount:
           type: boolean
-          default: false
+          default: "false"
           description: If set to true item is not considered for the discount of a
             business document.
         item_category:
@@ -16920,16 +16913,19 @@ components:
         supplier_order_number:
           type: string
           description: Optional number for the item number in the supplier's records.
-          example: "1"
+          example: 1
         tags:
           type: array
           description: Any tags to associate this item with
           items:
             type: string
-            description: Any tags to associate this item with
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetCreationDtoV2'
+          description: "Tax class entries of the item, see the /cbs/accounts/{account}/tax_class_entries\
+            \ resource. Required when creating an item if item category is not given\
+            \ or has no default account."
+          example: e7083036-8779-d492-0c78-332cfde21b6
         unit_of_measure:
           type: string
           description: "short code for the amount unit of measure, see the /units_of_measure\
@@ -16937,7 +16933,7 @@ components:
           example: S
         update_templates:
           type: boolean
-          default: false
+          default: "false"
           description: If set to true all invoice templates where the item is used
             will be updated. Default is false.
         visible:
@@ -17214,9 +17210,6 @@ components:
       - name
     ManualAddressInfoDtoV2:
       type: object
-      description: "This address information will be taken (only) for this receipt.\
-        \ If a customer reference is available, its information will be overwritten\
-        \ by this address."
       properties:
         bcc_email_address:
           type: string
@@ -17279,11 +17272,9 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
     MetadataCreationDtoV2:
       type: object
-      description: A list of metadata to include with the new document. Only approved
-        metadata sources are used in the UI.
       properties:
         boolean_value:
           type: boolean
@@ -17515,6 +17506,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -18069,8 +18062,6 @@ components:
       - type
     OfferLineCreationDtoV2:
       type: object
-      description: List of all business document lines. The order of this array defines
-        the numbers assigned to the lines.
       properties:
         account:
           type: string
@@ -18147,6 +18138,8 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithAmountCreationDtoV2'
+          description: "Tax class entries of the item, see the /accounts/{account}/tax_class_entries\
+            \ resource."
         total:
           type: number
           description: "Total price, including tax, of the line. Always required for\
@@ -18341,6 +18334,8 @@ components:
           example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: If manual address is true this address information will set
+            for the document.
         currency:
           type: string
           description: "Currency code of the document, see the /currencies resource.\
@@ -18960,8 +18955,6 @@ components:
             the assigned line numbers.
           items:
             $ref: '#/components/schemas/OutgoingInvoiceLineCreationDtoV2'
-          maxItems: 2147483647
-          minItems: 1
         net:
           type: number
           description: "Net amount of the invoice. Has to match net amount of lines\
@@ -19304,7 +19297,6 @@ components:
       - total
     OutgoingInvoiceLineCreationDtoV2:
       type: object
-      description: Lines that will be created for the template.
       properties:
         account:
           type: string
@@ -19339,6 +19331,7 @@ components:
           uniqueItems: true
         taxes:
           $ref: '#/components/schemas/TaxSetWithAmountCreationDtoV2'
+          description: Tax class entries for the line.
         total:
           type: number
           description: "Total amount (net + tax) of the line. Maximum of 10 digits\
@@ -19704,7 +19697,6 @@ components:
           - CREDIT_CASHED
     PaymentTermDiscountDtoV2:
       type: object
-      description: List of discounts connected to the payment term.
       properties:
         days:
           type: integer
@@ -20089,6 +20081,9 @@ components:
             was created.
         payment_account:
           $ref: '#/components/schemas/CashRegisterPaymentAccountReferenceDtoV2'
+        qr_code:
+          type: string
+          description: Machine readable code.
         reference_date:
           type: string
           format: date
@@ -20255,6 +20250,9 @@ components:
             \ resource. Sets an address besides the default to be used for this receipt."
         address:
           $ref: '#/components/schemas/ManualAddressInfoDtoV2'
+          description: "This address information will be taken (only) for this receipt.\
+            \ If a customer reference is available, its information will be overwritten\
+            \ by this address."
         customer:
           type: string
           description: "Customer id, see the /customers resource. If no customer name,\
@@ -20271,6 +20269,7 @@ components:
           type: string
           format: date-time
           description: "Date and time of the receipt, defaulted to the current time."
+          example: 2017-02-20T14:54:37.443
         id:
           type: string
           description: "Optional. The ID of a previously initiated receipt from the\
@@ -20312,7 +20311,6 @@ components:
       - id
     ReceiptLineCreationDtoV2:
       type: object
-      description: Receipt lines for INCOME type receipts.
       properties:
         account:
           type: string
@@ -20462,6 +20460,7 @@ components:
           type: string
           format: date-time
           description: Date and time of the rebook. Default to now if empty.
+          example: 2017-02-20T14:54:37.443
         description:
           type: string
           description: Optional description for rebook.
@@ -20752,7 +20751,7 @@ components:
         address_branch_no:
           type: string
           description: "Address branch number of the company, if present."
-          example: "2"
+          example: 2
         attribute1:
           type: string
           description: Client-defined custom attribute. Can be freely renamed or used.
@@ -20846,6 +20845,10 @@ components:
           - PERCENTAGE_WITH_TAX
         default_taxes:
           $ref: '#/components/schemas/TaxSetWithModifierCreationDtoV2'
+          description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
+            \ resource. Will be used as default for new incoming/outgoing invoices\
+            \ with the contact. Must be set alongside default_account, otherwisethis\
+            \ field will be ignored."
         description:
           type: string
           description: Short description or note belonging to the contact.
@@ -20947,7 +20950,6 @@ components:
           description: Any tags to associate this customer or supplier with
           items:
             type: string
-            description: Any tags to associate this customer or supplier with
           uniqueItems: true
         tax_number:
           type: string
@@ -20958,7 +20960,7 @@ components:
           type: string
           format: date
           description: Validation date of the tax number
-          example: 0006-07-17
+          example: 01-01-2024
         tax_number_validation_type:
           type: string
           description: Validation type of the tax number
@@ -20986,7 +20988,7 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
       required:
       - ignore_in_bsa
     SupplierDtoV2:
@@ -21274,7 +21276,7 @@ components:
         address_branch_no:
           type: string
           description: "Address branch number of the company, if present."
-          example: "2"
+          example: 2
         attribute1:
           type: string
           description: Client-defined custom attribute. Can be freely renamed or used.
@@ -21368,6 +21370,10 @@ components:
           - PERCENTAGE_WITH_TAX
         default_taxes:
           $ref: '#/components/schemas/TaxSetWithModifierCreationDtoV2'
+          description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
+            \ resource. Will be used as default for new incoming/outgoing invoices\
+            \ with the contact. Must be set alongside default_account, otherwisethis\
+            \ field will be ignored."
         description:
           type: string
           description: Short description or note belonging to the contact.
@@ -21456,7 +21462,6 @@ components:
           description: Any tags to associate this customer or supplier with
           items:
             type: string
-            description: Any tags to associate this customer or supplier with
           uniqueItems: true
         tax_number:
           type: string
@@ -21467,7 +21472,7 @@ components:
           type: string
           format: date
           description: Validation date of the tax number
-          example: 0006-07-17
+          example: 01-01-2024
         tax_number_validation_type:
           type: string
           description: Validation type of the tax number
@@ -21495,7 +21500,7 @@ components:
         zip_code:
           type: string
           description: Zip code of the address.
-          example: "1010"
+          example: 1010
       required:
       - ignore_in_bsa
     TagAssignmentDtoV2:
@@ -22012,10 +22017,6 @@ components:
       - content
     TaxSetCreationDtoV2:
       type: object
-      description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
-        \ resource. Will be used as default for new incoming/outgoing invoices with\
-        \ the contact. Must be set alongside default_account, otherwisethis field\
-        \ will be ignored."
       properties:
         tax_1:
           $ref: '#/components/schemas/TaxCreationDtoV2'
@@ -22047,12 +22048,20 @@ components:
           $ref: '#/components/schemas/TaxWithAmountCreationDtoV2'
         tax_2:
           $ref: '#/components/schemas/TaxWithAmountCreationDtoV2'
+          description: This field is only present if there are multiple tax rates
+            configured and available.
         tax_3:
           $ref: '#/components/schemas/TaxWithAmountCreationDtoV2'
+          description: This field is only present if there are multiple tax rates
+            configured and available.
         tax_4:
           $ref: '#/components/schemas/TaxWithAmountCreationDtoV2'
+          description: This field is only present if there are multiple tax rates
+            configured and available.
         tax_5:
           $ref: '#/components/schemas/TaxWithAmountCreationDtoV2'
+          description: This field is only present if there are multiple tax rates
+            configured and available.
     TaxSetWithAmountDtoV2:
       type: object
       properties:
@@ -22083,7 +22092,6 @@ components:
       - tax_1
     TaxSetWithModifierAndAmountCreationDtoV2:
       type: object
-      description: Tax class entries and modifier.
       properties:
         tax_1:
           $ref: '#/components/schemas/TaxWithModifierAndAmountCreationDtoV2'
@@ -22112,10 +22120,6 @@ components:
           $ref: '#/components/schemas/TaxWithModifierAndAmountDtoV2'
     TaxSetWithModifierCreationDtoV2:
       type: object
-      description: "Tax class entry ids for the default account, see the /fis/tax_class_entries\
-        \ resource. Will be used as default for new incoming/outgoing invoices with\
-        \ the contact. Must be set alongside default_account, otherwisethis field\
-        \ will be ignored."
       properties:
         tax_1:
           $ref: '#/components/schemas/TaxWithModifierCreationDtoV2'
@@ -22142,8 +22146,6 @@ components:
           $ref: '#/components/schemas/TaxModifierDtoV2'
     TaxWithAmountCreationDtoV2:
       type: object
-      description: This field is only present if there are multiple tax rates configured
-        and available.
       properties:
         amount:
           type: number

@@ -2760,7 +2760,7 @@ The response format with the reference looks like this:</p>
 <div class="title">Example customer response (shortened)</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-      "id": "759...45",
+      "id": "7594...5",
       "first_name": "John",
       "last_name": "Doe",
       "contra_account": {
@@ -2826,7 +2826,7 @@ content-type: application/json;charset=UTF-8</pre>
   "identifier": "sA5qOX",
   "details": [],
   "payload": [
-    "01f1a...42"
+    "01f1...a42"
   ]
 }</code></pre>
 </div>
@@ -2966,7 +2966,7 @@ Here is an example to query the bookkeeping accounts of your client with the <co
 <div class="listingblock">
 <div class="title">Example accounts API request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/cbs/accounts?limit=1
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/cbs/accounts?limit=1
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -2994,7 +2994,7 @@ content-type: application/json;charset=UTF-8
       "taxes": {
         "tax_1": {
           "tax_class_entry": {
-            "id": "4db0...0e",
+            "id": "4db0...0f0e",
             "code": "020",
             "tax_rate_value": 20
           },
@@ -3076,7 +3076,7 @@ If you wish to fetch all available accounts for creating invoices, you simply ap
 <div class="listingblock">
 <div class="title">Example accounts API request with INV use</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/cbs/accounts?use=INV
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/cbs/accounts?use=INV
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -3138,7 +3138,7 @@ You can fetch all available rates with the <code>fis/tax_classes/{id}/entries</c
 <div class="listingblock">
 <div class="title">Example request for tax class entries of a tax class</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/fis/tax_classes/e7db9b7b-c7e1-7940-eb1b-b0ab89bfdc0a/entries?limit=2sort=tax_rate%3Adesc
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/fis/tax_classes/e7db9b7b-c7e1-7940-eb1b-b0ab89bfdc0a/entries?limit=2sort=tax_rate%3Adesc
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -3249,7 +3249,7 @@ Tax class entry modifiers are used only when creating expenses and are therefore
 <div class="listingblock">
 <div class="title">Example request for tax class entry modifiers of a tax class entry</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/fis/tax_classes/c2b0...918/entries/4db0...f0e/modifiers?limit=2
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/fis/tax_classes/c2b0...918/entries/4db0...f0e/modifiers?limit=2
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -3376,9 +3376,9 @@ The accounts used for incoming invoice lines are expense accounts, which you can
 <div class="listingblock">
 <div class="title">Example request for minimal incoming invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3390,7 +3390,7 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
       "account": "9331...67", <i class="conum" data-value="1"></i><b>(1)</b>
       "taxes": { <i class="conum" data-value="2"></i><b>(2)</b>
         "tax_1": {
-          "tax_class_entry": "4db0...0e"
+          "tax_class_entry": "4db0...0f0e"
           }
         },
       "amount": 120,
@@ -3468,7 +3468,7 @@ Content-Type: application/json;charset=UTF-8</pre>
           "tax_1": {
             "amount": 24.00,
             "tax_class_entry": {
-              "id": "4db04f15-e5b0-74f8-cd4b-b2b06e0c0f0e",
+              "id": "4db0...0f0e",
               "code": "020",
               "tax_rate_value": 20
             }
@@ -3520,9 +3520,9 @@ Depending on the payment and booking state, inclusion of this invoice in tax rep
 <div id="example_cbi_min" class="listingblock">
 <div class="title">Example request for a paid incoming invoice with supplier (CMA)</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3540,7 +3540,7 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
             "account": "9331...67",
             "taxes": {
                 "tax_1": {
-                    "tax_class_entry": "4db0...0e"
+                    "tax_class_entry": "4db0...0f0e"
                 }
             },
             "amount": 12,
@@ -3603,7 +3603,7 @@ Content-Type: application/json;charset=UTF-8</pre>
     "note": "My internal note",
     "lines": [
       {
-        "id": "ebc266a9-4f80-41da-8a45-be17c9189c5b",
+        "id": "ebc2...9c5b",
         "line_number": 1,
         "amount": 12,
         "amount_type": "NET",
@@ -3617,7 +3617,7 @@ Content-Type: application/json;charset=UTF-8</pre>
           "tax_1": {
             "amount": 2.40,
             "tax_class_entry": {
-              "id": "4db0...0e",
+              "id": "4db0...0f0e",
               "code": "020",
               "tax_rate_value": 20
             }
@@ -3646,8 +3646,8 @@ To obtain all bookings for the invoice, simply use the <code>bookings</code> res
 <div class="listingblock">
 <div class="title">Example request to fetch invoice bookings</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices/6555...50/bookings
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices/6555...50/bookings
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3704,15 +3704,15 @@ If you are not familiar with modifiers, refer to the section <a href="#_tax_clas
 <div id="example_cbi_special_sale_modifier" class="listingblock">
 <div class="title">Example request for incoming invoice for an intra-Community acquisition with tax class entry modifier</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "supplier": "10c3..34",
+    "supplier": "10c3...34",
     "invoice_date": "2025-12-01",
     "lines": [
         {
@@ -3721,8 +3721,8 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
             "amount_type": "NET",
             "taxes": {
                 "tax_1": {
-                    "tax_class_entry": "4db0...0e",
-                    "tax_class_entry_modifier": "c442e...b7"
+                    "tax_class_entry": "4db0...0f0e",
+                    "tax_class_entry_modifier": "c442...eb7"
                 }
             }
         }
@@ -3755,7 +3755,7 @@ Content-Type: application/json;charset=UTF-8</pre>
     "open_in_main_currency": 20.00,
     "booked": false,
     "supplier": {
-      "id": "10c3..34",
+      "id": "10c3...34",
       "supplier_number": "L 8610",
       "display_name": "My Supplier"
     },
@@ -3776,7 +3776,7 @@ Content-Type: application/json;charset=UTF-8</pre>
           "tax_1": {
             "amount": 0,
             "tax_class_entry": {
-              "id": "4db0...f0e",
+              "id": "4db0...0f0e",
               "code": "020",
               "tax_rate_value": 20
             },
@@ -3815,15 +3815,15 @@ If a tax class entry has no associated modifiers, all invoices created with that
 <div id="example_cbi_special_sale_without_modifer" class="listingblock">
 <div class="title">Example request for incoming invoice for an intra-Community acquisition</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "supplier": "10c3..34",
+    "supplier": "10c3...34",
     "invoice_date": "2025-12-01",
     "lines": [
         {
@@ -3865,7 +3865,7 @@ Content-Type: application/json;charset=UTF-8</pre>
     "open_in_main_currency": 20.00,
     "booked": false,
      "supplier": {
-      "id": "10c3..34",
+      "id": "10c3...34",
       "supplier_number": "L 8610",
       "display_name": "My Supplier"
     },
@@ -3965,7 +3965,7 @@ Fetching the bookings shows you the full amount booked against payables:</p>
         }
       ],
       "contra_account": {
-        "id": "316a8310-297b-4e2d-8c0d-d78cc149e4d5",
+        "id": "316a...e4d5",
         "code": "3300"
       }
     }
@@ -3979,9 +3979,9 @@ Fetching the bookings shows you the full amount booked against payables:</p>
 <div class="listingblock">
 <div class="title">Request for a DEA incoming invoice with diverging dates</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21333/cbi/incoming_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3997,7 +3997,7 @@ Authorization: Bearer eyJhbGci...Vm-yw</pre>
             "amount_type": "GROSS",
             "taxes": {
                 "tax_1": {
-                    "tax_class_entry": "4db0...0e"
+                    "tax_class_entry": "4db0...0f0e"
                 }
             }
         }
@@ -4016,7 +4016,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "invoice": {
-    "id": "71f2e...9d",
+    "id": "71f2...e9d",
     "invoice_sequence": "ER2025 2",
     "invoice_date": "2025-12-01",
     "paid_date": "2025-12-02",
@@ -4166,9 +4166,9 @@ Rest payments cannot be created in <code>CMA</code> because, unlike in <code>DEA
 <div class="listingblock">
 <div class="title">Request for CMA payment for incoming invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/incoming_invoices/db34...85/pay
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices/db34...85/pay
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4229,9 +4229,9 @@ As described in the example for creating a paid invoice the response does not di
 <div class="listingblock">
 <div class="title">Request for DEA payment with rest payment</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21333/cbi/incoming_invoices/db34...85/pay
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/incoming_invoices/db34...85/pay
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4328,9 +4328,9 @@ You&#8217;ll note that it has the same structure as the incoming invoice, only t
 <div class="listingblock">
 <div class="title">Example request for a minimal outgoing invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/outgoing_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/outgoing_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4390,7 +4390,7 @@ Content-Type: application/json;charset=UTF-8</pre>
           "tax_1": {
             "amount": 20.00,
             "tax_class_entry": {
-              "id": "dec05...28",
+              "id": "dec0...528",
               "code": "020",
               "tax_rate_value": 20
             }
@@ -4408,9 +4408,9 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="listingblock">
 <div class="title">Example request for an outgoing invoice with customer in foreign currency</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cbi/outgoing_invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cbi/outgoing_invoices
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4538,9 +4538,9 @@ In addition, direct booking functionality is available through rebook journals.<
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/cba/rebook_journals
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4612,8 +4612,8 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/rebook_journals
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4694,8 +4694,8 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/rebook_journals/b699...79b
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/rebook_journals/b699...79b
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4748,8 +4748,8 @@ They are usually created from outgoing invoices, business documents, or daily cl
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/income_journals
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/income_journals
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4792,8 +4792,8 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/income_journals/6b1f...a05
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/income_journals/6b1f...a05
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4874,8 +4874,8 @@ They are usually created from incoming invoices, trip finalizations or expense e
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/outgo_journals
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/outgo_journals
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4918,8 +4918,8 @@ Content-Type: application/json;charset=UTF-8</pre>
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/outgo_journals/6b1f...a05
-Authorization: Bearer eyJhbGci...Vm-yw</pre>
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/cba/outgo_journals/6b1f...a05
+Authorization: Bearer eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4969,7 +4969,7 @@ Content-Type: application/json;charset=UTF-8</pre>
                 "tax_1": {
                     "amount": 4000.00,
                     "tax_class_entry": {
-                        "id": "4db0...0e",
+                        "id": "4db0...0f0e",
                         "key_name": "TAX_CLASS_ENTRY_ASTD_020",
                         "code": "020",
                         "tax_rate_value": 20
@@ -5005,8 +5005,8 @@ This includes both manual imports and PSD2 auto-imported statements.</p>
 <div class="listingblock">
 <div class="title">Example API request for all bank statement headers</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements
-Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/bsl/bank_statements
+Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5051,8 +5051,8 @@ content-type: application/json;charset=UTF-8</code></pre>
 <div class="listingblock">
 <div class="title">Example API request for bank statement lines</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/a7b3...f0/lines
-Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/bsl/bank_statements/a7b3...f0/lines
+Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5153,9 +5153,9 @@ You can choose to add lines later using the <a href="#creating_lines_by_header">
 <div class="listingblock">
 <div class="title">Example API request to create a bank statement header</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/:client_id/bsl/bank_statements
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5205,9 +5205,9 @@ Lines with duplicate <code>transaction_id</code> values are filtered out - dupli
 <div class="listingblock">
 <div class="title">Example API request to create lines</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/f2a3...01/lines
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/:client_id/bsl/bank_statements/f2a3...01/lines
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5314,9 +5314,9 @@ This endpoint handles automatic header management:</p>
 <div class="listingblock">
 <div class="title">Example API request to create lines by payment account</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/bsl/bank_statements/by_payment_account/b8c4...12/lines
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/:client_id/bsl/bank_statements/by_payment_account/b8c4...12/lines
 Content-Type: application/json
-Authorization: Bearer eyJhbGci...Vm-yw</code></pre>
+Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5434,7 +5434,7 @@ Below is a minimal example with one tax group - if the country of the client has
 <div class="listingblock">
 <div class="title">Example request for a minimal item</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/itm/items
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/itm/items
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -5521,7 +5521,7 @@ This way you can either present a list of items for selection, or fetch the one 
 <div class="listingblock">
 <div class="title">Example search for an item</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/itm/items?category=ad94...d5&amp;search=apple
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/itm/items?category=ad94...d5&amp;search=apple
 Authorization: Bearer {{$auth.token("ffappl")}}</pre>
 </div>
 </div>
@@ -5635,7 +5635,7 @@ A default payment term must exist and will be selected automatically.</p>
 <div class="listingblock">
 <div class="title">Example request for a minimal invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -5778,7 +5778,7 @@ Creating customers in your client master data and later referencing them in invo
 <div class="listingblock">
 <div class="title">Example request for a minimal invoice using references</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -5822,7 +5822,7 @@ Without the <code>item_defaulting</code> flag, the item is only set as a referen
 <div class="listingblock">
 <div class="title">Example request for a finalized invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -5934,7 +5934,7 @@ The <code>provider_id</code> in the <code>current_file</code> together with the 
 <div class="listingblock">
 <div class="title">Example request to fetch the PDF of a finalized invoice</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/files/c016...e0/content
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/files/c016...e0/content
 Authorization: eyJ...</pre>
 </div>
 </div>
@@ -6027,7 +6027,7 @@ This means that the unavoidable discrepancies are permitted, but contained to ne
 <div class="listingblock">
 <div class="title">Example request for an invoice with totals verified</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices/
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -6079,7 +6079,7 @@ If you want to attach a PDF, you must upload it separately and create an assignm
 <div class="listingblock">
 <div class="title">Example request for an external invoice</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/inv/invoices/external
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/external
 Content-Type: application/json
 Authorization: eyJ...</pre>
 </div>
@@ -6222,7 +6222,7 @@ You can retrieve the root folder or list subfolders using the endpoints describe
 <div class="listingblock">
 <div class="title">Example API request for DMS sub-folders</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/2b35...56/folders
+<pre>GET https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/folders/2b35...56/folders
 Authorization: Bearer eyJ...</pre>
 </div>
 </div>
@@ -6234,7 +6234,7 @@ Authorization: Bearer eyJ...</pre>
     {
       "key": {
         "provider": "DMS",
-        "provider_id": "47b27...0f" <i class="conum" data-value="1"></i><b>(1)</b>
+        "provider_id": "47b2...70f" <i class="conum" data-value="1"></i><b>(1)</b>
       },
       "name": "Documents",
       "flags": []
@@ -6261,7 +6261,7 @@ For external invoices, you typically want to upload to a permanent folder rather
 <div class="listingblock">
 <div class="title">Example request to upload a PDF file</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/47b27...0f/files
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/folders/47b27...0f/files
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer eyJ...</pre>
 </div>
@@ -6297,7 +6297,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "key": {
     "provider": "DMS",
-    "provider_id": "a247..ac" <i class="conum" data-value="1"></i><b>(1)</b>
+    "provider_id": "a247...ac" <i class="conum" data-value="1"></i><b>(1)</b>
   },
   "file_name": "external-invoice-R-2016-0001.pdf",
   "content_type": "application/pdf",
@@ -6309,7 +6309,7 @@ Content-Type: application/json;charset=UTF-8</pre>
   "metadata": [],
   "parent_folder": {
     "provider": "DMS",
-    "provider_id": "47b27...0f"
+    "provider_id": "47b2...70f"
   },
   "size": 1496,
   "updated_at": "2026-04-08T13:28:32.280348974Z"
@@ -6348,7 +6348,7 @@ Once the file exists in the external provider, you can create an assignment just
 <div class="listingblock">
 <div class="title">Example request to create an assignment</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/files/a247..ac/assignments
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/files/a247..ac/assignments
 Content-Type: application/json
 Authorization: Bearer eyJ...</pre>
 </div>
@@ -6388,7 +6388,7 @@ Content-Type: application/json;charset=UTF-8</pre>
   "file": {
     "key": {
       "provider": "DMS",
-      "provider_id": "a247..ac"
+      "provider_id": "a247...ac"
     },
     "file_name": "external-invoice-R-2016-0001.pdf"
   },
@@ -6446,7 +6446,7 @@ Starting from the root folder, the entire file system can be constructed in this
 <div class="listingblock">
 <div class="title">Example API request for DMS root folder</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/root
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/root
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6479,7 +6479,7 @@ content-type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="title">Example API request for DMS sub-folders</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/2b35...56/folders
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/2b35...56/folders
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6491,7 +6491,7 @@ Authorization: Bearer eyJ...</code></pre>
     { <i class="conum" data-value="1"></i><b>(1)</b>
       "key": {
         "provider": "DMS",
-        "provider_id": "47b27...0f"
+        "provider_id": "47b2...70f"
       },
       "name": "Documents",
       "description": "test folder",
@@ -6551,7 +6551,7 @@ Use the endpoint described in <a href="#_staging_files">Staging files</a> to upl
 <div class="listingblock">
 <div class="title">Example API request for DMS files</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/47b27...0f/files
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/47b27...0f/files
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6616,7 +6616,7 @@ The Base64 endpoint should only be used when multipart uploads are not possible.
 <div class="listingblock">
 <div class="title">Example API request to upload a new file as multipart</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/47b27...0f/files
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/folders/47b27...0f/files
 Authorization: Bearer eyJ...
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
@@ -6673,7 +6673,7 @@ Content-Type: application/json;charset=UTF-8</pre>
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "key": {
     "provider": "DMS",
-    "provider_id": "a247..ac"
+    "provider_id": "a247...ac"
   },
   "file_name": "uploadedFile.jpg",
   "content_type": "image/jpeg",
@@ -6748,7 +6748,7 @@ Creating assignments is also possible for files of external providers.
 <div class="listingblock">
 <div class="title">Example API request to create a new assignment of an cbi invoice</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/files/a247..ac/assignments
+<pre class="highlightjs highlight"><code class="language-none hljs">POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/files/a247..ac/assignments
 Authorization: Bearer eyJ...
 Content-Type: application/json</code></pre>
 </div>
@@ -6788,7 +6788,7 @@ Content-Type: application/json;charset=UTF-8</pre>
   "file": {
     "key": {
       "provider": "DMS",
-      "provider_id": "a247..ac"
+      "provider_id": "a247...ac"
     },
     "file_name": "uploadedFile.jpg"
   },
@@ -6856,7 +6856,7 @@ The file name is taken from the <code>Content-Disposition</code> of the first at
 <div class="listingblock">
 <div class="title">Minimal example for a simple file upload</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/staging
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer eyJ...</pre>
 </div>
@@ -6907,7 +6907,7 @@ This creates additional overhead, so only use it if multipart support can&#8217;
 <div class="listingblock">
 <div class="title">Example for a file upload with base64-encoded content</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging/json
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/staging/json
 Content-Type: application/json
 Authorization: Bearer eyJ...</pre>
 </div>
@@ -6934,7 +6934,7 @@ Authorization: Bearer eyJ...</pre>
 <div class="listingblock">
 <div class="title">Example for a file upload with sidecar JSON metadata</div>
 <div class="content">
-<pre>POST https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/staging
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/doc/providers/DMS/staging
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer eyJ...</pre>
 </div>
@@ -7042,7 +7042,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-17 16:19:28 +0200
+Last updated 2026-08-18 09:22:10 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

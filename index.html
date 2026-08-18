@@ -2061,7 +2061,7 @@ p {
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta8</span>
+<span id="revdate">2.0.0-beta9</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2122,6 +2122,18 @@ p {
 <li><a href="#_create_a_rebook_journal">Create a rebook journal</a></li>
 <li><a href="#_get_all_rebook_journals">Get all rebook journals</a></li>
 <li><a href="#_get_a_rebook_journal_by_id">Get a rebook journal by ID</a></li>
+</ul>
+</li>
+<li><a href="#_income_journals">4.4.2. Income journals</a>
+<ul class="sectlevel4">
+<li><a href="#_get_all_income_journals">Get all income journals</a></li>
+<li><a href="#_get_an_income_journal_by_id">Get an income journal by ID</a></li>
+</ul>
+</li>
+<li><a href="#_outgo_journals">4.4.3. Outgo journals</a>
+<ul class="sectlevel4">
+<li><a href="#_get_all_outgo_journals">Get all outgo journals</a></li>
+<li><a href="#_get_an_outgo_journal_by_id">Get an outgo journal by ID</a></li>
 </ul>
 </li>
 </ul>
@@ -4597,9 +4609,6 @@ Content-Type: application/json;charset=UTF-8</pre>
 </div>
 <div class="sect4">
 <h5 id="_get_all_rebook_journals">Get all rebook journals</h5>
-<div class="paragraph">
-<p>Returns all rebook journals with pagination and optional filtering via query parameters <code>search</code>, <code>from</code>, and <code>to</code>.</p>
-</div>
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
@@ -4726,17 +4735,257 @@ Content-Type: application/json;charset=UTF-8</pre>
 }</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-A <code>404 Not Found</code> is returned if the journal does not exist.
-</td>
-</tr>
-</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_income_journals">4.4.2. Income journals</h4>
+<div class="paragraph">
+<p>Income journals capture incomes on the customer side.
+They are usually created from outgoing invoices, business documents, or daily closings, but may also originate from other sources.</p>
+</div>
+<div class="sect4">
+<h5 id="_get_all_income_journals">Get all income journals</h5>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/income_journals
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "total_count": 17,
+    "content": [
+        {
+            "id": "6b1f...a05",
+            "sequence": "E2023 1",
+            "net": 200.00,
+            "tax": 40.00,
+            "total": 240.00,
+            "paid_date": "2023-09-23",
+            "created_at": "2023-09-23T10:00:00.000000Z",
+            "customer": {
+                "id": "0cdd...22f",
+                "customer_number": "C 1142",
+                "display_name": "My Customer"
+            },
+            "cancellation_state": "NONE"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_get_an_income_journal_by_id">Get an income journal by ID</h5>
+<div class="paragraph">
+<p>Retrieves the full details of a specific income journal, including its lines and associated invoice.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/income_journals/6b1f...a05
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "cc70...05f",
+    "sequence": "E2023 1",
+    "net": 200.00,
+    "tax": 40.00,
+    "total": 240.00,
+    "paid_date": "2023-09-23",
+    "created_at": "2023-09-23T10:00:00.000000Z",
+    "create_reference": "AR2023 1",
+    "customer": {
+        "id": "0cdd...22f",
+        "customer_number": "C 1142",
+        "display_name": "My Customer"
+    },
+    "cancellation_state": "NONE",
+    "lines": [
+        {
+            "line_number": 1,
+            "account": {
+                "id": "a678...5fd",
+                "name": "Revenue (income)",
+                "code": "4000",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "CREDIT"
+            },
+            "contra_account": {
+                "id": "04a7...9b",
+                "name": "Bank",
+                "code": "2800",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "taxes": {
+                "tax_1": {
+                    "amount": 40.00,
+                    "tax_class_entry": {
+                        "id": "9eca...5cc",
+                        "key_name": "TAX_CLASS_ENTRY_ESTD_020",
+                        "code": "020",
+                        "tax_rate_value": 20
+                    }
+                }
+            },
+            "total": 240.00,
+            "net": 200.00
+        }
+    ],
+    "outgoing_invoice": {
+        "id": "c57f...21d",
+        "sequence_number": "AR2023 1"
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_outgo_journals">4.4.3. Outgo journals</h4>
+<div class="paragraph">
+<p>Outgo journals capture expenses on the supplier side.
+They are usually created from incoming invoices, trip finalizations or expense entries, but may also originate from other sources.</p>
+</div>
+<div class="sect4">
+<h5 id="_get_all_outgo_journals">Get all outgo journals</h5>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/outgo_journals
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "total_count": 17,
+    "content": [
+        {
+            "id": "6b1f...a05",
+            "sequence": "A2024 1",
+            "net": 20000.00,
+            "tax": 4000.00,
+            "total": 24000.00,
+            "paid_date": "2024-09-11",
+            "created_at": "2024-09-23T12:10:46.873946Z",
+            "supplier": {
+                "id": "330c...ad0",
+                "supplier_number": "L 1152",
+                "display_name": "My Supplier"
+            },
+            "cancellation_state": "NONE"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_get_an_outgo_journal_by_id">Get an outgo journal by ID</h5>
+<div class="paragraph">
+<p>Retrieves the full details of a specific outgo journal, including its lines and associated invoice.</p>
+</div>
+<div class="listingblock">
+<div class="title">Request</div>
+<div class="content">
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/cba/outgo_journals/6b1f...a05
+Authorization: Bearer eyJhbGci...Vm-yw</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Response</div>
+<div class="content">
+<pre>HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "id": "6b1f...a05",
+    "sequence": "A2024 1",
+    "net": 20000.00,
+    "tax": 4000.00,
+    "total": 24000.00,
+    "paid_date": "2024-09-11",
+    "created_at": "2024-09-23T12:10:46.873946Z",
+    "create_reference": "ER2024 2",
+    "supplier": {
+        "id": "330c...ad0",
+        "supplier_number": "L 1152",
+        "display_name": "My Supplier"
+    },
+    "cancellation_state": "NONE",
+    "lines": [
+        {
+            "line_number": 1,
+            "account": {
+                "id": "502f...52f",
+                "name": "Plant and machinery",
+                "code": "0400",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "contra_account": {
+                "id": "04a7...9b",
+                "name": "Bank",
+                "code": "2800",
+                "from": "2004-01-01",
+                "to": "2099-12-31",
+                "category": "DEBIT"
+            },
+            "taxes": {
+                "tax_1": {
+                    "amount": 4000.00,
+                    "tax_class_entry": {
+                        "id": "4db0...0e",
+                        "key_name": "TAX_CLASS_ENTRY_ASTD_020",
+                        "code": "020",
+                        "tax_rate_value": 20
+                    }
+                }
+            },
+            "total": 24000.00,
+            "net": 20000.00
+        }
+    ],
+    "incoming_invoice": {
+        "id": "53af...a61",
+        "sequence_number": "ER2024 2"
+    }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -5973,7 +6222,7 @@ You can retrieve the root folder or list subfolders using the endpoints describe
 <div class="listingblock">
 <div class="title">Example API request for DMS sub-folders</div>
 <div class="content">
-<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/folders/2b35...56/folders
+<pre>GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/folders/2b35...56/folders
 Authorization: Bearer eyJ...</pre>
 </div>
 </div>
@@ -6197,7 +6446,7 @@ Starting from the root folder, the entire file system can be constructed in this
 <div class="listingblock">
 <div class="title">Example API request for DMS root folder</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/root
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/root
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6230,7 +6479,7 @@ content-type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="title">Example API request for DMS sub-folders</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/2b35...56/folders
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/2b35...56/folders
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6302,7 +6551,7 @@ Use the endpoint described in <a href="#_staging_files">Staging files</a> to upl
 <div class="listingblock">
 <div class="title">Example API request for DMS files</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/provider/DMS/47b27...0f/files
+<pre class="highlightjs highlight"><code class="language-none hljs">GET https://demo.freefinance.at/api/2.0/clients/21334/doc/providers/DMS/47b27...0f/files
 Authorization: Bearer eyJ...</code></pre>
 </div>
 </div>
@@ -6793,7 +7042,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 14:37:43 +0200
+Last updated 2026-08-17 16:19:28 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

@@ -8,7 +8,7 @@
     },
     "description" : "The REST API to be used with FreeFinance and FinanzFenster. Please read the examples for an introduction to authentication and some use cases.",
     "title" : "FreeFinance REST API",
-    "version" : "2.0.0-beta8"
+    "version" : "2.0.0-beta9"
   },
   "externalDocs" : {
     "description" : "Detailed examples for authentication and base tasks can be found here.",
@@ -694,6 +694,262 @@
           "bearerAuth" : [ ]
         } ],
         "tags" : [ "BSL" ]
+      }
+    },
+    "/clients/{client_id}/cba/income_journals" : {
+      "get" : {
+        "description" : "Get all income journals",
+        "operationId" : "getAllIncomeJournals",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Filters for description, sequence, note, business partner, etc.",
+          "in" : "query",
+          "name" : "search",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Minimum date.",
+          "example" : "2024-08-01",
+          "in" : "query",
+          "name" : "from",
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "pattern" : "yyyy-MM-dd"
+          }
+        }, {
+          "description" : "Maximum date.",
+          "example" : "2024-08-01",
+          "in" : "query",
+          "name" : "to",
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "pattern" : "yyyy-MM-dd"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IncomeJournalResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBA" ]
+      }
+    },
+    "/clients/{client_id}/cba/income_journals/{journal_id}" : {
+      "get" : {
+        "description" : "Get a income journal by id.",
+        "operationId" : "getIncomeJournalDetail",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "journal_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IncomeJournalDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Resource not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBA" ]
+      }
+    },
+    "/clients/{client_id}/cba/outgo_journals" : {
+      "get" : {
+        "description" : "Get all outgo journals.",
+        "operationId" : "getOutgoJournals",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Limit of results.",
+          "in" : "query",
+          "name" : "limit",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Offset to start with result set",
+          "in" : "query",
+          "name" : "offset",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "description" : "Comma separated list of sort params. The direction could append to the sort property by a colon.",
+          "example" : "name:ASC,status:DESC",
+          "in" : "query",
+          "name" : "sort",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Filters for description, sequence, note, business partner, etc.",
+          "in" : "query",
+          "name" : "search",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Minimum date.",
+          "example" : "2024-08-01",
+          "in" : "query",
+          "name" : "from",
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "pattern" : "yyyy-MM-dd"
+          }
+        }, {
+          "description" : "Maximum date.",
+          "example" : "2024-08-01",
+          "in" : "query",
+          "name" : "to",
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "pattern" : "yyyy-MM-dd"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OutgoJournalResultDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBA" ]
+      }
+    },
+    "/clients/{client_id}/cba/outgo_journals/{journal_id}" : {
+      "get" : {
+        "description" : "Get a outgo journal by id.",
+        "operationId" : "getOutgoJournalDetail",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "client_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "journal_id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OutgoJournalDetailDtoV2"
+                }
+              }
+            },
+            "description" : "Operation completed successfully."
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestError"
+                }
+              }
+            },
+            "description" : "Resource not found."
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "CBA" ]
       }
     },
     "/clients/{client_id}/cba/rebook_journals" : {
@@ -11474,7 +11730,7 @@
           "accountant_export_number" : {
             "type" : "string",
             "description" : "The code of the account used for the accountant export",
-            "example" : 2310
+            "example" : "2310"
           },
           "category" : {
             "type" : "string",
@@ -11534,7 +11790,7 @@
           "accountant_export_number" : {
             "type" : "string",
             "description" : "The code of the account used for the accountant export",
-            "example" : 2310
+            "example" : "2310"
           },
           "category" : {
             "type" : "string",
@@ -11603,7 +11859,7 @@
           "code" : {
             "type" : "string",
             "description" : "Numeric account code.",
-            "example" : 4000
+            "example" : "4000"
           },
           "from" : {
             "type" : "string",
@@ -11684,7 +11940,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "address_type" : {
             "type" : "string",
@@ -11793,7 +12049,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "address_type", "id", "identifier" ]
@@ -11804,7 +12060,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "address_type" : {
             "type" : "string",
@@ -11910,7 +12166,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "address_type", "identifier" ]
@@ -11978,7 +12234,7 @@
           },
           "zip_code" : {
             "type" : "string",
-            "example" : 1234
+            "example" : "1234"
           }
         },
         "required" : [ "country" ]
@@ -12083,166 +12339,6 @@
         },
         "required" : [ "content" ]
       },
-      "Attachment" : {
-        "type" : "object",
-        "properties" : {
-          "contentDisposition" : {
-            "$ref" : "#/components/schemas/ContentDisposition"
-          },
-          "contentId" : {
-            "type" : "string"
-          },
-          "contentType" : {
-            "properties" : {
-              "parameters" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              },
-              "subtype" : {
-                "type" : "string"
-              },
-              "type" : {
-                "type" : "string"
-              },
-              "wildcardSubtype" : {
-                "type" : "boolean"
-              },
-              "wildcardType" : {
-                "type" : "boolean"
-              }
-            }
-          },
-          "dataHandler" : {
-            "properties" : {
-              "allCommands" : {
-                "type" : "array",
-                "items" : {
-                  "properties" : {
-                    "commandClass" : {
-                      "type" : "string"
-                    },
-                    "commandName" : {
-                      "type" : "string"
-                    }
-                  }
-                }
-              },
-              "commandMap" : {
-                "properties" : {
-                  "mimeTypes" : {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }
-                },
-                "writeOnly" : true
-              },
-              "content" : { },
-              "contentType" : {
-                "type" : "string"
-              },
-              "dataSource" : {
-                "properties" : {
-                  "contentType" : {
-                    "type" : "string"
-                  },
-                  "inputStream" : { },
-                  "name" : {
-                    "type" : "string"
-                  },
-                  "outputStream" : { }
-                }
-              },
-              "inputStream" : { },
-              "name" : {
-                "type" : "string"
-              },
-              "outputStream" : { },
-              "preferredCommands" : {
-                "type" : "array",
-                "items" : {
-                  "properties" : {
-                    "commandClass" : {
-                      "type" : "string"
-                    },
-                    "commandName" : {
-                      "type" : "string"
-                    }
-                  }
-                }
-              },
-              "transferDataFlavors" : {
-                "type" : "array",
-                "items" : {
-                  "properties" : {
-                    "defaultRepresentationClassAsString" : {
-                      "type" : "string"
-                    },
-                    "flavorJavaFileListType" : {
-                      "type" : "boolean"
-                    },
-                    "flavorRemoteObjectType" : {
-                      "type" : "boolean"
-                    },
-                    "flavorSerializedObjectType" : {
-                      "type" : "boolean"
-                    },
-                    "flavorTextType" : {
-                      "type" : "boolean"
-                    },
-                    "humanPresentableName" : {
-                      "type" : "string"
-                    },
-                    "mimeType" : {
-                      "type" : "string"
-                    },
-                    "mimeTypeSerializedObject" : {
-                      "type" : "boolean"
-                    },
-                    "primaryType" : {
-                      "type" : "string"
-                    },
-                    "representationClassByteBuffer" : {
-                      "type" : "boolean"
-                    },
-                    "representationClassCharBuffer" : {
-                      "type" : "boolean"
-                    },
-                    "representationClassInputStream" : {
-                      "type" : "boolean"
-                    },
-                    "representationClassReader" : {
-                      "type" : "boolean"
-                    },
-                    "representationClassRemote" : {
-                      "type" : "boolean"
-                    },
-                    "representationClassSerializable" : {
-                      "type" : "boolean"
-                    },
-                    "subType" : {
-                      "type" : "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "headers" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            }
-          },
-          "object" : { }
-        }
-      },
       "AuthIssuerInfoDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -12344,7 +12440,7 @@
           "amount" : {
             "type" : "string",
             "description" : "Total amount of the booking. Positive for credit, and negative for debit transactions.",
-            "example" : 1234
+            "example" : "1234"
           },
           "booking_date" : {
             "type" : "string",
@@ -12383,7 +12479,7 @@
           "originator_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that originated the transaction.",
-            "example" : 12345
+            "example" : "12345"
           },
           "originator_bank_reference" : {
             "type" : "string",
@@ -12398,7 +12494,7 @@
           "partner_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that received the transaction.",
-            "example" : 12345
+            "example" : "12345"
           },
           "partner_name" : {
             "type" : "string",
@@ -12438,7 +12534,7 @@
           "transaction_id" : {
             "type" : "string",
             "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates.",
-            "example" : 123456789
+            "example" : "123456789"
           },
           "value_date" : {
             "type" : "string",
@@ -12477,7 +12573,7 @@
           "amount" : {
             "type" : "string",
             "description" : "Total amount of the booking. Positive for credit, and negative for debit transactions.",
-            "example" : 1234
+            "example" : "1234"
           },
           "booking_date" : {
             "type" : "string",
@@ -12527,7 +12623,7 @@
           "originator_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that originated the transaction.",
-            "example" : 12345
+            "example" : "12345"
           },
           "originator_bank_reference" : {
             "type" : "string",
@@ -12542,7 +12638,7 @@
           "partner_bank_code" : {
             "type" : "string",
             "description" : "Bank code of the person or company that received the transaction.",
-            "example" : 12345
+            "example" : "12345"
           },
           "partner_name" : {
             "type" : "string",
@@ -12587,7 +12683,7 @@
           "transaction_id" : {
             "type" : "string",
             "description" : "Optional, unique transaction id. Lines with duplicate transaction ids are filtered out as duplicates.",
-            "example" : 123456789
+            "example" : "123456789"
           },
           "value_date" : {
             "type" : "string",
@@ -12635,7 +12731,9 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/BankStatementLineCreationDtoV2"
-            }
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
           }
         },
         "required" : [ "lines" ]
@@ -13179,7 +13277,7 @@
           "account_code" : {
             "type" : "string",
             "description" : "Numeric account code.",
-            "example" : 2800
+            "example" : "2800"
           },
           "color" : {
             "type" : "string",
@@ -13527,23 +13625,6 @@
         },
         "required" : [ "content" ]
       },
-      "ContentDisposition" : {
-        "type" : "object",
-        "properties" : {
-          "filename" : {
-            "type" : "string"
-          },
-          "parameters" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "type" : {
-            "type" : "string"
-          }
-        }
-      },
       "CountryDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -13743,7 +13824,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/CreditMemoLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -13758,6 +13840,11 @@
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -13931,6 +14018,11 @@
           "open_in_main_currency" : {
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "paid" : {
             "type" : "boolean",
@@ -14121,7 +14213,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/CreditMemoLineDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -14149,6 +14242,11 @@
           "open_in_main_currency" : {
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "paid" : {
             "type" : "boolean",
@@ -14513,7 +14611,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -14638,7 +14736,7 @@
           "duns" : {
             "type" : "string",
             "description" : "Data Universal Numbering System (DUNS) number of the customer.",
-            "example" : 301627035
+            "example" : "301627035"
           },
           "email_address" : {
             "type" : "string",
@@ -14658,7 +14756,7 @@
           "gln" : {
             "type" : "string",
             "description" : "Global location number of the customer.",
-            "example" : 9110016992075
+            "example" : "9110016992075"
           },
           "has_valid_tax_number" : {
             "type" : "boolean",
@@ -14792,7 +14890,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -14823,7 +14921,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -14951,7 +15049,7 @@
           "duns" : {
             "type" : "string",
             "description" : "Data Universal Numbering System (DUNS) number of the customer.",
-            "example" : 301627035
+            "example" : "301627035"
           },
           "email_address" : {
             "type" : "string",
@@ -14971,7 +15069,7 @@
           "gln" : {
             "type" : "string",
             "description" : "Global location number of the customer.",
-            "example" : 9110016992075
+            "example" : "9110016992075"
           },
           "has_valid_tax_number" : {
             "type" : "boolean",
@@ -15101,7 +15199,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "display_name", "id", "ignore_in_bsa" ]
@@ -15209,7 +15307,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -15344,7 +15442,7 @@
           "duns" : {
             "type" : "string",
             "description" : "Data Universal Numbering System (DUNS) number of the customer.",
-            "example" : 301627035
+            "example" : "301627035"
           },
           "email_address" : {
             "type" : "string",
@@ -15364,7 +15462,7 @@
           "gln" : {
             "type" : "string",
             "description" : "Global location number of the customer.",
-            "example" : 9110016992075
+            "example" : "9110016992075"
           },
           "has_valid_tax_number" : {
             "type" : "boolean",
@@ -15489,7 +15587,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -15819,7 +15917,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/BusinessDocumentLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -15834,6 +15933,11 @@
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -15999,6 +16103,11 @@
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
           },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
+          },
           "payment_term" : {
             "$ref" : "#/components/schemas/PaymentTermReferenceDtoV2",
             "description" : "Reference to the payment terms applicable to this document."
@@ -16159,7 +16268,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/BusinessDocumentLineV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -16187,6 +16297,11 @@
           "open_in_main_currency" : {
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "$ref" : "#/components/schemas/PaymentTermReferenceDtoV2",
@@ -16274,7 +16389,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address Branch Number",
-            "example" : 1
+            "example" : "1"
           },
           "bcc_email_address" : {
             "type" : "string",
@@ -16362,7 +16477,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         }
       },
@@ -16710,8 +16825,10 @@
         "properties" : {
           "content" : {
             "type" : "array",
+            "description" : "List of multi-part file attachments",
             "items" : {
-              "$ref" : "#/components/schemas/Attachment"
+              "type" : "string",
+              "format" : "binary"
             }
           },
           "metadata" : {
@@ -16747,7 +16864,7 @@
           "artificial_tax_exemption_code" : {
             "type" : "string",
             "description" : "The code of the in-place tax exemption, if any",
-            "example" : 0
+            "example" : "0"
           },
           "currency" : {
             "type" : "string",
@@ -16838,7 +16955,7 @@
           "artificial_tax_exemption_code" : {
             "type" : "string",
             "description" : "The code of the in-place tax exemption, if any",
-            "example" : 0
+            "example" : "0"
           },
           "currency" : {
             "type" : "string",
@@ -16903,7 +17020,7 @@
           "artificial_tax_exemption_code" : {
             "type" : "string",
             "description" : "The code of the in-place tax exemption, if any",
-            "example" : 0
+            "example" : "0"
           },
           "currency" : {
             "type" : "string",
@@ -17042,6 +17159,177 @@
         },
         "required" : [ "content" ]
       },
+      "IncomeJournalDetailDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "business_document" : {
+            "$ref" : "#/components/schemas/BusinessDocumentReferenceV2",
+            "description" : "Associated inv invoice."
+          },
+          "cancellation_state" : {
+            "type" : "string",
+            "description" : "Indicates if the journal has been cancelled.",
+            "enum" : [ "NONE", "CANCELLED", "CANCELLATION" ]
+          },
+          "cancelled_reason" : {
+            "type" : "string",
+            "description" : "Reason for cancellation if journal is cancelled."
+          },
+          "create_reference" : {
+            "type" : "string",
+            "description" : "Invoice number of correlating invoice."
+          },
+          "created_at" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customer" : {
+            "$ref" : "#/components/schemas/CustomerReferenceDtoV2",
+            "description" : "Customer of the journal."
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the journal.",
+            "example" : "1f1e4e0e-4f21-4887-a711-07b4eb76cdb3"
+          },
+          "invoice_reference" : {
+            "type" : "string",
+            "description" : "Reference of correlating the invoice."
+          },
+          "lines" : {
+            "type" : "array",
+            "description" : "Lines of the journal.",
+            "items" : {
+              "$ref" : "#/components/schemas/JournalLineDtoV2"
+            }
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Total net sum of the journal in the main currency."
+          },
+          "note" : {
+            "type" : "string",
+            "description" : "Internal optional note."
+          },
+          "outgoing_invoice" : {
+            "$ref" : "#/components/schemas/OutgoingInvoiceReferenceDtoV2",
+            "description" : "Associated cbi invoice."
+          },
+          "paid_date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "referenceJournal" : {
+            "$ref" : "#/components/schemas/JournalReferenceDtoV2",
+            "description" : "Reference journal"
+          },
+          "sequence" : {
+            "type" : "string",
+            "description" : "Sequence of the journal.",
+            "example" : "E2024 1"
+          },
+          "tax" : {
+            "type" : "number",
+            "description" : "Total tax sum of the journal in the main currency.",
+            "example" : 1234
+          },
+          "total" : {
+            "type" : "number",
+            "description" : "Total sum of the journal in the main currency.",
+            "example" : 1234
+          }
+        },
+        "required" : [ "cancellation_state", "id", "net", "tax", "total" ]
+      },
+      "IncomeJournalDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "cancellation_state" : {
+            "type" : "string",
+            "description" : "Indicates if the journal has been cancelled.",
+            "enum" : [ "NONE", "CANCELLED", "CANCELLATION" ]
+          },
+          "cancelled_reason" : {
+            "type" : "string",
+            "description" : "Reason for cancellation if journal is cancelled."
+          },
+          "create_reference" : {
+            "type" : "string",
+            "description" : "Invoice number of correlating invoice."
+          },
+          "created_at" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customer" : {
+            "$ref" : "#/components/schemas/CustomerReferenceDtoV2",
+            "description" : "Customer of the journal."
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the journal.",
+            "example" : "1f1e4e0e-4f21-4887-a711-07b4eb76cdb3"
+          },
+          "invoice_reference" : {
+            "type" : "string",
+            "description" : "Reference of correlating the invoice."
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Total net sum of the journal in the main currency."
+          },
+          "note" : {
+            "type" : "string",
+            "description" : "Internal optional note."
+          },
+          "paid_date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "referenceJournal" : {
+            "$ref" : "#/components/schemas/JournalReferenceDtoV2",
+            "description" : "Reference journal"
+          },
+          "sequence" : {
+            "type" : "string",
+            "description" : "Sequence of the journal.",
+            "example" : "E2024 1"
+          },
+          "tax" : {
+            "type" : "number",
+            "description" : "Total tax sum of the journal in the main currency.",
+            "example" : 1234
+          },
+          "total" : {
+            "type" : "number",
+            "description" : "Total sum of the journal in the main currency.",
+            "example" : 1234
+          }
+        },
+        "required" : [ "cancellation_state", "id", "net", "tax", "total" ]
+      },
+      "IncomeJournalResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IncomeJournalDtoV2"
+            }
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "content" ]
+      },
       "IncomeTaxClassReferenceDtoV2" : {
         "type" : "object",
         "properties" : {
@@ -17137,7 +17425,9 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineCreationDtoV2"
-            }
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
           },
           "net" : {
             "type" : "number",
@@ -17752,7 +18042,9 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineCreationDtoV2"
-            }
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
           },
           "name" : {
             "type" : "string",
@@ -18071,7 +18363,9 @@
             "description" : "Lines for the template. Existing lines can be changed by applying their ID. Lines without ID will be created and existing lines without matching ID will be deleted.",
             "items" : {
               "$ref" : "#/components/schemas/IncomingInvoiceLineUpdateDtoV2"
-            }
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
           },
           "name" : {
             "type" : "string",
@@ -18212,7 +18506,7 @@
           "cancelled_booking" : {
             "type" : "string",
             "description" : "Code of the booking that was cancelled",
-            "example" : 2800
+            "example" : "2800"
           },
           "cancelled_date" : {
             "type" : "string",
@@ -18448,7 +18742,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/InvoiceLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -18463,6 +18758,11 @@
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -18676,6 +18976,11 @@
           "open_in_main_currency" : {
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "paid" : {
             "type" : "boolean",
@@ -18912,7 +19217,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/InvoiceLineDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -18946,6 +19252,11 @@
           "open_in_main_currency" : {
             "type" : "number",
             "description" : "Remaining, unpaid amount in main currency of the document (invoice or credit memo). Decreases with payments, 0 for paid documents."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "paid" : {
             "type" : "boolean",
@@ -19122,7 +19433,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/InvoiceLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -19142,6 +19454,11 @@
             "type" : "string",
             "description" : "Number of the business document.",
             "example" : "R 2026-0001"
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -19475,7 +19792,8 @@
           "name" : {
             "type" : "string",
             "description" : "Name or title of the category.",
-            "example" : "Tree category"
+            "example" : "Tree category",
+            "minLength" : 1
           },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetDtoV2",
@@ -19520,7 +19838,8 @@
           "name" : {
             "type" : "string",
             "description" : "Name or title of the category.",
-            "example" : "Tree category"
+            "example" : "Tree category",
+            "minLength" : 1
           },
           "taxes" : {
             "$ref" : "#/components/schemas/TaxSetCreationDtoV2",
@@ -19560,7 +19879,8 @@
           "name" : {
             "type" : "string",
             "description" : "Name or title of the category.",
-            "example" : "Tree category"
+            "example" : "Tree category",
+            "minLength" : 1
           }
         },
         "required" : [ "id", "name" ]
@@ -19649,7 +19969,7 @@
           "description_formatted" : {
             "type" : "string",
             "description" : "Description pre-formatted and html-sanitized to readable text.",
-            "example" : "Grows Apples during Autumn\r\n",
+            "example" : "Grows Apples during Autumn",
             "readOnly" : true
           },
           "id" : {
@@ -19659,7 +19979,7 @@
           },
           "ignore_total_discount" : {
             "type" : "boolean",
-            "default" : "false",
+            "default" : false,
             "description" : "If set to true item is not considered for the discount of a business document."
           },
           "item_category" : {
@@ -19681,7 +20001,8 @@
           "name" : {
             "type" : "string",
             "description" : "Short name of the item.",
-            "example" : "Apple Tree"
+            "example" : "Apple Tree",
+            "minLength" : 1
           },
           "number" : {
             "type" : "string",
@@ -19710,7 +20031,7 @@
           "supplier_order_number" : {
             "type" : "string",
             "description" : "Optional number for the item number in the supplier's records.",
-            "example" : 1
+            "example" : "1"
           },
           "tags" : {
             "type" : "array",
@@ -19810,7 +20131,7 @@
           },
           "ignore_total_discount" : {
             "type" : "boolean",
-            "default" : "false",
+            "default" : false,
             "description" : "If set to true item is not considered for the discount of a business document."
           },
           "item_category" : {
@@ -19832,7 +20153,8 @@
           "name" : {
             "type" : "string",
             "description" : "Short name of the item.",
-            "example" : "Apple Tree"
+            "example" : "Apple Tree",
+            "minLength" : 1
           },
           "number" : {
             "type" : "string",
@@ -19862,7 +20184,7 @@
           "supplier_order_number" : {
             "type" : "string",
             "description" : "Optional number for the item number in the supplier's records.",
-            "example" : 1
+            "example" : "1"
           },
           "tags" : {
             "type" : "array",
@@ -20000,7 +20322,7 @@
           },
           "ignore_total_discount" : {
             "type" : "boolean",
-            "default" : "false",
+            "default" : false,
             "description" : "If set to true item is not considered for the discount of a business document."
           },
           "item_category" : {
@@ -20022,7 +20344,8 @@
           "name" : {
             "type" : "string",
             "description" : "Short name of the item.",
-            "example" : "Apple Tree"
+            "example" : "Apple Tree",
+            "minLength" : 1
           },
           "number" : {
             "type" : "string",
@@ -20052,7 +20375,7 @@
           "supplier_order_number" : {
             "type" : "string",
             "description" : "Optional number for the item number in the supplier's records.",
-            "example" : 1
+            "example" : "1"
           },
           "tags" : {
             "type" : "array",
@@ -20074,7 +20397,7 @@
           },
           "update_templates" : {
             "type" : "boolean",
-            "default" : "false",
+            "default" : false,
             "description" : "If set to true all invoice templates where the item is used will be updated. Default is false."
           },
           "visible" : {
@@ -20089,6 +20412,43 @@
           }
         },
         "required" : [ "account", "amount_type", "name", "selling_price" ]
+      },
+      "JournalLineDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "account" : {
+            "$ref" : "#/components/schemas/AccountReferenceDtoV2",
+            "description" : "Account of the journal line."
+          },
+          "contra_account" : {
+            "$ref" : "#/components/schemas/AccountReferenceDtoV2",
+            "description" : "Contra account of the journal line."
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description of the journal line",
+            "example" : "Journal line description"
+          },
+          "line_number" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "Line number of the journal line."
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Net amount of the journal line.",
+            "example" : 12.99
+          },
+          "taxes" : {
+            "$ref" : "#/components/schemas/TaxSetWithModifierAndAmountDtoV2",
+            "description" : "Taxes of the journal line."
+          },
+          "total" : {
+            "type" : "number",
+            "description" : "Total amount of the journal line.",
+            "example" : 12.99
+          }
+        }
       },
       "JournalReferenceDtoV2" : {
         "type" : "object",
@@ -20412,7 +20772,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         }
       },
@@ -20609,7 +20969,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/OfferLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -20624,6 +20985,11 @@
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -20956,7 +21322,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/OfferLineDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -21368,7 +21735,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/BusinessDocumentLineCreationDtoV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -21383,6 +21751,11 @@
             "type" : "string",
             "description" : "Internal note that isn't printed.",
             "example" : "Internal Description Test."
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number / Bestellnummer from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "type" : "string",
@@ -21548,6 +21921,11 @@
             "description" : "The order confirmation state of the document.",
             "enum" : [ "IN_PROGRESS", "DONE" ]
           },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
+          },
           "payment_term" : {
             "$ref" : "#/components/schemas/PaymentTermReferenceDtoV2",
             "description" : "Reference to the payment terms applicable to this document."
@@ -21703,7 +22081,8 @@
             "description" : "List of all business document lines. The order of this array defines the numbers assigned to the lines.",
             "items" : {
               "$ref" : "#/components/schemas/BusinessDocumentLineV2"
-            }
+            },
+            "minItems" : 1
           },
           "manual_address" : {
             "type" : "boolean",
@@ -21736,6 +22115,11 @@
             "type" : "string",
             "description" : "The order confirmation state of the document.",
             "enum" : [ "IN_PROGRESS", "DONE" ]
+          },
+          "order_number" : {
+            "type" : "string",
+            "description" : "Order number from the customer.",
+            "example" : "BN-2024-1234"
           },
           "payment_term" : {
             "$ref" : "#/components/schemas/PaymentTermReferenceDtoV2",
@@ -21808,6 +22192,181 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/OrderConfirmationDtoV2"
+            }
+          },
+          "total_count" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "content" ]
+      },
+      "OutgoJournalDetailDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "cancellation_state" : {
+            "type" : "string",
+            "description" : "Indicates if the journal has been cancelled.",
+            "enum" : [ "NONE", "CANCELLED", "CANCELLATION" ]
+          },
+          "cancelled_reason" : {
+            "type" : "string",
+            "description" : "Reason for cancellation if journal is cancelled."
+          },
+          "create_reference" : {
+            "type" : "string",
+            "description" : "Invoice number of correlating invoice."
+          },
+          "created_at" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "expense_entry_finalization" : {
+            "$ref" : "#/components/schemas/TemFinalizationReferenceDtoV2",
+            "description" : "Expense entry finalization associated with the journal."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the journal.",
+            "example" : "1f1e4e0e-4f21-4887-a711-07b4eb76cdb3"
+          },
+          "incoming_invoice" : {
+            "$ref" : "#/components/schemas/IncomingInvoiceReferenceDtoV2",
+            "description" : "Invoice associated with the journal."
+          },
+          "invoice_reference" : {
+            "type" : "string",
+            "description" : "Reference of correlating the invoice."
+          },
+          "lines" : {
+            "type" : "array",
+            "description" : "Lines of the journal.",
+            "items" : {
+              "$ref" : "#/components/schemas/JournalLineDtoV2"
+            }
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Total net sum of the journal in the main currency."
+          },
+          "note" : {
+            "type" : "string",
+            "description" : "Internal optional note."
+          },
+          "paid_date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "referenceJournal" : {
+            "$ref" : "#/components/schemas/JournalReferenceDtoV2",
+            "description" : "Reference journal"
+          },
+          "sequence" : {
+            "type" : "string",
+            "description" : "Sequence of the journal.",
+            "example" : "E2024 1"
+          },
+          "supplier" : {
+            "$ref" : "#/components/schemas/SupplierReferenceDtoV2",
+            "description" : "Supplier of the journal."
+          },
+          "tax" : {
+            "type" : "number",
+            "description" : "Total tax sum of the journal in the main currency.",
+            "example" : 1234
+          },
+          "total" : {
+            "type" : "number",
+            "description" : "Total sum of the journal in the main currency.",
+            "example" : 1234
+          },
+          "trip_finalization" : {
+            "$ref" : "#/components/schemas/TemFinalizationReferenceDtoV2",
+            "description" : "Trip finalization associated with the journal."
+          }
+        },
+        "required" : [ "cancellation_state", "id", "net", "tax", "total" ]
+      },
+      "OutgoJournalDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "cancellation_state" : {
+            "type" : "string",
+            "description" : "Indicates if the journal has been cancelled.",
+            "enum" : [ "NONE", "CANCELLED", "CANCELLATION" ]
+          },
+          "cancelled_reason" : {
+            "type" : "string",
+            "description" : "Reason for cancellation if journal is cancelled."
+          },
+          "create_reference" : {
+            "type" : "string",
+            "description" : "Invoice number of correlating invoice."
+          },
+          "created_at" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the journal.",
+            "example" : "1f1e4e0e-4f21-4887-a711-07b4eb76cdb3"
+          },
+          "invoice_reference" : {
+            "type" : "string",
+            "description" : "Reference of correlating the invoice."
+          },
+          "net" : {
+            "type" : "number",
+            "description" : "Total net sum of the journal in the main currency."
+          },
+          "note" : {
+            "type" : "string",
+            "description" : "Internal optional note."
+          },
+          "paid_date" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "referenceJournal" : {
+            "$ref" : "#/components/schemas/JournalReferenceDtoV2",
+            "description" : "Reference journal"
+          },
+          "sequence" : {
+            "type" : "string",
+            "description" : "Sequence of the journal.",
+            "example" : "E2024 1"
+          },
+          "supplier" : {
+            "$ref" : "#/components/schemas/SupplierReferenceDtoV2",
+            "description" : "Supplier of the journal."
+          },
+          "tax" : {
+            "type" : "number",
+            "description" : "Total tax sum of the journal in the main currency.",
+            "example" : 1234
+          },
+          "total" : {
+            "type" : "number",
+            "description" : "Total sum of the journal in the main currency.",
+            "example" : 1234
+          }
+        },
+        "required" : [ "cancellation_state", "id", "net", "tax", "total" ]
+      },
+      "OutgoJournalResultDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "content" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OutgoJournalDtoV2"
             }
           },
           "total_count" : {
@@ -21892,7 +22451,9 @@
             "description" : "List of invoice lines. The supplied order of the array defines the assigned line numbers.",
             "items" : {
               "$ref" : "#/components/schemas/OutgoingInvoiceLineCreationDtoV2"
-            }
+            },
+            "maxItems" : 2147483647,
+            "minItems" : 1
           },
           "net" : {
             "type" : "number",
@@ -22502,7 +23063,7 @@
           "account_code" : {
             "type" : "string",
             "description" : "Numeric account code.",
-            "example" : 2800
+            "example" : "2800"
           },
           "color" : {
             "type" : "string",
@@ -23036,7 +23597,7 @@
           "number" : {
             "type" : "string",
             "description" : "Sequence number of the receipt, will be set automatically.",
-            "example" : 2017.0001
+            "example" : "2017.0001"
           },
           "original_receipt" : {
             "$ref" : "#/components/schemas/ReceiptReferenceDtoV2",
@@ -23140,7 +23701,7 @@
           "number" : {
             "type" : "string",
             "description" : "Sequence number of the receipt, will be set automatically.",
-            "example" : 2017.0001
+            "example" : "2017.0001"
           },
           "original_receipt" : {
             "$ref" : "#/components/schemas/ReceiptReferenceDtoV2",
@@ -23322,7 +23883,8 @@
             "example" : "Receipt must be sent per post."
           },
           "taxes" : {
-            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2"
+            "$ref" : "#/components/schemas/TaxSetWithAmountCreationDtoV2",
+            "description" : "Tax class entries of the item, see the /accounts/{account}/tax_class_entries resource."
           },
           "total" : {
             "type" : "number",
@@ -23454,7 +24016,7 @@
           "number" : {
             "type" : "string",
             "description" : "Sequence number of the receipt, will be set automatically.",
-            "example" : 2017.0001
+            "example" : "2017.0001"
           }
         },
         "required" : [ "cash_register", "id", "number" ]
@@ -23735,7 +24297,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -23989,7 +24551,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -24010,7 +24572,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -24258,7 +24820,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "display_name", "id", "ignore_in_bsa" ]
@@ -24321,7 +24883,7 @@
           "address_branch_no" : {
             "type" : "string",
             "description" : "Address branch number of the company, if present.",
-            "example" : 2
+            "example" : "2"
           },
           "attribute1" : {
             "type" : "string",
@@ -24566,7 +25128,7 @@
           "zip_code" : {
             "type" : "string",
             "description" : "Zip code of the address.",
-            "example" : 1010
+            "example" : "1010"
           }
         },
         "required" : [ "ignore_in_bsa" ]
@@ -24618,7 +25180,7 @@
           "color" : {
             "type" : "string",
             "description" : "HEX code of the color the tag should have in the UI.",
-            "example" : "Infinity"
+            "example" : "5e0504"
           },
           "description" : {
             "type" : "string",
@@ -24755,7 +25317,7 @@
           "invert_tax" : {
             "type" : "boolean",
             "description" : "Whether to invert the tax or not",
-            "example" : "False"
+            "example" : false
           },
           "ivat_sales_tax_class" : {
             "$ref" : "#/components/schemas/SalesTaxClassReferenceDtoV2",
@@ -24859,7 +25421,7 @@
           "with_tax_deduction" : {
             "type" : "boolean",
             "description" : "Whether there is tax deduction or not",
-            "example" : "True"
+            "example" : true
           }
         },
         "required" : [ "code", "country", "id", "key_description", "key_name", "tax_class_entry", "with_tax_deduction" ]
@@ -25376,6 +25938,29 @@
             "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
           }
         }
+      },
+      "TemFinalizationReferenceDtoV2" : {
+        "type" : "object",
+        "properties" : {
+          "from_date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Start of the finalization",
+            "example" : "2024-08-01"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Id for this finalization",
+            "example" : "5665af78-cc67-490-b030-f649fde5d8a8"
+          },
+          "to_date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "End of the of the finalization",
+            "example" : "2024-08-02"
+          }
+        },
+        "required" : [ "from_date", "id", "to_date" ]
       },
       "UnitOfMeasureDtoV2" : {
         "type" : "object",

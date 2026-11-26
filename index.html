@@ -2061,7 +2061,7 @@ p {
 <h1>FreeFinance REST API</h1>
 <div class="details">
 <span id="author" class="author">support@freefinance.at</span><br>
-<span id="revdate">2.0.0-beta11</span>
+<span id="revdate">2.0.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2161,9 +2161,13 @@ p {
 <li><a href="#inv_line_calc">4.7.4. Verification of total sums</a></li>
 <li><a href="#_external_invoices">4.7.5. External invoices</a>
 <ul class="sectlevel4">
-<li><a href="#_attaching_a_pdf_file">Attaching a PDF file</a></li>
+<li><a href="#_attaching_a_document">Attaching a document</a></li>
 </ul>
 </li>
+<li><a href="#_external_dunning_letters">4.7.6. External dunning letters</a></li>
+<li><a href="#_external_cancellation_invoices">4.7.7. External cancellation invoices</a></li>
+<li><a href="#_external_cancellations">4.7.8. External cancellations</a></li>
+<li><a href="#_external_cancellation_credit_memos">4.7.9. External cancellation credit memos</a></li>
 </ul>
 </li>
 <li><a href="#_documents_files_folders_assignments">4.8. Documents - files, folders, assignments</a>
@@ -6074,20 +6078,30 @@ This ensures that the original invoice number from the external system is preser
 <div class="paragraph">
 <p>All external invoices are automatically finalized upon creation.
 Unlike regular finalized invoices, no PDF file is generated automatically.
-If you want to attach a PDF, you must upload it separately and create an assignment.</p>
+The externally created document is sent with the request in a single multipart call:
+the mandatory <code>invoice</code> part carries the invoice itself, the optional <code>document</code> part the externally created file (max 2 MB).
+If the <code>document</code> part is omitted, the invoice is created without any document.
+The accepted file types and the size limit are the ones of the DMS file upload, and the content type has to match the file extension.
+The document is stored in an additional <code>Extern</code> sub-folder of the invoice documents folder in the DMS storage, which keeps externally created documents separated from internally generated ones, and is assigned to the invoice.
+A filename that is already used in that folder is rejected.
+The assigned file remains a regular DMS document: it can be downloaded and deleted again through the document endpoints.</p>
 </div>
 <div class="listingblock">
 <div class="title">Example request for an external invoice</div>
 <div class="content">
 <pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/external
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: eyJ...</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "number": "R 2016-0001", <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="invoice"
+Content-Type: application/json
+
+{
+    "number": "R 2016-0001",
     "date": "2025-11-11",
     "customer_name": "Ernest Example",
     "lines": [
@@ -6104,7 +6118,14 @@ Authorization: eyJ...</pre>
             }
         }
     ]
-}</code></pre>
+}
+
+--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="R-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of R-2016-0001.pdf --&gt;
+--WebAppBoundary--</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -6208,9 +6229,13 @@ It is not generated from a sequence group.</td>
 </table>
 </div>
 <div class="sect4">
-<h5 id="_attaching_a_pdf_file">Attaching a PDF file</h5>
+<h5 id="_attaching_a_document">Attaching a document</h5>
 <div class="paragraph">
-<p>To attach a PDF file to an external invoice, you need to upload the file and create an assignment.
+<p>An external invoice is created together with its document via the multipart endpoint <code>POST /inv/invoices/external</code> described above,
+which stores the document in the invoice&#8217;s <code>Extern</code> folder in a single request.</p>
+</div>
+<div class="paragraph">
+<p>To attach an additional document to an already existing external invoice, upload the file and create an assignment.
 This involves three steps: fetching a folder, uploading the file, and creating the assignment.</p>
 </div>
 <div class="sect5">
@@ -6420,6 +6445,228 @@ Use the external invoice endpoint when importing invoices from external systems 
 </table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_external_dunning_letters">4.7.6. External dunning letters</h4>
+<div class="paragraph">
+<p>If a dunning letter was already created in another system, you can dun an invoice without letting FreeFinance generate a dunning document.
+The endpoint <code>POST /inv/invoices/:invoice/dunning_letters/external</code> works exactly like the regular dunning endpoint <code>POST /inv/invoices/:invoice/dunning_letters</code>,
+with one difference: instead of a layout setup it takes the externally created dunning document.</p>
+</div>
+<div class="paragraph">
+<p>Like the external invoice, the request is a single multipart call:
+the mandatory <code>dunning_letter</code> part carries the dunning data as JSON (without the <code>layout_setup</code> field of the regular endpoint),
+the optional <code>document</code> part the externally created file (same file types and size limit as the DMS file upload, max 2 MB).
+If a document is sent, no dunning document is generated. Instead, the file is stored in the <code>Extern</code> sub-folder of the invoice documents folder in the DMS storage
+and assigned to the dunned invoice, since a dunning letter itself is not an assignable document. The created dunning letter references that file in its <code>document</code> field,
+while the invoice keeps its own <code>current_file</code>. Without the <code>document</code> part, the dunning letter is created without any document.
+Dunning fee, booking and dunning sequence work exactly as with regular dunning letters.
+A filename that is already used in that folder is rejected.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for dunning with an external document</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/1000...1/dunning_letters/external
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="dunning_letter"
+Content-Type: application/json
+
+{
+  "dunning_level": "8b3c...91",
+  "subject": "Payment Reminder",
+  "dunning_date": "2016-06-13",
+  "due_date": "2016-04-20",
+  "dunning_text": "Sadly, we could not retrieve any payment as of now.",
+  "show_lines": false,
+  "total_dunning_amount": 500.00,
+  "dunning_fee": 0,
+  "dunning_end_text": "If your payment already went through, ignore this reminder.",
+  "currency_rate": 1
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="dunning-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of dunning-2016-0001.pdf --&gt;
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response is the same as for the regular dunning endpoint: the dunned invoice together with the created dunning letter.
+The letter itself has no <code>document</code> - the uploaded file is only assigned to the invoice.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_external_cancellation_invoices">4.7.7. External cancellation invoices</h4>
+<div class="paragraph">
+<p>If the cancellation document for a cancellation invoice (Storno) was already created in another system,
+you can cancel an invoice and create the cancellation invoice without letting FreeFinance generate a document or assign a number.
+The endpoint <code>POST /inv/invoices/:invoice/external/cancel/with_invoice</code> works like the regular
+<code>POST /inv/invoices/:invoice/cancel/with_invoice</code> endpoint, with one difference:
+the cancellation invoice keeps the number from the request and its document can optionally be the uploaded file.</p>
+</div>
+<div class="paragraph">
+<p>The request is again a single multipart call:
+the mandatory <code>cancellation_invoice</code> part carries the data of the cancellation invoice as JSON,
+the optional <code>document</code> part the externally created file (same file types and size limit as the DMS file upload, max 2 MB).
+The <code>number</code> of the cancellation invoice is mandatory - no number is taken from a sequence group -
+and <code>date</code> defaults to today. As with the regular endpoint, all lines of the original invoice are copied and negated.
+If a document is sent, no PDF or XML is generated: the file is stored in the <code>Extern</code> sub-folder of the invoice documents folder in the DMS storage
+and assigned to the cancellation invoice. Without the <code>document</code> part, the cancellation invoice is finalized like a regular one -
+a document is generated with the layout of the original invoice if it has one, otherwise no document is created.
+A filename that is already used in that folder is rejected.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for cancelling with an external document</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/1000...1/external/cancel/with_invoice
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="cancellation_invoice"
+Content-Type: application/json
+
+{
+  "number": "S 2016-0001",
+  "date": "2016-06-13"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="storno-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of storno-2016-0001.pdf --&gt;
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response is the created cancellation invoice with state <code>CANCELLATION_DOCUMENT</code> and the number given in the request.
+The original invoice is cancelled as with the regular cancellation endpoint.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_external_cancellations">4.7.8. External cancellations</h4>
+<div class="paragraph">
+<p>If the cancellation document for a regular cancellation (Storno) of an invoice or a credit memo was already created in another system,
+you can cancel the document without letting FreeFinance generate a cancellation document.
+The endpoints <code>POST /inv/invoices/:invoice/external/cancel</code> and <code>POST /inv/credit_memos/:credit_memo/external/cancel</code>
+work like the regular <code>cancel</code> endpoints, with one difference: instead of generating a cancellation document,
+the externally created document is uploaded and linked to the cancelled document.</p>
+</div>
+<div class="paragraph">
+<p>The request is again a single multipart call:
+the mandatory <code>cancellation</code> part carries the cancellation data as JSON (only the <code>date</code>, defaulted with today),
+the optional <code>document</code> part the externally created file (same file types and size limit as the DMS file upload, max 2 MB).
+If a document is sent, no PDF or XML is generated: the file is stored in the <code>Extern</code> sub-folder of the invoice documents folder in the DMS storage
+and assigned to the cancelled document. Without the <code>document</code> part, the document is cancelled like with the regular endpoint:
+a cancellation document is generated with the layout of the cancelled document, unless the cancelled document is itself an external document -
+external documents never receive system generated documents, with or without a layout.
+A filename that is already used in that folder is rejected.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for cancelling an invoice with an external document</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/1000...1/external/cancel
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="cancellation"
+Content-Type: application/json
+
+{
+  "date": "2016-06-13"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="storno-normal-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of storno-normal-2016-0001.pdf --&gt;
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response is the cancelled document with state <code>CANCELLED</code>. The uploaded file is assigned to it but does not replace its current document.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_external_cancellation_credit_memos">4.7.9. External cancellation credit memos</h4>
+<div class="paragraph">
+<p>If the credit memo document for a cancellation of an invoice was already created in another system,
+you can cancel an invoice and create the credit memo without letting FreeFinance generate a document or assign a number.
+The endpoint <code>POST /inv/invoices/:invoice/external/cancel/with_credit_memo</code> works like the regular
+<code>POST /inv/invoices/:invoice/cancel/with_credit_memo</code> endpoint, with one difference:
+the credit memo keeps the number from the request and its document can optionally be the uploaded file.</p>
+</div>
+<div class="paragraph">
+<p>The request is again a single multipart call:
+the mandatory <code>credit_memo</code> part carries the data of the cancellation credit memo as JSON,
+the optional <code>document</code> part the externally created file (same file types and size limit as the DMS file upload, max 2 MB).
+The <code>number</code> of the credit memo is mandatory - no number is taken from a sequence group -
+and <code>date</code> defaults to today. As with the regular endpoint, all lines of the original invoice are copied and negated.
+If a document is sent, no PDF or XML is generated: the file is stored in the <code>Extern</code> sub-folder of the invoice documents folder in the DMS storage
+and assigned to the credit memo. Without the <code>document</code> part, the credit memo is finalized like a regular one -
+a document is generated with the layout of the original invoice if it has one, otherwise no document is created.
+A filename that is already used in that folder is rejected.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example request for cancelling an invoice with an external credit memo document</div>
+<div class="content">
+<pre>POST https://demo.freefinance.at/api/2.0/clients/:client_id/inv/invoices/1000...1/external/cancel/with_credit_memo
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: eyJ...</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="credit_memo"
+Content-Type: application/json
+
+{
+  "number": "GM 2016-0001",
+  "date": "2016-06-13"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="storno-gutschrift-2016-0001.pdf"
+Content-Type: application/pdf
+
+&lt;!-- raw content of storno-gutschrift-2016-0001.pdf --&gt;
+--WebAppBoundary--</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response is the created credit memo with state <code>CANCELLATION_DOCUMENT</code> and the number given in the request.
+The original invoice is cancelled as with the regular cancellation endpoint.</p>
 </div>
 </div>
 </div>
@@ -7042,7 +7289,7 @@ See <a href="#_clients">Clients</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-13 12:20:15 +0100
+Last updated 2026-11-26 17:46:29 +0100
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

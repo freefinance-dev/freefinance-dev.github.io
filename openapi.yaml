@@ -7,7 +7,7 @@ info:
   description: The REST API to be used with FreeFinance and FinanzFenster. Please
     read the examples for an introduction to authentication and some use cases.
   title: FreeFinance REST API
-  version: 2.0.0-beta11
+  version: 2.0.0
 externalDocs:
   description: Detailed examples for authentication and base tasks can be found here.
   url: https://freefinance-dev.github.io
@@ -76,6 +76,10 @@ tags:
   name: POS-RCT
 - description: "Tagging and Cost Centers for customers, invoices, etc."
   name: TAG
+- description: "Travel Expense Management - expense entries, vehicle fleet, etc."
+  name: TEM
+- description: Travel Expense Management - trips.
+  name: TEM-TRP
 paths:
   /auth/issuer:
     get:
@@ -1029,7 +1033,7 @@ paths:
               $ref: "#/components/schemas/IncomingInvoiceCreationDtoV2"
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -1636,7 +1640,53 @@ paths:
               $ref: "#/components/schemas/IncomingPaymentDtoV2"
         required: true
       responses:
-        "200":
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncomingInvoiceModificationResultDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBI-INC
+  /clients/{client_id}/cbi/incoming_invoices/{invoice}/pay_rest:
+    post:
+      description: Registers the rest payment for an incoming invoice.
+      operationId: postIncomingInvoiceRestPayment
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncomingRestPaymentDtoV2"
+        required: true
+      responses:
+        "201":
           content:
             application/json:
               schema:
@@ -1921,7 +1971,7 @@ paths:
               $ref: "#/components/schemas/OutgoingInvoiceCreationDtoV2"
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -2314,7 +2364,53 @@ paths:
               $ref: "#/components/schemas/OutgoingPaymentDtoV2"
         required: true
       responses:
-        "200":
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutgoingInvoiceModificationResultDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - CBI-OUT
+  /clients/{client_id}/cbi/outgoing_invoices/{invoice}/pay_rest:
+    post:
+      description: Registers the rest payment for an outgoing invoice.
+      operationId: postOutgoingInvoiceRestPayment
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutgoingRestPaymentDtoV2"
+        required: true
+      responses:
+        "201":
           content:
             application/json:
               schema:
@@ -2373,6 +2469,12 @@ paths:
         name: type
         schema:
           type: string
+      - description: "If set to true, only copyable accounts will be included. Default\
+          \ false"
+        in: query
+        name: copyable
+        schema:
+          type: boolean
       - description: "Account use determines which accounts are used for which purpose,\
           \ depending on API."
         example: INCOME
@@ -2384,6 +2486,12 @@ paths:
         example: 4000
         in: query
         name: code
+        schema:
+          type: string
+      - description: Account code alternative
+        example: 4000
+        in: query
+        name: code_alt
         schema:
           type: string
       - description: "Search text filtering by code, name or description."
@@ -2430,6 +2538,34 @@ paths:
           type: string
           format: date
           pattern: yyyy-MM-dd
+      - description: VAT sales tax class code to filter by.
+        example: 1
+        in: query
+        name: vat_sales_tax_class_code
+        schema:
+          type: string
+      - description: Intra-community VAT sales tax class code to filter by.
+        example: 1
+        in: query
+        name: ivat_sales_tax_class_code
+        schema:
+          type: string
+      - description: Income tax class code to filter by.
+        example: 1
+        in: query
+        name: income_tax_class_code
+        schema:
+          type: string
+      - description: Only return accounts that are assigned to any of the given tag
+          ids.
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: query
+        name: tags
+        schema:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
       responses:
         "200":
           content:
@@ -3365,7 +3501,7 @@ paths:
         description: "The file name, content type and base64 content of the document."
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -4080,6 +4216,45 @@ paths:
       - bearerAuth: []
       tags:
       - INV-CM
+  /clients/{client_id}/inv/credit_memos/external:
+    post:
+      description: Create and marks a specific external credit memo as finalized.
+      operationId: createAndFinalizeExternalCreditMemo
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreditMemoExternalCreationDtoV2"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditMemoExtendedDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-CM
   /clients/{client_id}/inv/credit_memos/{credit_memo}:
     get:
       description: Returns a specific credit memo by its id.
@@ -4148,6 +4323,54 @@ paths:
               schema:
                 $ref: "#/components/schemas/RestError"
           description: Credit memo cannot be cancelled.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-CM
+  /clients/{client_id}/inv/credit_memos/{credit_memo}/external/cancel:
+    post:
+      description: "Cancel the credit memo with an optionally externally created cancellation\
+        \ document. If a document is sent with the multi-part request, no cancellation\
+        \ document is generated - it is uploaded and linked to the cancelled credit\
+        \ memo. Without a document the credit memo is cancelled like a regular cancellation."
+      operationId: cancelCreditMemoExternal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Credit memo id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: credit_memo
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/BusinessDocumentExternalCancellationWithMultipartDtoV2"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditMemoExtendedDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
       security:
       - bearerAuth: []
       tags:
@@ -4607,7 +4830,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/DeliveryNoteBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -4640,7 +4863,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/DeliveryNoteBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -5332,10 +5555,9 @@ paths:
           type: string
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/InvoiceExternalCreationDtoV2"
-        required: true
+              $ref: "#/components/schemas/InvoiceExternalCreationWithMultipartDtoV2"
       responses:
         "201":
           content:
@@ -5343,6 +5565,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/InvoiceExtendedDtoV2"
           description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
         "404":
           content:
             application/json:
@@ -5558,7 +5786,8 @@ paths:
       - INV-IV
   /clients/{client_id}/inv/invoices/{invoice}/cancel:
     post:
-      description: Cancel a finalized invoice.
+      description: "Cancel a finalized invoice. With cancel_payments, all active payments\
+        \ of the invoice are cancelled automatically beforehand."
       operationId: cancelInvoice
       parameters:
       - in: path
@@ -5577,11 +5806,211 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BusinessDocumentCancellationDtoV2"
+              $ref: "#/components/schemas/InvoiceCancellationWithPaymentsDtoV2"
         required: true
       responses:
         "204":
           description: Invoice has been cancelled.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-IV
+  /clients/{client_id}/inv/invoices/{invoice}/dunning_letters/external:
+    post:
+      description: "Dun an invoice with an optionally externally created dunning document.\
+        \ If a document is sent with the multi-part request, no dunning document is\
+        \ generated - it is uploaded and linked to the invoice. Without a document\
+        \ no dunning document is created."
+      operationId: createExternalDunningLetter
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/DunningLetterExternalCreationWithMultipartDtoV2"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DunnedInvoiceResultDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-IV
+  /clients/{client_id}/inv/invoices/{invoice}/external/cancel:
+    post:
+      description: "Cancel the invoice with an optionally externally created cancellation\
+        \ document. If a document is sent with the multi-part request, no cancellation\
+        \ document is generated - it is uploaded and linked to the cancelled invoice.\
+        \ Without a document the invoice is cancelled like a regular cancellation."
+      operationId: cancelInvoiceExternal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/BusinessDocumentExternalCancellationWithMultipartDtoV2"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceExtendedDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-IV
+  /clients/{client_id}/inv/invoices/{invoice}/external/cancel/with_credit_memo:
+    post:
+      description: "Cancel the invoice and create a credit memo from an optionally\
+        \ externally created document. No number is assigned - it comes in the request.\
+        \ If a document is sent with the multi-part request, no document is generated\
+        \ - it is uploaded and linked to the credit memo. Without a document the credit\
+        \ memo is finalized like a regular cancellation credit memo."
+      operationId: cancelAndCreateCreditMemoExternal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreditMemoExternalCancellationWithMultipartDtoV2"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditMemoExtendedDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - INV-IV
+  /clients/{client_id}/inv/invoices/{invoice}/external/cancel/with_invoice:
+    post:
+      description: "Cancel the invoice and create a cancellation invoice from an optionally\
+        \ externally created document. No number is assigned - it comes in the request.\
+        \ If a document is sent with the multi-part request, no document is generated\
+        \ - it is uploaded and linked to the cancellation invoice. Without a document\
+        \ the cancellation invoice is finalized like a regular cancellation invoice."
+      operationId: cancelAndCreateCancellationInvoiceExternal
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Invoice id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: invoice
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/InvoiceExternalCancellationWithMultipartDtoV2"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceExtendedDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
         "404":
           content:
             application/json:
@@ -5698,7 +6127,7 @@ paths:
               $ref: "#/components/schemas/InvoiceCashRegisterPaymentCreationDtoV2"
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -5744,7 +6173,7 @@ paths:
               $ref: "#/components/schemas/InvoiceAccountPaymentCreationDtoV2"
         required: true
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -6173,7 +6602,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/OfferBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -6207,7 +6636,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/OfferBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -6562,7 +6991,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/OrderConfirmationBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -6596,7 +7025,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BulkBusinessDocumentDtoV2"
+                $ref: "#/components/schemas/OrderConfirmationBulkResultDtoV2"
           description: Operation completed successfully.
         "400":
           content:
@@ -9112,6 +9541,11 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OperatorDtoV2"
       responses:
         "200":
           content:
@@ -9119,6 +9553,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/ReceiptDetailDtoV2"
           description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
         "404":
           content:
             application/json:
@@ -9285,6 +9725,534 @@ paths:
       - bearerAuth: []
       tags:
       - TAG
+  /clients/{client_id}/tem/tem_user:
+    get:
+      description: Returns all temUsers for the currently authenticated user.
+      operationId: getTemUsers
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Show Deleted
+        in: query
+        name: show_deleted
+        schema:
+          type: boolean
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemUserConfigResultDtoV2"
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+  /clients/{client_id}/tem/tem_user/{user}:
+    get:
+      description: Returns a temUser.
+      operationId: getTemUser
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: User id.
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: user
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemUserConfigDtoV2"
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+  /clients/{client_id}/tem/trips:
+    get:
+      description: Returns all trips for the currently authenticated user.
+      operationId: getTrips
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Return only trips updated after this timestamp in milliseconds
+          (Instant.now().toEpochMilli())
+        example: 1479497595571
+        in: query
+        name: updated_since
+        schema:
+          type: integer
+          format: int64
+      - description: "Return only trips after this date (inclusive). Default: First\
+          \ day of this year."
+        example: 2024-08-01
+        in: query
+        name: from
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      - description: "Return only trips before this date (inclusive). Default: Last\
+          \ day of this year."
+        example: 2024-08-01
+        in: query
+        name: to
+        schema:
+          type: string
+          format: date
+          pattern: yyyy-MM-dd
+      - description: The id for a specific vehicle.
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: query
+        name: vehicle
+        schema:
+          type: string
+      - description: Search-text
+        example: holiday trip
+        in: query
+        name: search_text
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripResultDtoV2"
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM-TRP
+    post:
+      description: Create a trip.
+      operationId: postTrip
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TripCreationDtoV2"
+        description: Contains the created trip
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM-TRP
+  /clients/{client_id}/tem/trips/{trip}:
+    delete:
+      description: Remove the trip.
+      operationId: deleteTrip
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Trip id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: trip
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM-TRP
+    get:
+      description: Return a specific trip.
+      operationId: getTrip
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Trip id.
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: trip
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripDtoV2"
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM-TRP
+    put:
+      description: Update the current trip.
+      operationId: putTrip
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Trip id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: trip
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TripUpdateDtoV2"
+        description: Contains the updated fields
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TripDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM-TRP
+  /clients/{client_id}/tem/vehicles:
+    get:
+      description: Returns all vehicles.
+      operationId: getVehicles
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Limit of results.
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int32
+      - description: Offset to start with result set
+        in: query
+        name: offset
+        schema:
+          type: integer
+          format: int32
+      - description: Comma separated list of sort params. The direction could append
+          to the sort property by a colon.
+        example: "name:ASC,status:DESC"
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleExtendedResultDtoV2"
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+    post:
+      description: Create a vehicle.
+      operationId: postVehicle
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleModifyDtoV2"
+        description: Contains the created vehicle
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+  /clients/{client_id}/tem/vehicles/{vehicle}:
+    delete:
+      description: Remove the vehicle.
+      operationId: deleteVehicle
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Vehicle id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: vehicle
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+    get:
+      description: Returns a specific vehicle by its id.
+      operationId: getVehicle
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Vehicle id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: vehicle
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleExtendedDtoV2"
+          description: Operation completed successfully.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+    patch:
+      description: Update a vehicle that already has trips made.
+      operationId: patchVehicle
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Vehicle id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: vehicle
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehiclePatchDtoV2"
+        description: Contains the updated fields
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Input invalid. Further information in the RestError response.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Operation completed successfully.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
+    put:
+      description: Update a vehicle that has no trips made yet.
+      operationId: putVehicle
+      parameters:
+      - in: path
+        name: client_id
+        required: true
+        schema:
+          type: string
+      - description: Vehicle id
+        example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        in: path
+        name: vehicle
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleModifyDtoV2"
+        description: Contains the updated fields
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleDtoV2"
+          description: Operation completed successfully.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: "The vehicle already has trips made, so it cannot be updated\
+            \ with put. Use patch instead."
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestError"
+          description: Resource not found.
+      security:
+      - bearerAuth: []
+      tags:
+      - TEM
   /fnd/countries:
     get:
       description: Returns all countries.
@@ -9655,10 +10623,10 @@ components:
           example: "2310"
           maxLength: 25
           minLength: 0
-        code_alt:
-          type: string
-          description: Alternate account code of the account.
-          example: "4000"
+        copy_allowed:
+          type: boolean
+          description: Whether this account can be copied or not.
+          example: true
         default_taxes:
           $ref: "#/components/schemas/TaxSetWithClassModifierForcedDtoV2"
           description: "Tax class entries for the default account, see the /fis/tax_classes/{tax_class}/entries\
@@ -9680,6 +10648,17 @@ components:
         income_tax_class:
           $ref: "#/components/schemas/IncomeTaxClassReferenceDtoV2"
           description: Income tax class of the account.
+        ivat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: Intra-community VAT sales tax class of the default tax class
+            entry.
+        mod_ivat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: Intra-community VAT sales tax class of the default tax class
+            entry modifier.
+        mod_vat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: VAT sales tax class of the default tax class entry modifier.
         name:
           type: string
           description: "Readable, translated name of the document type of this account."
@@ -9696,6 +10675,9 @@ components:
           example: Used for stock trading
           maxLength: 1024
           minLength: 0
+        vat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: VAT sales tax class of the default tax class entry.
         visible:
           type: boolean
           description: Whether this account is visible in account lists or not
@@ -9731,10 +10713,10 @@ components:
           example: "2310"
           maxLength: 25
           minLength: 0
-        code_alt:
-          type: string
-          description: Alternate account code of the account.
-          example: "4000"
+        copy_allowed:
+          type: boolean
+          description: Whether this account can be copied or not.
+          example: true
         default_taxes:
           $ref: "#/components/schemas/TaxSetWithClassModifierForcedDtoV2"
           description: "Tax class entries for the default account, see the /fis/tax_classes/{tax_class}/entries\
@@ -9756,6 +10738,17 @@ components:
         income_tax_class:
           $ref: "#/components/schemas/IncomeTaxClassReferenceDtoV2"
           description: Income tax class of the account.
+        ivat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: Intra-community VAT sales tax class of the default tax class
+            entry.
+        mod_ivat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: Intra-community VAT sales tax class of the default tax class
+            entry modifier.
+        mod_vat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: VAT sales tax class of the default tax class entry modifier.
         name:
           type: string
           description: "Readable, translated name of the document type of this account."
@@ -9812,6 +10805,9 @@ components:
             - ROUNDING_DIFFERENCE_OUTGO
             - DISCOUNT_OUTGO
             - IRRECOVERABLE_OUTGO
+        vat_sales_tax_class:
+          $ref: "#/components/schemas/SalesTaxClassReferenceDtoV2"
+          description: VAT sales tax class of the default tax class entry.
         visible:
           type: boolean
           description: Whether this account is visible in account lists or not
@@ -11092,19 +12088,6 @@ components:
           format: int64
       required:
       - content
-    BulkBusinessDocumentDtoV2:
-      type: object
-      properties:
-        failed:
-          type: array
-          description: "Details about the documents the operation failed on, including\
-            \ the reason for the failure."
-          items:
-            $ref: "#/components/schemas/ErrorMessageDetailsDtoV2"
-        success:
-          type: array
-          description: The documents that the operation was successfully applied to.
-          items: {}
     BusinessDocumentCancellationDtoV2:
       type: object
       properties:
@@ -11369,6 +12352,27 @@ components:
       - date
       - state
       - type
+    BusinessDocumentExternalCancellationDtoV2:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: "Date of cancellation, defaulted with today."
+          example: 2024-08-01
+    BusinessDocumentExternalCancellationWithMultipartDtoV2:
+      type: object
+      properties:
+        cancellation:
+          $ref: "#/components/schemas/BusinessDocumentExternalCancellationDtoV2"
+          description: The data of the cancellation.
+        document:
+          type: string
+          format: binary
+          description: "The optionally externally created cancellation document (same\
+            \ file types and size limit as the DMS file upload, max 2 MB)."
+      required:
+      - cancellation
     BusinessDocumentFinalizationDtoV2:
       type: object
       properties:
@@ -12253,6 +13257,7 @@ components:
           - PL
           - AE
           - XX
+          - XY
           example: AT
         display_name:
           type: string
@@ -12266,6 +13271,11 @@ components:
           format: int64
           description: Client ID / Number.
           example: 1234
+        main_end_date:
+          type: string
+          format: date
+          description: the end date of the main product
+          example: 2024-08-01
         parent_client:
           type: integer
           format: int64
@@ -12295,6 +13305,11 @@ components:
           - ADM
           - EXT
           example: CMA
+        registration_date:
+          type: string
+          format: date
+          description: The date the client was created.
+          example: 2024-08-01
         registration_product_number:
           type: string
           description: "Currently active product, or chosen product at registration."
@@ -12448,6 +13463,15 @@ components:
           enum:
           - ON_ACCOUNT
           example: ON_ACCOUNT
+        user:
+          type: string
+          description: "Optional username of the FreeFinance user to be recorded as\
+            \ the operator of the cash register receipt created for this payment,\
+            \ instead of the authenticated user, e.g. for a technical user creating\
+            \ receipts on behalf of a cashier. Usernames are matched case insensitively."
+          example: MaxMuster
+          maxLength: 255
+          minLength: 0
       required:
       - amount
       - cash_register
@@ -13121,6 +14145,196 @@ components:
       - tax
       - total
       - type
+    CreditMemoExternalCancellationDtoV2:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: "Date of cancellation, defaulted with today."
+          example: 2024-08-01
+        number:
+          type: string
+          description: "Number of the cancellation credit memo. No number is assigned\
+            \ by the system, this number is used as is."
+          example: GM-EX-2026-0001
+          maxLength: 255
+          minLength: 0
+      required:
+      - number
+    CreditMemoExternalCancellationWithMultipartDtoV2:
+      type: object
+      properties:
+        credit_memo:
+          $ref: "#/components/schemas/CreditMemoExternalCancellationDtoV2"
+          description: The data of the cancellation credit memo to create.
+        document:
+          type: string
+          format: binary
+          description: "The optionally externally created document of the cancellation\
+            \ credit memo (same file types and size limit as the DMS file upload,\
+            \ max 2 MB)."
+      required:
+      - credit_memo
+    CreditMemoExternalCreationDtoV2:
+      type: object
+      properties:
+        additional_address:
+          type: string
+          description: "Additional address id, see the /customer/{customer}/additional_addresses\
+            \ resource. Sets an address besides the default to be used for this document."
+          example: a9137a47-5f4c-4239-b85e-2a97e3826cbb
+          maxLength: 38
+          minLength: 0
+        address:
+          $ref: "#/components/schemas/ManualAddressInfoDtoV2"
+          description: If manual address is true this address information will set
+            for the document.
+        currency:
+          type: string
+          description: "Currency code of the document, see the /currencies resource.\
+            \ Defaulted with EUR."
+          example: EUR
+          maxLength: 255
+          minLength: 0
+        currency_rate:
+          type: number
+          description: Currency rate of the document. Defaulted with 1.
+          example: 1.2
+        customer:
+          type: string
+          description: "ID of the customer, see the /customers resource."
+          example: d35aed5d-ff02-78d4-a98d-5f1f388b75c7
+          maxLength: 38
+          minLength: 0
+        customer_name:
+          type: string
+          description: "Customer name, for when the customer doesn't have a record,\
+            \ or doesn't need one. Ignored if a customer id is set."
+          example: Doe Inc.
+          maxLength: 255
+          minLength: 0
+        date:
+          type: string
+          format: date
+          description: Date of the invoice. Always required.
+        delivery_from_date:
+          type: string
+          format: date
+          description: Optional from date for a delivery span. Only available for
+            double-entry accounting.
+          example: 2024-08-01
+        delivery_text:
+          type: string
+          description: "Free-text field containing delivery-related information such\
+            \ as shipping details, delivery instructions, or additional notes for\
+            \ the recipient."
+          example: Please leave the package at the front door if nobody is home.
+          maxLength: 1024
+          minLength: 0
+        delivery_to_date:
+          type: string
+          format: date
+          description: Optional to date for a delivery span. Only available for double-entry
+            accounting.
+          example: 2024-08-02
+        due_date:
+          type: string
+          format: date
+          description: The date by which the invoice is due.
+          example: 2024-08-01
+        inherit_tags:
+          type: boolean
+          description: "When set the tags of the Customer, Supplier and items are\
+            \ inherited onto this line."
+        lines:
+          type: array
+          description: List of all business document lines. The order of this array
+            defines the numbers assigned to the lines.
+          items:
+            $ref: "#/components/schemas/CreditMemoLineCreationDtoV2"
+          minItems: 1
+        manual_address:
+          type: boolean
+          description: If the address for this document was overridden with custom
+            values.
+        net:
+          type: number
+          description: Total net amount of the document. Must match the sum of all
+            line net amounts if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 50.0
+        note:
+          type: string
+          description: Internal note that isn't printed.
+          example: Internal Description Test.
+          maxLength: 4000
+          minLength: 0
+        number:
+          type: string
+          description: Number of the business document.
+          example: R 2026-0001
+          maxLength: 255
+          minLength: 0
+        order_number:
+          type: string
+          description: Order number / Bestellnummer from the customer.
+          example: BN-2024-1234
+          maxLength: 255
+          minLength: 0
+        payment_term:
+          type: string
+          description: "Payment term id, see /payment_terms resource. Determines due\
+            \ date, dunning date, etc. and is defaulted with the configured default\
+            \ payment term, if any."
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        reference_date:
+          type: string
+          format: date
+          description: "Optional reference date to another business case, transaction,\
+            \ etc."
+        reference_text:
+          type: string
+          description: "Reference info to other documents, business case information,\
+            \ remittance numbers, etc."
+          example: R 2016-0002
+          maxLength: 10000
+          minLength: 0
+        tax:
+          type: number
+          description: Total tax amount of the document. Must match the sum of all
+            line tax amounts if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 10.0
+        text_bottom:
+          type: string
+          description: "Description of the business document to be printed after the\
+            \ lines. Defaulted with configured layout, unless the state is EXTERNAL."
+          maxLength: 10000
+          minLength: 0
+        text_defaulting:
+          type: boolean
+          description: "If true, the text at the top and bottom will be defaulted\
+            \ with the values from the layout."
+        text_top:
+          type: string
+          description: Description of the business document to be printed after the
+            subject.
+          example: Details of the Invoice.
+          maxLength: 10000
+          minLength: 0
+        total:
+          type: number
+          description: Total amount of the document including tax. Must match the
+            sum of all line totals if document is FINALIZED or EXTERNAL for verification.
+            Maximum of 10 digits and 2 fractional digits.
+          example: 60.0
+      required:
+      - date
+      - lines
+      - number
     CreditMemoLineCreationDtoV2:
       type: object
       properties:
@@ -14816,6 +16030,20 @@ components:
       - rebook_count
       - state
       - total_count
+    DeliveryNoteBulkResultDtoV2:
+      type: object
+      properties:
+        failed:
+          type: array
+          description: "The delivery notes that could not be processed, each with\
+            \ its error."
+          items:
+            $ref: "#/components/schemas/ErrorMessageDetailsDtoV2"
+        success:
+          type: array
+          description: The delivery notes that were processed successfully.
+          items:
+            $ref: "#/components/schemas/DeliveryNoteDtoV2"
     DeliveryNoteCompletionDtoV2:
       type: object
       properties:
@@ -15549,6 +16777,168 @@ components:
       required:
       - provider
       - provider_id
+    DunnedInvoiceResultDtoV2:
+      type: object
+      properties:
+        invoice:
+          $ref: "#/components/schemas/InvoiceDtoV2"
+          description: The dunned invoice.
+        letter:
+          type: array
+          description: The dunning letters of the dunned invoice.
+          items:
+            $ref: "#/components/schemas/DunningLetterDtoV2"
+    DunningLetterDtoV2:
+      type: object
+      properties:
+        cancel_document:
+          $ref: "#/components/schemas/FileReferenceDtoV2"
+          description: "A reference to the cancellation document, if the dunning was\
+            \ cancelled."
+        cancellation_date:
+          type: string
+          format: date
+          description: "The date when the dunning process was cancelled, if applicable."
+          example: 2024-08-02
+        currency_rate:
+          type: number
+          description: "The currency exchange rate applied, if applicable."
+          example: 1.2
+        document:
+          $ref: "#/components/schemas/FileReferenceDtoV2"
+          description: A reference to the generated dunning document.
+        due_date:
+          type: string
+          format: date
+          description: The original due date of the invoice.
+          example: 2024-08-02
+        dunning_date:
+          type: string
+          format: date
+          description: The date when the dunning process was initiated for this level.
+          example: 2024-08-01
+        dunning_end_text:
+          type: string
+          description: The closing text or footer of the dunning letter.
+          maxLength: 10000
+          minLength: 0
+        dunning_fee:
+          type: number
+          description: The fee charged for this dunning level.
+          example: 12.99
+        dunning_level:
+          $ref: "#/components/schemas/DunningLevelReferenceDtoV2"
+          description: The dunning level of the dunning process.
+        dunning_text:
+          type: string
+          description: The main body text of the dunning letter or email.
+          maxLength: 10000
+          minLength: 0
+        id:
+          type: string
+          description: The unique identifier of the dunning process.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        invoice:
+          $ref: "#/components/schemas/BusinessDocumentReferenceDtoV2"
+          description: A reference to the original invoice that is being dunned.
+        sequence:
+          type: integer
+          format: int32
+          description: "The sequence number of this dunning instance in the process\
+            \ (e.g., 1 for the first reminder)."
+          example: 1
+        show_lines:
+          type: boolean
+          description: Flag to indicate whether individual invoice lines should be
+            shown in the dunning document.
+        state:
+          type: string
+          description: The current status of the dunning process.
+          enum:
+          - STAGING
+          - FINALIZED
+          - EXTERNAL
+          - CANCELLED
+          - CANCELLATION_DOCUMENT
+          example: FINALIZED
+        subject:
+          type: string
+          description: The subject line used for the dunning communication.
+          example: Payment Reminder
+          maxLength: 1024
+          minLength: 0
+        total_dunning_amount:
+          type: number
+          description: "The total amount due, including the original invoice amount\
+            \ and any fees."
+          example: 12.99
+    DunningLetterExternalCreationDtoV2:
+      type: object
+      properties:
+        currency_rate:
+          type: number
+          description: "The currency exchange rate applied, if applicable."
+          example: 1.2
+        due_date:
+          type: string
+          format: date
+          description: The original due date of the invoice.
+          example: 2024-08-02
+        dunning_date:
+          type: string
+          format: date
+          description: The date when the dunning process was initiated for this level.
+          example: 2024-08-01
+        dunning_end_text:
+          type: string
+          description: The closing text or footer of the dunning letter.
+          maxLength: 10000
+          minLength: 0
+        dunning_fee:
+          type: number
+          description: The fee charged for this dunning level.
+          example: 12.99
+        dunning_level:
+          type: string
+          description: The dunning level of the dunning letter.
+          example: "1"
+          maxLength: 255
+          minLength: 0
+        dunning_text:
+          type: string
+          description: The main body text of the dunning letter or email.
+          maxLength: 10000
+          minLength: 0
+        show_lines:
+          type: boolean
+          description: Flag to indicate whether individual invoice lines should be
+            shown in the dunning document.
+        subject:
+          type: string
+          description: The subject line used for the dunning communication.
+          example: Payment Reminder
+          maxLength: 1024
+          minLength: 0
+        total_dunning_amount:
+          type: number
+          description: "The total amount due, including the original invoice amount\
+            \ and any fees."
+          example: 12.99
+      required:
+      - dunning_level
+    DunningLetterExternalCreationWithMultipartDtoV2:
+      type: object
+      properties:
+        document:
+          type: string
+          format: binary
+          description: "The optionally externally created dunning document (same file\
+            \ types and size limit as the DMS file upload, max 2 MB)."
+        dunning_letter:
+          $ref: "#/components/schemas/DunningLetterExternalCreationDtoV2"
+          description: The external dunning letter to create.
+      required:
+      - dunning_letter
     DunningLevelDtoV2:
       type: object
       properties:
@@ -17634,6 +19024,40 @@ components:
       - payment_amount
       - payment_date
       - payment_type
+    IncomingRestPaymentDtoV2:
+      type: object
+      properties:
+        currency_rate:
+          type: number
+          description: Currency rate at the payment date. Defaulted to 1.
+          example: 1
+        payment_date:
+          type: string
+          format: date
+          description: Date of the payment.
+          example: 2024-08-01
+        payment_description:
+          type: string
+          description: Optional description of the payment.
+          example: Payment was overdue.
+          maxLength: 4000
+          minLength: 0
+        rest_payment_account:
+          type: string
+          description: Account for rest payment. Only available and mandatory for
+            DBH.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        rest_payment_type:
+          type: string
+          description: Indicates type of the remaining open amount.
+          enum:
+          - DISCOUNT
+          - ROUNDING_DIFFERENCE
+      required:
+      - payment_date
+      - rest_payment_type
     InvoiceAccountPaymentCreationDtoV2:
       type: object
       properties:
@@ -17783,6 +19207,38 @@ components:
           format: int64
       required:
       - content
+    InvoiceCancellationWithPaymentsDtoV2:
+      type: object
+      properties:
+        cancel_payments:
+          type: boolean
+          description: "If true, all active payments on the invoice itself are automatically\
+            \ cancelled with cancel reason before the invoice is cancelled. Requires\
+            \ cancel reason. Generated or reconciled payments cannot be cancelled\
+            \ and will fail the request. Credit memos cashed in against the invoice\
+            \ are not cancelled."
+          example: false
+        cancel_reason:
+          type: string
+          description: "Reason of the payment cancellation. Used as cancellation reason\
+            \ for the automatically cancelled payments. Mandatory together with cancel_payments,\
+            \ not allowed without it."
+          maxLength: 4000
+          minLength: 0
+        date:
+          type: string
+          format: date
+          description: "Date of cancellation, defaulted with today."
+        layout_setup:
+          type: string
+          description: "Layout setup id of the layout to use for the cancellation\
+            \ document PDF, see /layout_setups resource. Is defaulted with the configured\
+            \ default setup. Ignored for EXTERNAL type business documents."
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+      required:
+      - layout_setup
     InvoiceCashRegisterPaymentCreationDtoV2:
       type: object
       properties:
@@ -17835,6 +19291,15 @@ components:
           - CURRENCY_DIFFERENCE
           - CORRECTION
           example: UNCOLLECTABLE
+        user:
+          type: string
+          description: "Optional username of the FreeFinance user to be recorded as\
+            \ the operator of the cash register receipt created for this payment,\
+            \ instead of the authenticated user, e.g. for a technical user creating\
+            \ receipts on behalf of a cashier. Usernames are matched case insensitively."
+          example: MaxMuster
+          maxLength: 255
+          minLength: 0
       required:
       - amount
       - cash_register
@@ -18644,6 +20109,37 @@ components:
       - tax
       - total
       - type
+    InvoiceExternalCancellationDtoV2:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: "Date of cancellation, defaulted with today."
+          example: 2024-08-01
+        number:
+          type: string
+          description: "Number of the cancellation invoice. No number is assigned\
+            \ by the system, this number is used as is."
+          example: S-EX-2026-0001
+          maxLength: 255
+          minLength: 0
+      required:
+      - number
+    InvoiceExternalCancellationWithMultipartDtoV2:
+      type: object
+      properties:
+        cancellation_invoice:
+          $ref: "#/components/schemas/InvoiceExternalCancellationDtoV2"
+          description: The data of the cancellation invoice to create.
+        document:
+          type: string
+          format: binary
+          description: "The optionally externally created document of the cancellation\
+            \ invoice (same file types and size limit as the DMS file upload, max\
+            \ 2 MB)."
+      required:
+      - cancellation_invoice
     InvoiceExternalCreationDtoV2:
       type: object
       properties:
@@ -18814,6 +20310,19 @@ components:
       - date
       - lines
       - number
+    InvoiceExternalCreationWithMultipartDtoV2:
+      type: object
+      properties:
+        document:
+          type: string
+          format: binary
+          description: "The optionally externally created document of the invoice\
+            \ (same file types and size limit as the DMS file upload, max 2 MB)."
+        invoice:
+          $ref: "#/components/schemas/InvoiceExternalCreationDtoV2"
+          description: The external invoice to create.
+      required:
+      - invoice
     InvoiceLineCreationDtoV2:
       type: object
       properties:
@@ -20140,6 +21649,31 @@ components:
       - code
       - key_name
       - localized_name
+    LastTripDtoV2:
+      type: object
+      properties:
+        to:
+          type: string
+          format: date-time
+          description: The to date of the last trip.
+        to_km:
+          type: integer
+          format: int32
+          description: The to km of the last trip.
+        vehicle:
+          $ref: "#/components/schemas/VehicleReferenceDtoV2"
+          description: The vehicle of the last trip.
+    LastTripForVehicleDtoV2:
+      type: object
+      properties:
+        to:
+          type: string
+          format: date-time
+          description: The to date of the last trip.
+        to_km:
+          type: integer
+          format: int32
+          description: The to km of the last trip.
     LayoutSetupDtoV2:
       type: object
       properties:
@@ -20637,6 +22171,19 @@ components:
           type: string
           description: Metadata value if the metadata type is string.
           example: Invoice description.
+    OfferBulkResultDtoV2:
+      type: object
+      properties:
+        failed:
+          type: array
+          description: "The offers that could not be processed, each with its error."
+          items:
+            $ref: "#/components/schemas/ErrorMessageDetailsDtoV2"
+        success:
+          type: array
+          description: The offers that were processed successfully.
+          items:
+            $ref: "#/components/schemas/OfferDtoV2"
     OfferCompletionDtoV2:
       type: object
       properties:
@@ -21499,6 +23046,32 @@ components:
           format: int64
       required:
       - content
+    OperatorDtoV2:
+      type: object
+      properties:
+        user:
+          type: string
+          description: "Optional username of the FreeFinance user to be recorded as\
+            \ the operator of the created receipt instead of the authenticated user,\
+            \ e.g. for a technical user acting on behalf of a cashier. Usernames are\
+            \ matched case insensitively."
+          example: MaxMuster
+          maxLength: 255
+          minLength: 0
+    OrderConfirmationBulkResultDtoV2:
+      type: object
+      properties:
+        failed:
+          type: array
+          description: "The order confirmations that could not be processed, each\
+            \ with its error."
+          items:
+            $ref: "#/components/schemas/ErrorMessageDetailsDtoV2"
+        success:
+          type: array
+          description: The order confirmations that were processed successfully.
+          items:
+            $ref: "#/components/schemas/OrderConfirmationDtoV2"
     OrderConfirmationCompletionDtoV2:
       type: object
       properties:
@@ -22924,6 +24497,42 @@ components:
       - payment_amount
       - payment_date
       - payment_type
+    OutgoingRestPaymentDtoV2:
+      type: object
+      properties:
+        currency_rate:
+          type: number
+          description: Currency rate at the payment date. Defaulted to 1.
+          example: 1
+        payment_date:
+          type: string
+          format: date
+          description: Date of the payment.
+          example: 2024-08-01
+        payment_description:
+          type: string
+          description: Optional description of the payment.
+          example: Payment was overdue.
+          maxLength: 4000
+          minLength: 0
+        rest_payment_account:
+          type: string
+          description: Account for rest payment. Only available and mandatory for
+            DBH.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        rest_payment_type:
+          type: string
+          description: Indicates type of the remaining open amount.
+          enum:
+          - DISCOUNT
+          - ROUNDING_DIFFERENCE
+          - IRRECOVERABLE
+      required:
+      - payment_date
+      - rest_payment_account
+      - rest_payment_type
     PaymentAccountDtoV2:
       type: object
       properties:
@@ -23754,6 +25363,15 @@ components:
         total:
           type: number
           description: "Total amount of the receipt, must match total of receipt lines."
+        user:
+          type: string
+          description: "Optional username of the FreeFinance user to be recorded as\
+            \ the operator of this receipt instead of the authenticated user, e.g.\
+            \ for a technical user creating receipts on behalf of a cashier. Usernames\
+            \ are matched case insensitively."
+          example: MaxMuster
+          maxLength: 255
+          minLength: 0
       required:
       - lines
       - total
@@ -23959,6 +25577,15 @@ components:
           enum:
           - FROM_ACCOUNT
           - TO_ACCOUNT
+        user:
+          type: string
+          description: "Optional username of the FreeFinance user to be recorded as\
+            \ the operator of this receipt instead of the authenticated user, e.g.\
+            \ for a technical user creating receipts on behalf of a cashier. Usernames\
+            \ are matched case insensitively."
+          example: MaxMuster
+          maxLength: 255
+          minLength: 0
       required:
       - account
       - total
@@ -25443,6 +27070,7 @@ components:
           - PL
           - AE
           - XX
+          - XY
           example: AT
         effective_from:
           type: string
@@ -25502,6 +27130,7 @@ components:
           - PL
           - AE
           - XX
+          - XY
           example: AT
         effective_from:
           type: string
@@ -25592,6 +27221,7 @@ components:
           - PL
           - AE
           - XX
+          - XY
           example: AT
         effective_from:
           type: string
@@ -25803,6 +27433,7 @@ components:
           - PL
           - AE
           - XX
+          - XY
           example: AT
         effective_from:
           type: string
@@ -26213,6 +27844,396 @@ components:
       - from_date
       - id
       - to_date
+    TemUserConfigDtoV2:
+      type: object
+      properties:
+        billing_type:
+          type: string
+          description: The billing type of the user.
+          enum:
+          - EMPLOYEE_CASH
+          - EMPLOYEE_PAYROLLACCOUNTING
+          - OWNER
+          example: OWNER
+        contra_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: The contra account used for the user. only necessary when the
+            billing type is not payroll accounting
+        first_name:
+          type: string
+          description: First name of the user.
+          example: Max
+        id:
+          type: string
+          description: ID for this user.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        is_deleted:
+          type: boolean
+          description: True when the user is deleted
+        last_diet_date:
+          type: string
+          format: date
+          description: Date when the last diet of this user was entered.
+          example: 2024-08-01
+        last_name:
+          type: string
+          description: Last name of the user.
+          example: Mustermann
+        last_trip_date:
+          type: string
+          format: date
+          description: Date when the last trip of this user was entered.
+          example: 2024-08-01
+        user:
+          $ref: "#/components/schemas/UserReferenceDtoV2"
+          description: The connected enduser of the user.
+      required:
+      - billing_type
+      - id
+    TemUserConfigExtendedDtoV2:
+      type: object
+      properties:
+        billing_type:
+          type: string
+          description: The billing type of the user.
+          enum:
+          - EMPLOYEE_CASH
+          - EMPLOYEE_PAYROLLACCOUNTING
+          - OWNER
+          example: OWNER
+        contra_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: The contra account used for the user. only necessary when the
+            billing type is not payroll accounting
+        first_name:
+          type: string
+          description: First name of the user.
+          example: Max
+        id:
+          type: string
+          description: ID for this user.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        is_deleted:
+          type: boolean
+          description: True when the user is deleted
+        last_diet_date:
+          type: string
+          format: date
+          description: Date when the last diet of this user was entered.
+          example: 2024-08-01
+        last_name:
+          type: string
+          description: Last name of the user.
+          example: Mustermann
+        last_trip:
+          $ref: "#/components/schemas/LastTripDtoV2"
+          description: Info of the last trip of the user
+        last_trip_date:
+          type: string
+          format: date
+          description: Date when the last trip of this user was entered.
+          example: 2024-08-01
+        user:
+          $ref: "#/components/schemas/UserReferenceDtoV2"
+          description: The connected enduser of the user.
+      required:
+      - billing_type
+      - id
+    TemUserConfigReferenceDtoV2:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: First name of the user.
+          example: Max
+        id:
+          type: string
+          description: ID for this user.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        last_diet_date:
+          type: string
+          format: date
+          description: Date of the last diet of this user.
+          example: 2024-08-01
+        last_name:
+          type: string
+          description: Last name of the user.
+          example: Mustermann
+        last_trip_date:
+          type: string
+          format: date
+          description: Date of the last trip of this user.
+          example: 2024-08-01
+      required:
+      - first_name
+      - id
+      - last_name
+    TemUserConfigResultDtoV2:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TemUserConfigExtendedDtoV2"
+        total_count:
+          type: integer
+          format: int64
+      required:
+      - content
+    TripCreationDtoV2:
+      type: object
+      properties:
+        country:
+          type: string
+          description: The country-code for the trip
+          example: DE
+          maxLength: 255
+          minLength: 0
+        currency:
+          type: string
+          description: "Currency, see the fnd/currency resource. Defaulted with the\
+            \ main currency."
+          example: EUR
+          maxLength: 255
+          minLength: 0
+        description:
+          type: string
+          description: Description for the trip.
+          example: Test trip
+          maxLength: 4000
+          minLength: 0
+        from:
+          type: string
+          format: date-time
+          description: From trip date time
+          example: 2024-08-01T08:00:00
+        from_km:
+          type: integer
+          format: int32
+          description: From km of the vehicle.
+          example: 10
+        id:
+          type: string
+          description: Id for this trip
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        tem_user:
+          type: string
+          description: The user taking this trip
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        to:
+          type: string
+          format: date-time
+          description: To trip date time
+          example: 2024-08-02T16:00:00
+        to_km:
+          type: integer
+          format: int32
+          description: To km of the vehicle.
+          example: 90
+        total_km:
+          type: integer
+          format: int32
+          description: Total km for the trip
+          example: 80
+        usage_type:
+          type: string
+          description: Km type
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle:
+          type: string
+          description: The vehicle-id
+          example: d35aed5d-ff02-78d4-a98d-5f1f388b75c7
+          maxLength: 38
+          minLength: 0
+        waypoints:
+          type: array
+          description: Waypoints for this trip (optional)
+          items:
+            $ref: "#/components/schemas/WayPointCreationDtoV2"
+      required:
+      - country
+      - description
+      - from
+      - to
+      - usage_type
+      - vehicle
+    TripDtoV2:
+      type: object
+      properties:
+        country:
+          $ref: "#/components/schemas/CountryReferenceDtoV2"
+          description: The country for the trip
+        currency:
+          type: string
+          description: "Currency, see the fnd/currency resource. Defaulted with the\
+            \ main currency."
+          example: EUR
+        description:
+          type: string
+          description: Description for the trip.
+          example: Test trip
+        from:
+          type: string
+          format: date-time
+          description: From trip date time
+          example: 2024-08-01T08:00:00
+        from_km:
+          type: integer
+          format: int32
+          description: From km of the vehicle. 2 of the 3 km fields must be set!
+          example: 10
+        id:
+          type: string
+          description: Id for this trip
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        tem_user:
+          $ref: "#/components/schemas/TemUserConfigReferenceDtoV2"
+          description: The user taking this trip
+        to:
+          type: string
+          format: date-time
+          description: To trip date time
+          example: 2024-08-02T16:00:00
+        to_km:
+          type: integer
+          format: int32
+          description: To km of the vehicle. 2 of the 3 km fields must be set!
+          example: 90
+        total_km:
+          type: integer
+          format: int32
+          description: Total km for the trip. 2 of the 3 km fields must be set!
+          example: 80
+        total_price:
+          type: number
+          description: Calculated total price for this trip
+          example: 12.99
+        transferred:
+          type: boolean
+          description: Indicates if the trip was booked. A booked trip can't be changed
+            unless the booking is cancelled first.
+        usage_type:
+          type: string
+          description: Km type
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: PRIVATE
+        vehicle:
+          $ref: "#/components/schemas/VehicleReferenceDtoV2"
+          description: The vehicle
+        waypoint_counter:
+          type: integer
+          format: int32
+          description: How many waypoints are registered with this trip.
+      required:
+      - country
+      - description
+      - from
+      - id
+      - tem_user
+      - to
+      - total_price
+      - transferred
+      - usage_type
+      - vehicle
+    TripResultDtoV2:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TripDtoV2"
+        total_count:
+          type: integer
+          format: int64
+      required:
+      - content
+    TripUpdateDtoV2:
+      type: object
+      properties:
+        country:
+          type: string
+          description: The country-code for the trip
+          example: DE
+          maxLength: 255
+          minLength: 0
+        currency:
+          type: string
+          description: "Currency, see the fnd/currency resource. Defaulted with the\
+            \ main currency."
+          example: EUR
+          maxLength: 255
+          minLength: 0
+        description:
+          type: string
+          description: Description for the trip.
+          example: Test trip
+          maxLength: 4000
+          minLength: 0
+        from:
+          type: string
+          format: date-time
+          description: From trip date time
+          example: 2024-08-01T08:00:00
+        from_km:
+          type: integer
+          format: int32
+          description: From km of the vehicle.
+          example: 10
+        tem_user:
+          type: string
+          description: The user taking this trip
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        to:
+          type: string
+          format: date-time
+          description: To trip date time
+          example: 2024-08-02T16:00:00
+        to_km:
+          type: integer
+          format: int32
+          description: To km of the vehicle.
+          example: 90
+        total_km:
+          type: integer
+          format: int32
+          description: Total km for the trip
+          example: 80
+        usage_type:
+          type: string
+          description: Km type
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle:
+          type: string
+          description: The vehicle-id
+          example: d35aed5d-ff02-78d4-a98d-5f1f388b75c7
+          maxLength: 38
+          minLength: 0
+        waypoints:
+          type: array
+          description: Waypoints for this trip (optional)
+          items:
+            $ref: "#/components/schemas/WayPointCreationDtoV2"
+      required:
+      - country
+      - description
+      - from
+      - to
+      - usage_type
+      - vehicle
     UnitOfMeasureDtoV2:
       type: object
       properties:
@@ -26242,6 +28263,323 @@ components:
       - key_name
       - localized_description
       - localized_name
+    UserReferenceDtoV2:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: First name of the user.
+          example: John
+        last_name:
+          type: string
+          description: Last name of the user.
+          example: Doe
+        username:
+          type: string
+          description: Unique username.
+          example: JohnDoe
+      required:
+      - username
+    VehicleDtoV2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Mandatory name or description.
+          example: Company car
+        domestic_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: Account for domestic trips.
+          example: 2800
+        foreign_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: Account for foreign trips.
+          example: 2800
+        id:
+          type: string
+          description: ID for this vehicle.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        initial_km:
+          type: integer
+          format: int32
+          description: Initial mileage of the vehicle in kilometers.
+          example: 5000
+        owner:
+          type: string
+          description: Optional owner of the vehicle.
+          example: Max Mustermann
+        usage_type:
+          type: string
+          description: The usage type of this vehicle (PRIVATE or BUSINESS).
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle_entered_date:
+          type: string
+          format: date
+          description: Date when the vehicle was added to the fleet.
+          example: 2024-12-31
+        vehicle_retired_date:
+          type: string
+          format: date
+          description: Date the vehicle was retired from the fleet.
+          example: 2024-12-31
+        vehicle_type:
+          type: string
+          description: "Vehicle type, like car or bike."
+          enum:
+          - CAR
+          - MOTORBIKE
+          - BIKE
+          - PASSENGER
+          - MOTORBIKE_SMALL
+          example: MOTORBIKE
+      required:
+      - description
+      - id
+      - initial_km
+      - usage_type
+      - vehicle_entered_date
+      - vehicle_type
+    VehicleExtendedDtoV2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Mandatory name or description.
+          example: Company car
+        domestic_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: Account for domestic trips.
+          example: 2800
+        foreign_account:
+          $ref: "#/components/schemas/AccountReferenceDtoV2"
+          description: Account for foreign trips.
+          example: 2800
+        id:
+          type: string
+          description: ID for this vehicle.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        initial_km:
+          type: integer
+          format: int32
+          description: Initial mileage of the vehicle in kilometers.
+          example: 5000
+        last_trip:
+          $ref: "#/components/schemas/LastTripForVehicleDtoV2"
+          description: Info of the last trip of the vehicle
+        owner:
+          type: string
+          description: Optional owner of the vehicle.
+          example: Max Mustermann
+        usage_type:
+          type: string
+          description: The usage type of this vehicle (PRIVATE or BUSINESS).
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle_entered_date:
+          type: string
+          format: date
+          description: Date when the vehicle was added to the fleet.
+          example: 2024-12-31
+        vehicle_retired_date:
+          type: string
+          format: date
+          description: Date the vehicle was retired from the fleet.
+          example: 2024-12-31
+        vehicle_type:
+          type: string
+          description: "Vehicle type, like car or bike."
+          enum:
+          - CAR
+          - MOTORBIKE
+          - BIKE
+          - PASSENGER
+          - MOTORBIKE_SMALL
+          example: MOTORBIKE
+      required:
+      - description
+      - id
+      - initial_km
+      - usage_type
+      - vehicle_entered_date
+      - vehicle_type
+    VehicleExtendedResultDtoV2:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/VehicleExtendedDtoV2"
+        total_count:
+          type: integer
+          format: int64
+      required:
+      - content
+    VehicleModifyDtoV2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Mandatory name or description.
+          example: Company car
+          maxLength: 1024
+          minLength: 0
+        initial_km:
+          type: integer
+          format: int32
+          description: Initial mileage of the vehicle in kilometers.
+          example: 5000
+        owner:
+          type: string
+          description: The id of a temUser.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        usage_type:
+          type: string
+          description: The usage type of this vehicle (PRIVATE or BUSINESS).
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle_entered_date:
+          type: string
+          format: date
+          description: Date when the vehicle was added to the fleet.
+          example: 2024-12-31
+        vehicle_retired_date:
+          type: string
+          format: date
+          description: Date the vehicle was retired from the fleet.
+          example: 2024-12-31
+        vehicle_type:
+          type: string
+          description: "Vehicle type, like car or bike."
+          enum:
+          - CAR
+          - MOTORBIKE
+          - BIKE
+          - PASSENGER
+          - MOTORBIKE_SMALL
+          example: MOTORBIKE
+      required:
+      - description
+      - initial_km
+      - usage_type
+      - vehicle_entered_date
+      - vehicle_type
+    VehiclePatchDtoV2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Mandatory name or description.
+          example: Company car
+          maxLength: 1024
+          minLength: 0
+        initial_km:
+          type: integer
+          format: int32
+          description: Initial mileage of the vehicle in kilometers.
+          example: 5000
+        owner:
+          type: string
+          description: The id of a temUser.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+          maxLength: 38
+          minLength: 0
+        vehicle_entered_date:
+          type: string
+          format: date
+          description: Date when the vehicle was added to the fleet.
+          example: 2024-12-31
+        vehicle_retired_date:
+          type: string
+          format: date
+          description: Date the vehicle was retired from the fleet.
+          example: 2024-12-31
+      required:
+      - description
+      - initial_km
+      - vehicle_entered_date
+    VehicleReferenceDtoV2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Mandatory name or description.
+          example: Company car
+        id:
+          type: string
+          description: ID for this vehicle.
+          example: 5665af78-cc67-4908-b030-f649fde5d8a8
+        km_type:
+          type: string
+          description: "Vehicle type, like car or bike."
+          enum:
+          - PRIVATE
+          - BUSINESS
+          example: BUSINESS
+        vehicle_type:
+          type: string
+          description: "Vehicle type, like car or bike."
+          enum:
+          - CAR
+          - MOTORBIKE
+          - BIKE
+          - PASSENGER
+          - MOTORBIKE_SMALL
+          example: MOTORBIKE
+      required:
+      - description
+      - id
+      - km_type
+      - vehicle_type
+    WayPointCreationDtoV2:
+      type: object
+      properties:
+        geo_hash:
+          type: string
+          description: The geo hash
+          example: sxg8t2hegk
+        horizontal_accuracy:
+          type: number
+          format: double
+          description: The horizontal accuracy
+          example: 4.72922251239141
+        latitude:
+          type: number
+          format: double
+          description: The latitude
+          example: 39.3902610862528
+        longitude:
+          type: number
+          format: double
+          description: The longitude
+          example: 2.73664702029674
+        speed:
+          type: number
+          format: double
+          description: The speed
+          example: 244.130004882812
+        speed_accuracy:
+          type: number
+          format: double
+          description: The speed accuracy
+          example: 1.13752913475037
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the waypoint
+          example: 2024-08-01T08:00:00
+      required:
+      - latitude
+      - longitude
+      - timestamp
   securitySchemes:
     bearerAuth:
       bearerFormat: JWT
